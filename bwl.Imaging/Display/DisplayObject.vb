@@ -11,6 +11,7 @@
 <KnownType(GetType(BitmapObject))>
 <KnownType(GetType(Bitmap))>
 Public Class DisplayObject
+    Implements ICloneable
     Public Property Color As Color = Drawing.Color.Red
     Public Property IsMoveable As Boolean = False
     Public Property IsVisible As Boolean = True
@@ -20,6 +21,7 @@ Public Class DisplayObject
     Public Property LineWidth As Single = 0.0
     Public Property PointSize As Single = 0.0
     Public Property Caption As String = ""
+    Public Property Group As String = ""
 
     Public Sub New()
 
@@ -38,4 +40,22 @@ Public Class DisplayObject
         Me.IsMoveable = isMoveable
         Me.IsSelectable = isSelectable
     End Sub
+
+    Public Sub New(obj As DisplayObject)
+        Me.Color = obj.Color
+        Me.IsMoveable = obj.IsMoveable
+        Me.IsVisible = obj.IsVisible
+        Me.IsSelectable = obj.IsSelectable
+        Me.ID = obj.ID
+        Me.DrawObject = obj.DrawObject
+        Me.LineWidth = obj.LineWidth
+        Me.PointSize = obj.PointSize
+        Me.Caption = obj.Caption
+        Me.Group = obj.Group
+    End Sub
+
+    Public Function Clone() As Object Implements ICloneable.Clone
+        Return New DisplayObject(Me)
+    End Function
+
 End Class

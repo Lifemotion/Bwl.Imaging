@@ -79,11 +79,11 @@
         End If
     End Sub
 
-    Public Function Items(id As String) As DisplayObject()
+    Public Function Find(idPart As String, groupPart As String) As DisplayObject()
         SyncLock Me
             Dim copy As New List(Of DisplayObject)
             For Each obj In DisplayObjects
-                If obj.ID = id Then copy.Add(obj)
+                If obj.ID.Contains(idPart) And obj.Group.Contains(groupPart) Then copy.Add(obj)
             Next
             Return copy.ToArray
         End SyncLock
@@ -108,9 +108,13 @@
     Public Property MoveMode As Boolean
     Public Property MovePoints As New List(Of PointF)
 
+    ' Public Event MoveModeChanged(sender As DisplayControl, moveMode As Boolean)
+    Public Event DisplayObjectMoved(sender As DisplayControl, displayObject As DisplayObject)
+
     Private Sub _pictureBox_Click(sender As Object, e As MouseEventArgs) Handles _pictureBox.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Right Then
             MoveMode = Not MoveMode
+            If SelectedObject IsNot Nothing AndAlso SelectedObject.IsMoveable = False Then MoveMode = False
             MovePoints.Clear()
             Me.Refresh()
         End If
@@ -123,18 +127,22 @@
                         .Point2 = MovePoints(1)
                         MoveMode = False
                     End With
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                 End If
                 If TypeOf SelectedObject.DrawObject Is Rectangle AndAlso MovePoints.Count > 1 Then
                     SelectedObject.DrawObject = Rectangle.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
                     MoveMode = False
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                 End If
                 If TypeOf SelectedObject.DrawObject Is RectangleF AndAlso MovePoints.Count > 1 Then
                     SelectedObject.DrawObject = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
                     MoveMode = False
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                 End If
                 If TypeOf SelectedObject.DrawObject Is BitmapObject AndAlso MovePoints.Count > 1 Then
                     DirectCast(SelectedObject.DrawObject, BitmapObject).RectangleF = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y)
                     MoveMode = False
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                 End If
                 If TypeOf SelectedObject.DrawObject Is Tetragon AndAlso MovePoints.Count > 3 Then
                     With DirectCast(SelectedObject.DrawObject, Tetragon)
@@ -143,19 +151,23 @@
                         .Point3 = MovePoints(2)
                         .Point4 = MovePoints(3)
                         MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                     End With
                 End If
                 If TypeOf SelectedObject.DrawObject Is PointF AndAlso MovePoints.Count > 0 Then
                     SelectedObject.DrawObject = MovePoints(0)
                     MoveMode = False
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                 End If
                 If TypeOf SelectedObject.DrawObject Is Point AndAlso MovePoints.Count > 0 Then
                     SelectedObject.DrawObject = New Point(MovePoints(0).X, MovePoints(0).Y)
                     MoveMode = False
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                 End If
                 If TypeOf SelectedObject.DrawObject Is PointC AndAlso MovePoints.Count > 0 Then
                     DirectCast(SelectedObject.DrawObject, PointC).PointF = New PointF(MovePoints(0).X, MovePoints(0).Y)
                     MoveMode = False
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                 End If
                 Me.Refresh()
             Else

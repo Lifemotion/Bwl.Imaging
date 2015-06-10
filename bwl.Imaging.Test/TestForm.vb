@@ -36,8 +36,6 @@
             .DrawObject(Color.Green, New TextObject(rnd.NextDouble, rnd.NextDouble, "test", 0.05))
             .DrawObject(Color.BlueViolet, New Tetragon(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble))
             .DrawObject(Color.BlueViolet, New Tetragon(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble))
-
-            '  .DrawBitmap(image, 0.1, 0.1)
         End With
         OverlayDisplay1.Refresh()
     End Sub
@@ -53,11 +51,13 @@
             .Add(New DisplayObject("point2", Color.Red, New PointC(rnd.NextDouble, rnd.NextDouble)))
             .Add(New DisplayObject("test1", Color.Green, New TextObject(rnd.NextDouble, rnd.NextDouble, "test", 0.05)))
             .Add(New DisplayObject("tetra1", Color.BlueViolet, New Tetragon(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
-
-            ' Dim t = Serializer.SaveObjectToJsonString(DisplayControl1.DisplayObjects)
-            ' .Clear()
-            ' Dim objects = Serializer.LoadObjectFromJsonString(Of List(Of DisplayObject))(t)
-            '.AddRange(objects)
+            Dim objs1 = .Find("", "")
+            Dim objs2 = .Find("2", "")
+            Dim objs3 = .Find("", "back")
+            .Find("2", "").All(Function(obj As DisplayObject)
+                                   obj.IsMoveable = True
+                                   Return False
+                               End Function)
         End With
 
     End Sub
