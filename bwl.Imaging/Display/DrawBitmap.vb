@@ -60,8 +60,13 @@
     Public Sub DrawBitmap(bitmap As Bitmap, rect As RectangleF)
         DrawBitmap(bitmap, rect.Left, rect.Top, rect.Right, rect.Bottom)
     End Sub
+
     Public Sub DrawBitmap(bitmap As Bitmap, x1 As Single, y1 As Single, x2 As Single, y2 As Single)
         _graphics.DrawImage(bitmap, x1 * _mulX, y1 * _mulY, (x2 - x1) * _mulX, (y2 - y1) * _mulY)
+    End Sub
+
+    Public Sub DrawBitmap(bitmap As Bitmap, x1 As Single, y1 As Single)
+        _graphics.DrawImage(bitmap, x1 * _mulX, y1 * _mulY)
     End Sub
 
     Public Property MultiplyOnBitmapSize As Boolean

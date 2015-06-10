@@ -1,5 +1,10 @@
-﻿Public Class Line
+﻿Imports System.Runtime.Serialization
+
+<DataContractAttribute()>
+Public Class Line
     Inherits Polygon
+
+    <IgnoreDataMember>
     Public Property Point1 As PointF
         Set(value As PointF)
             _points(0) = value
@@ -9,6 +14,7 @@
         End Get
     End Property
 
+    <IgnoreDataMember>
     Public Property Point2 As PointF
         Set(value As PointF)
             _points(1) = value

@@ -1,8 +1,11 @@
-﻿Public Class PointC
+﻿Imports System.Runtime.Serialization
+
+Public Class PointC
     Implements ICloneable
 
     Public Property PointF As PointF
 
+    <IgnoreDataMember>
     Public Property X As Single
         Set(value As Single)
             _PointF.X = value
@@ -11,7 +14,7 @@
             Return PointF.X
         End Get
     End Property
-
+    <IgnoreDataMember>
     Public Property Y As Single
         Set(value As Single)
             _PointF.Y = value

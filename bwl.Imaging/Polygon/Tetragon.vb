@@ -1,9 +1,11 @@
 ﻿Imports System.Drawing
 Imports System.Text
+Imports System.Runtime.Serialization
 
 Public Class Tetragon
     Inherits Polygon
 
+    <IgnoreDataMember>
     Public Property Point1 As PointF
         Set(value As PointF)
             _points(0) = value
@@ -12,6 +14,8 @@ Public Class Tetragon
             Return _points(0)
         End Get
     End Property
+
+    <IgnoreDataMember>
     Public Property Point2 As PointF
         Set(value As PointF)
             _points(1) = value
@@ -21,7 +25,8 @@ Public Class Tetragon
         End Get
     End Property
 
-    Public Property Point3 As PointF
+    <IgnoreDataMember>
+       Public Property Point3 As PointF
         Set(value As PointF)
             _points(2) = value
         End Set
@@ -30,7 +35,8 @@ Public Class Tetragon
         End Get
     End Property
 
-    Public Property Point4 As PointF
+    <IgnoreDataMember>
+       Public Property Point4 As PointF
         Set(value As PointF)
             _points(3) = value
         End Set
@@ -53,6 +59,13 @@ Public Class Tetragon
         Point2 = New PointF(right, top)
         Point3 = New PointF(right, bottom)
         Point4 = New PointF(left, bottom)
+    End Sub
+
+    Public Sub Expand(offset As Single)
+        Point1 = New PointF(Point1.X - offset, Point1.Y - offset)
+        Point2 = New PointF(Point2.X + offset, Point2.Y - offset)
+        Point3 = New PointF(Point3.X + offset, Point3.Y + offset)
+        Point4 = New PointF(Point4.X - offset, Point4.Y + offset)
     End Sub
 
     Public Sub New()

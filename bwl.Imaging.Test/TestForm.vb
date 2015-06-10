@@ -52,7 +52,13 @@
             .Add(New DisplayObject("point2", Color.Red, New PointC(rnd.NextDouble, rnd.NextDouble)))
             .Add(New DisplayObject("test1", Color.Green, New TextObject(rnd.NextDouble, rnd.NextDouble, "test", 0.05)))
             .Add(New DisplayObject("tetra1", Color.BlueViolet, New Tetragon(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
-            .Add(New DisplayObject("img1", Color.Black, New BitmapObject(image, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
+            ' .Add(New DisplayObject("img1", Color.Black, New BitmapObject(image, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
+
+            Dim t = Serializer.SaveObjectToJsonString(DisplayControl1.DisplayObjects)
+            .Clear()
+            Dim objects = Serializer.LoadObjectFromJsonString(Of List(Of DisplayObject))(t)
+            .AddRange(objects)
         End With
+
     End Sub
 End Class

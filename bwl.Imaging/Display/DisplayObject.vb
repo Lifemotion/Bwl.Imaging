@@ -1,4 +1,16 @@
-﻿Public Class DisplayObject
+﻿Imports System.Runtime.Serialization
+<KnownType(GetType(Polygon))>
+<KnownType(GetType(Tetragon))>
+<KnownType(GetType(Line))>
+<KnownType(GetType(PointC))>
+<KnownType(GetType(PointF))>
+<KnownType(GetType(Point))>
+<KnownType(GetType(RectangleF))>
+<KnownType(GetType(Rectangle))>
+<KnownType(GetType(TextObject))>
+<KnownType(GetType(BitmapObject))>
+<KnownType(GetType(Bitmap))>
+Public Class DisplayObject
     Public Property Color As Color = Drawing.Color.Red
     Public Property IsMoveable As Boolean = False
     Public Property IsVisible As Boolean = True

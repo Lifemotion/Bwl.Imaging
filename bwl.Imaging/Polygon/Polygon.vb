@@ -1,5 +1,10 @@
-﻿Public Class Polygon
+﻿Imports System.Runtime.Serialization
+
+<DataContractAttribute()>
+Public Class Polygon
+    <DataMemberAttribute()>
     Protected _points() As PointF
+    <DataMemberAttribute()>
     Protected _isClosed As Boolean
 
     Public ReadOnly Property Points As PointF()

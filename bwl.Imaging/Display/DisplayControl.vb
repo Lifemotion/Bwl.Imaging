@@ -18,7 +18,7 @@
         End SyncLock
     End Sub
 
-    Public Sub AddRange(displayObjects As DisplayObject())
+    Public Sub AddRange(displayObjects As IEnumerable(Of DisplayObject))
         SyncLock Me
             _displayObjects.AddRange(displayObjects)
             If AutoRedraw Then Refresh()
@@ -53,11 +53,11 @@
     End Sub
 
     Public Overrides Sub Refresh()
-        Draw()
+        If AutoRedraw Then RedrawObjects()
         MyBase.Refresh()
     End Sub
 
-    Private Sub Draw()
+    Public Sub RedrawObjects()
         DrawBitmap.Clear()
         For Each obj In _displayObjects
             If obj.IsVisible Then DrawBitmap.DrawDisplayObject(obj)
@@ -192,8 +192,11 @@
 
     Private Sub Label1_Click(sender As Object, e As EventArgs) Handles Label1.Click
         If SelectedObject IsNot Nothing AndAlso SelectedObject.IsMoveable Then MoveMode = True
-        MoveMode = True
         MovePoints.Clear()
         Me.Refresh()
+    End Sub
+
+    Private Sub DisplayControl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
     End Sub
 End Class
