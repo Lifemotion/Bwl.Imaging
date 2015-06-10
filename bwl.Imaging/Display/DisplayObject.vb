@@ -17,8 +17,8 @@ Public Class DisplayObject
     Public Property IsSelectable As Boolean = True
     Public Property ID As String = ""
     Public Property DrawObject As Object
-    Public Property Width As Single = 0.0
-    Public Property Size As Single = 0.0
+    Public Property LineWidth As Single = 0.0
+    Public Property PointSize As Single = 0.0
     Public Property Caption As String = ""
 
     Public Sub New()

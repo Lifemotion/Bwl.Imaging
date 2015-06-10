@@ -164,14 +164,14 @@
         End SyncLock
     End Sub
 
-    Public Sub DrawObject(color As Color, obj As Object, Optional width As Single = 0, Optional size As Single = 0)
+    Public Sub DrawObject(color As Color, obj As Object, Optional lineWidth As Single = 0, Optional pointSize As Single = 0)
         Select Case obj.GetType()
             Case GetType(Polygon), GetType(Line), GetType(Tetragon)
-                DrawPoligon(color, obj, width)
+                DrawPoligon(color, obj, lineWidth)
             Case GetType(PointC), GetType(PointF), GetType(Point)
-                DrawPoint(color, obj.x, obj.y, size)
+                DrawPoint(color, obj.x, obj.y, pointSize)
             Case GetType(RectangleF)
-                DrawRectangle(color, obj, width)
+                DrawRectangle(color, obj, lineWidth)
             Case GetType(Bitmap)
                 DrawBitmap(obj, 0, 0, 1, 1)
             Case GetType(BitmapObject)
@@ -235,7 +235,7 @@
     End Function
 
     Public Sub DrawDisplayObject(dispObj As DisplayObject)
-        DrawObject(dispObj.Color, dispObj.DrawObject, dispObj.Width, dispObj.Size)
+        DrawObject(dispObj.Color, dispObj.DrawObject, dispObj.LineWidth, dispObj.PointSize)
     End Sub
 
 End Class

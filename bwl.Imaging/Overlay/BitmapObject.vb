@@ -13,7 +13,7 @@
         Me.Bitmap = bitmap
     End Sub
     Public Sub New(bitmap As Bitmap, x1 As Single, y1 As Single, x2 As Single, y2 As Single)
-        Me.RectangleF = RectangleF.FromLTRB(x1, y1, x2, y2)
+        Me.RectangleF = RectangleF.FromLTRB(x1, y1, x2, y2).ToPositiveSized
         Me.Bitmap = bitmap
     End Sub
 End Class
