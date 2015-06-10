@@ -82,7 +82,7 @@
     <Compile Include="Display\DisplayObject.vb" />
     <Compile Include="Display\DrawBitmap.vb" />
     <Compile Include="Overlay\BitmapObject.vb" />
-    <Compile Include="Point\PointC.vb" />
+    <Compile Include="PointClass\PointC.vb" />
     <Compile Include="Polygon\Line.vb" />
     <Compile Include="Matrix\BitmapConverter.vb" />
     <Compile Include="Matrix\GrayMatrix.vb" />
@@ -94,7 +94,7 @@
     </Compile>
     <Compile Include="Overlay\TextObject.vb" />
     <Compile Include="Polygon\Polygon.vb" />
-    <Compile Include="Polygon\RectangleC.vb" />
+    <Compile Include="PointClass\RectangleC.vb" />
     <Compile Include="Polygon\Tetragon.vb" />
     <Compile Include="Tools\Extensions.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

@@ -15,4 +15,23 @@ Public Module Extensions
     Public Function ToString(this As PointF) As String
         Return "X: " + this.X.ToString() + " Y: " + this.Y.ToString
     End Function
+
+    <Extension()>
+    Public Function ToPositiveSized(this As RectangleF) As RectangleF
+        Dim left = Math.Min(this.Left, this.Right)
+        Dim right = Math.Max(this.Left, this.Right)
+        Dim top = Math.Min(this.Top, this.Bottom)
+        Dim bottom = Math.Max(this.Top, this.Bottom)
+        Return RectangleF.FromLTRB(left, top, right, bottom)
+    End Function
+
+    <Extension()>
+    Public Function ToPositiveSized(this As Rectangle) As Rectangle
+        Dim left = Math.Min(this.Left, this.Right)
+        Dim right = Math.Max(this.Left, this.Right)
+        Dim top = Math.Min(this.Top, this.Bottom)
+        Dim bottom = Math.Max(this.Top, this.Bottom)
+        Return Rectangle.FromLTRB(left, top, right, bottom)
+    End Function
+
 End Module

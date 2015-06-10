@@ -115,7 +115,7 @@
             Me.Refresh()
         End If
         If e.Button = Windows.Forms.MouseButtons.Left Then
-            If MoveMode Then
+            If MoveMode AndAlso SelectedObject IsNot Nothing Then
                 MovePoints.Add(DrawBitmap.GetObjectPoint(e.Location))
                 If TypeOf SelectedObject.DrawObject Is Line AndAlso MovePoints.Count > 1 Then
                     With DirectCast(SelectedObject.DrawObject, Line)
@@ -125,11 +125,11 @@
                     End With
                 End If
                 If TypeOf SelectedObject.DrawObject Is Rectangle AndAlso MovePoints.Count > 1 Then
-                    SelectedObject.DrawObject = Rectangle.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y)
+                    SelectedObject.DrawObject = Rectangle.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
                     MoveMode = False
                 End If
                 If TypeOf SelectedObject.DrawObject Is RectangleF AndAlso MovePoints.Count > 1 Then
-                    SelectedObject.DrawObject = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y)
+                    SelectedObject.DrawObject = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
                     MoveMode = False
                 End If
                 If TypeOf SelectedObject.DrawObject Is BitmapObject AndAlso MovePoints.Count > 1 Then
