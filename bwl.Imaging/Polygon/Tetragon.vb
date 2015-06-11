@@ -77,7 +77,7 @@ Public Class Tetragon
     End Sub
 
     Public Sub New(p1 As PointF, p2 As PointF, p3 As PointF, p4 As PointF)
-        MyBase.New(False, p1, p2, p3, p4)
+        MyBase.New(True, p1, p2, p3, p4)
     End Sub
 
     Public Sub New(x1 As Single, y1 As Single, x2 As Single, y2 As Single)
