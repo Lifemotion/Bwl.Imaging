@@ -40,6 +40,8 @@
         End SyncLock
     End Sub
 
+    Public Property BackgroundBitmap As Bitmap
+
     Public Sub Remove(id As String)
         SyncLock Me
             Dim copy As New List(Of DisplayObject)
@@ -59,6 +61,7 @@
 
     Public Sub RedrawObjects()
         DrawBitmap.Clear()
+        If BackgroundBitmap IsNot Nothing Then Me.DrawBitmap.DrawBitmap(BackgroundBitmap, 0, 0, 1, 1)
         For Each obj In _displayObjects
             If obj.IsVisible Then DrawBitmap.DrawDisplayObject(obj)
             If Object.Equals(obj, SelectedObject) Then

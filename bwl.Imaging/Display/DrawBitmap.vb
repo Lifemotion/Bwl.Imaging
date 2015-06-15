@@ -69,6 +69,10 @@
         _graphics.DrawImage(bitmap, x1 * _mulX, y1 * _mulY)
     End Sub
 
+    Public Sub DrawBitmap(bitmap As Bitmap)
+        _graphics.DrawImage(bitmap, 0, 0)
+    End Sub
+
     Public Property MultiplyOnBitmapSize As Boolean
         Set(value As Boolean)
             _multiplyOnBitmapSize = value
