@@ -28,6 +28,7 @@ Partial Class DisplayControl
         '
         '_pictureBox
         '
+        Me._pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me._pictureBox.Size = New System.Drawing.Size(348, 293)
         '
         'Label1

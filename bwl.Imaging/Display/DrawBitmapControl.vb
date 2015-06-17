@@ -15,7 +15,7 @@
     End Property
 
     Public Sub CreateBitmap()
-        DrawBitmap = New DrawBitmap(_pictureBox.Width, _pictureBox.Height)
+        DrawBitmap = New DrawBitmap(Me.Width, Me.Height)
     End Sub
 
     Public Overrides Sub Refresh()
@@ -26,7 +26,7 @@
 
     Private Sub _pictureBox_Resize(sender As Object, e As EventArgs) Handles _pictureBox.Resize
         Try
-            CreateBitmap()
+            DrawBitmap.Resize(Me.Width, Me.Height)
         Catch ex As Exception
         End Try
     End Sub

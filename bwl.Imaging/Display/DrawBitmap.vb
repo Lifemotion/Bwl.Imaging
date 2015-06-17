@@ -242,4 +242,13 @@
         DrawObject(dispObj.Color, dispObj.DrawObject, dispObj.LineWidth, dispObj.PointSize)
     End Sub
 
+    Public Sub Resize(width As Integer, height As Integer)
+        If width < 1 Then Throw New ArgumentException("width must be >0")
+        If height < 1 Then Throw New ArgumentException("height must be >0")
+        _bitmap = New Bitmap(width, height)
+        _graphics = Graphics.FromImage(_bitmap)
+        ComputeMultipliers()
+    End Sub
+
+
 End Class
