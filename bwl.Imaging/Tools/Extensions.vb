@@ -2,8 +2,13 @@
 
 Public Module Extensions
     <Extension()>
-    Public Function ToDrawingPoint(point As PointF) As System.Drawing.Point
-        Return New System.Drawing.Point(point.X, point.Y)
+    Public Function ToPoint(pointF As PointF) As System.Drawing.Point
+        Return New System.Drawing.Point(pointF.X, pointF.Y)
+    End Function
+
+    <Extension()>
+    Public Function ToPointF(point As Point) As System.Drawing.PointF
+        Return New System.Drawing.PointF(point.X, point.Y)
     End Function
 
     <Extension()>
