@@ -2,8 +2,8 @@
     Dim image As Bitmap
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        OverlayDisplay1.DrawBitmap.Clear()
-        With OverlayDisplay1.DrawBitmap
+        OverlayDisplay1.DisplayBitmap.Clear()
+        With OverlayDisplay1.DisplayBitmap
             Dim rnd As New Random
             .DrawLine(Color.Red, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)
             .DrawLine(Color.Red, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, 2)
@@ -22,8 +22,8 @@
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
-        OverlayDisplay1.DrawBitmap.Clear()
-        With OverlayDisplay1.DrawBitmap
+        OverlayDisplay1.DisplayBitmap.Clear()
+        With OverlayDisplay1.DisplayBitmap
             Dim rnd As New Random
             .DrawObject(Color.Red, New Line(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble))
             .DrawObject(Color.Red, New Line(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble), 2)
@@ -43,6 +43,7 @@
     Private Sub Button3_Click(sender As Object, e As EventArgs) Handles Button3.Click
         With DisplayControl1
             Dim rnd As New Random
+            .RedrawObjectsWhenCollectionChanged = False
             .Add(New DisplayObject("img1", Color.Black, New BitmapObject(image, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
             .Add(New DisplayObject("line1", Color.Red, New Line(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
             .Add(New DisplayObject("line2", Color.Blue, New Line(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
@@ -58,7 +59,31 @@
                                    obj.IsMoveable = True
                                    Return False
                                End Function)
+            .Refresh()
         End With
 
+    End Sub
+
+    Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
+        Dim imgs(20) As Bitmap
+        For i = 1 To 20
+            '     Dim b As New Bitmap(DisplayControl1._pictureBox.Width, DisplayControl1._pictureBox.Height)
+            Dim b As New Bitmap(10, 20)
+
+            Dim g = Graphics.FromImage(b)
+            Dim clr = Color.FromArgb(i * 1, i * 1.5, i * 2)
+            g.Clear(clr)
+            imgs(i) = b
+        Next
+        Dim t = Now
+        For j = 1 To 20
+            '    DisplayControl1._pictureBox.Image = imgs(j)
+            '   DisplayControl1._pictureBox.Refresh()
+            DisplayControl1.BackgroundBitmap = imgs(j)
+            DisplayControl1.Refresh()
+
+        Next
+        Dim s = (Now - t).TotalMilliseconds.ToString("0.0")
+        MsgBox(s)
     End Sub
 End Class

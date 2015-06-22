@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
     <RemoteDebugEnabled>false</RemoteDebugEnabled>
     <RemoteDebugMachine>20.20.25.82</RemoteDebugMachine>
-    <StartAction>Program</StartAction>
+    <StartAction>Project</StartAction>
     <StartProgram>C:\Users\Igor\Dropbox\Programming\NET\SingleProjects\Bwl.RemoteApp\RemoteApp\rapp-client-gui.exe</StartProgram>
   </PropertyGroup>
 </Project>

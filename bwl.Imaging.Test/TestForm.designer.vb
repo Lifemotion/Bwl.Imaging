@@ -22,17 +22,19 @@ Partial Class TestForm
     'Не изменяйте ее в редакторе исходного кода.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(TestForm))
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
         Me.Button3 = New System.Windows.Forms.Button()
-        Me.DisplayControl1 = New Bwl.Imaging.DisplayControl()
-        Me.OverlayDisplay1 = New Bwl.Imaging.DrawBitmapControl()
+        Me.Button4 = New System.Windows.Forms.Button()
+        Me.DisplayControl1 = New Bwl.Imaging.DisplayObjectsControl()
+        Me.OverlayDisplay1 = New Bwl.Imaging.DisplayBitmapControl()
         Me.SuspendLayout()
         '
         'Button1
         '
         Me.Button1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button1.Location = New System.Drawing.Point(661, 12)
+        Me.Button1.Location = New System.Drawing.Point(900, 12)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(75, 23)
         Me.Button1.TabIndex = 1
@@ -42,7 +44,7 @@ Partial Class TestForm
         'Button2
         '
         Me.Button2.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button2.Location = New System.Drawing.Point(661, 41)
+        Me.Button2.Location = New System.Drawing.Point(900, 41)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(75, 23)
         Me.Button2.TabIndex = 2
@@ -52,23 +54,38 @@ Partial Class TestForm
         'Button3
         '
         Me.Button3.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.Button3.Location = New System.Drawing.Point(661, 215)
+        Me.Button3.Location = New System.Drawing.Point(900, 215)
         Me.Button3.Name = "Button3"
         Me.Button3.Size = New System.Drawing.Size(75, 23)
         Me.Button3.TabIndex = 4
         Me.Button3.Text = "Button3"
         Me.Button3.UseVisualStyleBackColor = True
         '
+        'Button4
+        '
+        Me.Button4.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Button4.Location = New System.Drawing.Point(900, 244)
+        Me.Button4.Name = "Button4"
+        Me.Button4.Size = New System.Drawing.Size(75, 23)
+        Me.Button4.TabIndex = 5
+        Me.Button4.Text = "Button4"
+        Me.Button4.UseVisualStyleBackColor = True
+        '
         'DisplayControl1
         '
         Me.DisplayControl1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.DisplayControl1.AutoRedraw = True
+        Me.DisplayControl1.BackgroundBitmap = Nothing
+        Me.DisplayControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.DisplayControl1.Location = New System.Drawing.Point(12, 215)
+        Me.DisplayControl1.MoveMode = False
+        Me.DisplayControl1.MoveModePointColor = System.Drawing.Color.Red
+        Me.DisplayControl1.MovePoints = CType(resources.GetObject("DisplayControl1.MovePoints"), System.Collections.Generic.List(Of System.Drawing.PointF))
         Me.DisplayControl1.Name = "DisplayControl1"
+        Me.DisplayControl1.RedrawObjectsWhenCollectionChanged = True
         Me.DisplayControl1.SelectedObject = Nothing
-        Me.DisplayControl1.Size = New System.Drawing.Size(643, 301)
+        Me.DisplayControl1.Size = New System.Drawing.Size(882, 612)
         Me.DisplayControl1.TabIndex = 3
         '
         'OverlayDisplay1
@@ -77,14 +94,15 @@ Partial Class TestForm
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.OverlayDisplay1.Location = New System.Drawing.Point(12, 12)
         Me.OverlayDisplay1.Name = "OverlayDisplay1"
-        Me.OverlayDisplay1.Size = New System.Drawing.Size(643, 197)
+        Me.OverlayDisplay1.Size = New System.Drawing.Size(882, 197)
         Me.OverlayDisplay1.TabIndex = 0
         '
         'TestForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(748, 518)
+        Me.ClientSize = New System.Drawing.Size(987, 829)
+        Me.Controls.Add(Me.Button4)
         Me.Controls.Add(Me.Button3)
         Me.Controls.Add(Me.DisplayControl1)
         Me.Controls.Add(Me.Button2)
@@ -95,10 +113,11 @@ Partial Class TestForm
         Me.ResumeLayout(False)
 
     End Sub
-    Friend WithEvents OverlayDisplay1 As bwl.Imaging.DrawBitmapControl
+    Friend WithEvents OverlayDisplay1 As bwl.Imaging.DisplayBitmapControl
     Friend WithEvents Button1 As System.Windows.Forms.Button
     Friend WithEvents Button2 As System.Windows.Forms.Button
-    Friend WithEvents DisplayControl1 As bwl.Imaging.DisplayControl
+    Friend WithEvents DisplayControl1 As bwl.Imaging.DisplayObjectsControl
     Friend WithEvents Button3 As System.Windows.Forms.Button
+    Friend WithEvents Button4 As System.Windows.Forms.Button
 
 End Class
