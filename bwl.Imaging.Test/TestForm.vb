@@ -5,6 +5,7 @@
         OverlayDisplay1.DisplayBitmap.Clear()
         With OverlayDisplay1.DisplayBitmap
             Dim rnd As New Random
+            .DrawVector(Color.Pink, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)
             .DrawLine(Color.Red, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)
             .DrawLine(Color.Red, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, 2)
             .DrawRectangle(Color.Blue, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)
@@ -12,7 +13,7 @@
             .DrawPoint(Color.Green, rnd.NextDouble, rnd.NextDouble)
             .DrawCircle(Color.Gray, rnd.NextDouble, rnd.NextDouble, 0.04)
             .DrawText(Color.Black, rnd.NextDouble, rnd.NextDouble, 0.02, "text")
-            .DrawBitmap(image, 0.1, 0.1, 0.9, 0.9)
+            .DrawBitmap(image, 0.1, 0.1, 0.2, 0.2)
         End With
         OverlayDisplay1.Refresh()
     End Sub
@@ -25,6 +26,7 @@
         OverlayDisplay1.DisplayBitmap.Clear()
         With OverlayDisplay1.DisplayBitmap
             Dim rnd As New Random
+            .DrawObject(Color.Violet, New Vector(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble))
             .DrawObject(Color.Red, New Line(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble))
             .DrawObject(Color.Red, New Line(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble), 2)
             .DrawObject(Color.Blue, New RectangleF(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble))
@@ -44,6 +46,7 @@
         With DisplayControl1
             Dim rnd As New Random
             .RedrawObjectsWhenCollectionChanged = False
+            .Add(New DisplayObject("vector1", Color.Violet, New Vector(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
             .Add(New DisplayObject("img1", Color.Black, New BitmapObject(image, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
             .Add(New DisplayObject("line1", Color.Red, New Line(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
             .Add(New DisplayObject("line2", Color.Blue, New Line(rnd.NextDouble, rnd.NextDouble, rnd.NextDouble, rnd.NextDouble)))
@@ -55,12 +58,11 @@
             Dim objs1 = .Find("", "")
             Dim objs2 = .Find("2", "")
             Dim objs3 = .Find("", "back")
-            .Find("2", "").All(Function(obj As DisplayObject)
-                                   obj.IsMoveable = True
-                                   Return False
-                               End Function)
             .Refresh()
         End With
+        For Each obj In DisplayControl1.DisplayObjects
+            obj.IsMoveable = True
+        Next
 
     End Sub
 

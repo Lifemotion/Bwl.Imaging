@@ -90,7 +90,24 @@ Public Class DisplayGraphics
         End SyncLock
     End Sub
 
+    Public Sub DrawVector(color As Color, x1 As Single, y1 As Single, x2 As Single, y2 As Single, Optional width As Single = 0)
+        SyncLock Me
+            If width <= 0 Then width = DefaultWidth
+            If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
+            _graphics.DrawLine(_pen, x1 * _mulX - 5, y1 * _mulY - 5,
+                                     x2 * _mulX, y2 * _mulY)
+            _graphics.DrawLine(_pen, x1 * _mulX + 5, y1 * _mulY + 5,
+                                   x2 * _mulX, y2 * _mulY)
+            _graphics.DrawLine(_pen, x1 * _mulX + 5, y1 * _mulY + 5,
+                                   x1 * _mulX - 5, y1 * _mulY - 5)
+        End SyncLock
+    End Sub
+
     Public Sub DrawRectangle(color As Color, rect As RectangleF, Optional width As Single = 0)
+        DrawRectangle(color, rect.Left, rect.Top, rect.Right, rect.Bottom, width)
+    End Sub
+
+    Public Sub DrawRectangle(color As Color, rect As Rectangle, Optional width As Single = 0)
         DrawRectangle(color, rect.Left, rect.Top, rect.Right, rect.Bottom, width)
     End Sub
 
@@ -158,20 +175,22 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawObject(color As Color, obj As Object, Optional lineWidth As Single = 0, Optional pointSize As Single = 0)
-        Select Case obj.GetType()
-            Case GetType(Polygon), GetType(Line), GetType(Tetragon)
-                DrawPoligon(color, obj, lineWidth)
-            Case GetType(PointC), GetType(PointF), GetType(Point)
-                DrawPoint(color, obj.x, obj.y, pointSize)
-            Case GetType(RectangleF)
-                DrawRectangle(color, obj, lineWidth)
-            Case GetType(Bitmap)
-                DrawBitmap(obj, 0, 0, 1, 1)
-            Case GetType(BitmapObject)
-                DrawBitmap(obj)
-            Case GetType(TextObject)
-                DrawText(color, obj)
-        End Select
+        If GetType(Vector).IsAssignableFrom(obj.GetType) Then
+            Dim vector As Vector = obj
+            DrawVector(color, vector.Point1.X, vector.Point1.Y, vector.Point2.X, vector.Point2.Y)
+        ElseIf GetType(Polygon).IsAssignableFrom(obj.GetType)
+            DrawPoligon(color, obj, lineWidth)
+        ElseIf GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType)
+            DrawPoint(color, obj.x, obj.y, pointSize)
+        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType) Or GetType(RectangleC).IsAssignableFrom(obj.GetType) Or GetType(Rectangle).IsAssignableFrom(obj.GetType)
+            DrawRectangle(color, obj, lineWidth)
+        ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType)
+            DrawBitmap(obj)
+        ElseIf GetType(Bitmap).IsAssignableFrom(obj.GetType)
+            DrawBitmap(obj, 0, 0, 1, 1)
+        ElseIf GetType(TextObject).IsAssignableFrom(obj.GetType)
+            DrawText(color, obj)
+        End If
     End Sub
 
     Public Function GetBitmapRectangle(objectRecrtangle As RectangleF) As RectangleF
@@ -198,32 +217,31 @@ Public Class DisplayGraphics
     End Function
 
     Public Function GetBoundRectangeF(obj As Object) As RectangleF
-        Select Case obj.GetType()
-            Case GetType(Polygon), GetType(Line), GetType(Tetragon)
-                Dim bound = DirectCast(obj, Polygon).GetBoundRectangleF
-                Return bound
-            Case GetType(PointC), GetType(PointF), GetType(Point)
-                Dim px As Single = obj.X
-                Dim py As Single = obj.Y
-                Dim sx = DefaultPointSize * 2 / _mulX
-                Dim bound = New RectangleF(px - sx / 2, py - sx / 2, sx, sx)
-                Return bound
-            Case GetType(RectangleF)
-                Dim bound = DirectCast(obj, RectangleF)
-                Return bound
-            Case GetType(Rectangle)
-                Dim bound = DirectCast(obj, Rectangle)
-                Return bound
-            Case GetType(Bitmap)
-                Dim bound = New RectangleF(0, 0, 1, 1)
-                Return bound
-            Case GetType(BitmapObject)
-                Dim bound = DirectCast(obj, BitmapObject).RectangleF
-                Return bound
-            Case GetType(TextObject)
-                Dim bound = New RectangleF(DirectCast(obj, TextObject).Point1, New SizeF(0.1, 0.1))
-                Return bound
-        End Select
+        If GetType(Polygon).IsAssignableFrom(obj.GetType) Then
+            Dim bound = DirectCast(obj, Polygon).GetBoundRectangleF
+            Return bound
+        ElseIf GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType)
+            Dim px As Single = obj.X
+            Dim py As Single = obj.Y
+            Dim sx = DefaultPointSize * 2 / _mulX
+            Dim bound = New RectangleF(px - sx / 2, py - sx / 2, sx, sx)
+            Return bound
+        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType)
+            Dim bound = DirectCast(obj, RectangleF)
+            Return bound
+        ElseIf GetType(Rectangle).IsAssignableFrom(obj.GetType)
+            Dim bound = DirectCast(obj, Rectangle)
+            Return bound
+        ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType)
+            Dim bound = DirectCast(obj, BitmapObject).RectangleF
+            Return bound
+        ElseIf GetType(Bitmap).IsAssignableFrom(obj.GetType)
+            Dim bound = New RectangleF(0, 0, 1, 1)
+            Return bound
+        ElseIf GetType(TextObject).IsAssignableFrom(obj.GetType)
+            Dim bound = New RectangleF(DirectCast(obj, TextObject).Point1, New SizeF(0.1, 0.1))
+            Return bound
+        End If
         Return New RectangleF(0, 0, 0, 0)
     End Function
 

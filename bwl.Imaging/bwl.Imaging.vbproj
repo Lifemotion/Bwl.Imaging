@@ -97,6 +97,7 @@
     <Compile Include="Polygon\Polygon.vb" />
     <Compile Include="PointClass\RectangleC.vb" />
     <Compile Include="Polygon\Tetragon.vb" />
+    <Compile Include="Polygon\Vector.vb" />
     <Compile Include="Tools\Extensions.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">

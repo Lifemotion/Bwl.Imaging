@@ -134,7 +134,8 @@
         If e.Button = Windows.Forms.MouseButtons.Left Then
             If MoveMode AndAlso SelectedObject IsNot Nothing Then
                 MovePoints.Add(DisplayBitmap.GetObjectPoint(e.Location))
-                If TypeOf SelectedObject.DrawObject Is Line AndAlso MovePoints.Count > 1 Then
+
+                If GetType(Line).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 1 Then
                     With DirectCast(SelectedObject.DrawObject, Line)
                         .Point1 = MovePoints(0)
                         .Point2 = MovePoints(1)
@@ -142,6 +143,7 @@
                     End With
                     RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
                 End If
+                'TODO: переделать для работы с производными классами
                 If TypeOf SelectedObject.DrawObject Is Rectangle AndAlso MovePoints.Count > 1 Then
                     SelectedObject.DrawObject = Rectangle.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
                     MoveMode = False
