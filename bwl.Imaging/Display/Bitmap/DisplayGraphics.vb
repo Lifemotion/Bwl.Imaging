@@ -94,12 +94,21 @@ Public Class DisplayGraphics
         SyncLock Me
             If width <= 0 Then width = DefaultWidth
             If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
-            _graphics.DrawLine(_pen, x1 * _mulX - 5, y1 * _mulY - 5,
-                                     x2 * _mulX, y2 * _mulY)
-            _graphics.DrawLine(_pen, x1 * _mulX + 5, y1 * _mulY + 5,
+            Dim dx = x2 - x1
+            Dim dy = y2 - y1
+            Dim length = Math.Sqrt(dx ^ 2 + dy ^ 2)
+            If length > 0 Then
+                Dim angle As Single = Math.Atan2(dy, dx)
+
+                Dim sz = 5
+                _graphics.DrawLine(_pen, x1 * _mulX + CSng(Math.Cos(angle - Math.PI / 2) * sz), y1 * _mulY + CSng(Math.Sin(angle - Math.PI / 2) * sz),
+                                              x2 * _mulX, y2 * _mulY)
+                _graphics.DrawLine(_pen, x1 * _mulX + CSng(Math.Cos(angle + Math.PI / 2) * sz), y1 * _mulY + CSng(Math.Sin(angle + Math.PI / 2) * sz),
                                    x2 * _mulX, y2 * _mulY)
-            _graphics.DrawLine(_pen, x1 * _mulX + 5, y1 * _mulY + 5,
-                                   x1 * _mulX - 5, y1 * _mulY - 5)
+                _graphics.DrawLine(_pen, x1 * _mulX + CSng(Math.Cos(angle - Math.PI / 2) * sz), y1 * _mulY + CSng(Math.Sin(angle - Math.PI / 2) * sz),
+                                   x1 * _mulX + CSng(Math.Cos(angle + Math.PI / 2) * sz), y1 * _mulY + CSng(Math.Sin(angle + Math.PI / 2) * sz))
+            End If
+            '  x1 * _mulX - 5, y1 * _mulY - 5)
         End SyncLock
     End Sub
 
@@ -216,31 +225,40 @@ Public Class DisplayGraphics
         Return False
     End Function
 
+    Public Function ExtendRectangleAtLineWidth(rect As RectangleF) As RectangleF
+        Dim width = DefaultWidth
+        If width < 1 Then width = 1
+        Dim offset = width / _mulX
+        rect = rect.ToPositiveSized
+        Dim newrect As New RectangleF(rect.Left - offset, rect.Top - offset, rect.Width + offset, rect.Height + offset)
+        Return newrect
+    End Function
+
     Public Function GetBoundRectangeF(obj As Object) As RectangleF
-        If GetType(Polygon).IsAssignableFrom(obj.GetType) Then
-            Dim bound = DirectCast(obj, Polygon).GetBoundRectangleF
-            Return bound
-        ElseIf GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType)
+        If GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType) Then
             Dim px As Single = obj.X
             Dim py As Single = obj.Y
             Dim sx = DefaultPointSize * 2 / _mulX
             Dim bound = New RectangleF(px - sx / 2, py - sx / 2, sx, sx)
-            Return bound
+            Return ExtendRectangleAtLineWidth(bound)
         ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType)
             Dim bound = DirectCast(obj, RectangleF)
-            Return bound
+            Return ExtendRectangleAtLineWidth(bound)
         ElseIf GetType(Rectangle).IsAssignableFrom(obj.GetType)
             Dim bound = DirectCast(obj, Rectangle)
-            Return bound
+            Return ExtendRectangleAtLineWidth(bound)
+        ElseIf GetType(Polygon).IsAssignableFrom(obj.GetType) Then
+            Dim bound = DirectCast(obj, Polygon).GetBoundRectangleF
+            Return ExtendRectangleAtLineWidth(bound)
         ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType)
             Dim bound = DirectCast(obj, BitmapObject).RectangleF
-            Return bound
+            Return ExtendRectangleAtLineWidth(bound)
         ElseIf GetType(Bitmap).IsAssignableFrom(obj.GetType)
             Dim bound = New RectangleF(0, 0, 1, 1)
-            Return bound
+            Return ExtendRectangleAtLineWidth(bound)
         ElseIf GetType(TextObject).IsAssignableFrom(obj.GetType)
             Dim bound = New RectangleF(DirectCast(obj, TextObject).Point1, New SizeF(0.1, 0.1))
-            Return bound
+            Return ExtendRectangleAtLineWidth(bound)
         End If
         Return New RectangleF(0, 0, 0, 0)
     End Function
