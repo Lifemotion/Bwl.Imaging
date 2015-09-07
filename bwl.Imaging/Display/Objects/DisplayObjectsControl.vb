@@ -141,9 +141,56 @@
                         .Point2 = MovePoints(1)
                         MoveMode = False
                     End With
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject.DrawObject)
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
                 End If
-                'TODO: переделать для работы с производными классами
+
+                If GetType(TextObject).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 0 Then
+                    With DirectCast(SelectedObject.DrawObject, TextObject)
+                        .Point1 = MovePoints(0)
+                        MoveMode = False
+                    End With
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                End If
+
+                If GetType(BitmapObject).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 1 Then
+                    With DirectCast(SelectedObject.DrawObject, BitmapObject)
+                        .RectangleF = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y)
+                        MoveMode = False
+                    End With
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                End If
+
+                If GetType(Tetragon).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 3 Then
+                    With DirectCast(SelectedObject.DrawObject, Tetragon)
+                        .Point1 = MovePoints(0)
+                        .Point2 = MovePoints(1)
+                        .Point3 = MovePoints(2)
+                        .Point4 = MovePoints(3)
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End With
+                End If
+
+                If GetType(PointC).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 0 Then
+                    With DirectCast(SelectedObject.DrawObject, PointC)
+                        .X = MovePoints(0).X
+                        .Y = MovePoints(0).Y
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End With
+                End If
+
+                If TypeOf SelectedObject.DrawObject Is PointF AndAlso MovePoints.Count > 0 Then
+                    SelectedObject.DrawObject = MovePoints(0)
+                    MoveMode = False
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                End If
+
+                If TypeOf SelectedObject.DrawObject Is Point AndAlso MovePoints.Count > 0 Then
+                    SelectedObject.DrawObject = New Point(MovePoints(0).X, MovePoints(0).Y)
+                    MoveMode = False
+                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                End If
+
                 If TypeOf SelectedObject.DrawObject Is Rectangle AndAlso MovePoints.Count > 1 Then
                     SelectedObject.DrawObject = Rectangle.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
                     MoveMode = False
@@ -154,36 +201,7 @@
                     MoveMode = False
                     RaiseEvent DisplayObjectMoved(Me, SelectedObject)
                 End If
-                If TypeOf SelectedObject.DrawObject Is BitmapObject AndAlso MovePoints.Count > 1 Then
-                    DirectCast(SelectedObject.DrawObject, BitmapObject).RectangleF = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y)
-                    MoveMode = False
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-                If TypeOf SelectedObject.DrawObject Is Tetragon AndAlso MovePoints.Count > 3 Then
-                    With DirectCast(SelectedObject.DrawObject, Tetragon)
-                        .Point1 = MovePoints(0)
-                        .Point2 = MovePoints(1)
-                        .Point3 = MovePoints(2)
-                        .Point4 = MovePoints(3)
-                        MoveMode = False
-                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                    End With
-                End If
-                If TypeOf SelectedObject.DrawObject Is PointF AndAlso MovePoints.Count > 0 Then
-                    SelectedObject.DrawObject = MovePoints(0)
-                    MoveMode = False
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-                If TypeOf SelectedObject.DrawObject Is Point AndAlso MovePoints.Count > 0 Then
-                    SelectedObject.DrawObject = New Point(MovePoints(0).X, MovePoints(0).Y)
-                    MoveMode = False
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-                If TypeOf SelectedObject.DrawObject Is PointC AndAlso MovePoints.Count > 0 Then
-                    DirectCast(SelectedObject.DrawObject, PointC).PointF = New PointF(MovePoints(0).X, MovePoints(0).Y)
-                    MoveMode = False
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
+
                 Me.Refresh()
             Else
                 Dim list As New List(Of DisplayObject)

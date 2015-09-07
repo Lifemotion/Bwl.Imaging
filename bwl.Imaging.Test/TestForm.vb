@@ -1,4 +1,7 @@
-﻿Public Class TestForm
+﻿Imports System.Windows.Forms
+Imports bwl.Imaging
+
+Public Class TestForm
     Dim image As Bitmap
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
@@ -87,5 +90,13 @@
         Next
         Dim s = (Now - t).TotalMilliseconds.ToString("0.0")
         MsgBox(s)
+    End Sub
+
+    Private Sub DisplayControl1_ObjectSelect(sender As Object, selected As DisplayObject, e As MouseEventArgs) Handles DisplayControl1.ObjectSelect
+
+    End Sub
+
+    Private Sub DisplayControl1_DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject) Handles DisplayControl1.DisplayObjectMoved
+
     End Sub
 End Class
