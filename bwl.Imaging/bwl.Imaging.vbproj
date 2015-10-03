@@ -83,6 +83,8 @@
     <Compile Include="Display\Bitmap\DisplayGraphics.vb" />
     <Compile Include="Display\Bitmap\DisplayBitmap.vb" />
     <Compile Include="Display\Objects\BitmapObject.vb" />
+    <Compile Include="Matrix\CommonMatrix.vb" />
+    <Compile Include="Matrix\RGBMatrix.vb" />
     <Compile Include="PointClass\PointC.vb" />
     <Compile Include="Polygon\Line.vb" />
     <Compile Include="Matrix\BitmapConverter.vb" />

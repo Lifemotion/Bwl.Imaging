@@ -99,4 +99,26 @@ Public Class TestForm
     Private Sub DisplayControl1_DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject) Handles DisplayControl1.DisplayObjectMoved
 
     End Sub
+
+    Private Sub Button5_Click(sender As Object, e As EventArgs) Handles Button5.Click
+        OverlayDisplay1.DisplayBitmap.Clear()
+        With OverlayDisplay1.DisplayBitmap
+            .DrawBitmap(image, 0.1, 0.1, 0.2, 0.8)
+            .DrawBitmap(image.BitmapToGrayMatrix.ToBitmap, 0.3, 0.1, 0.4, 0.8)
+            .DrawBitmap(image.BitmapToRgbMatrix.ToBitmap, 0.5, 0.1, 0.6, 0.8)
+            Dim redmat = New RGBMatrix(1, 1)
+            Dim greenmat = New RGBMatrix(1, 1)
+            Dim bluemat = New RGBMatrix(1, 1)
+            redmat.Red(0, 0) = 255
+            greenmat.Green(0, 0) = 255
+            bluemat.Blue(0, 0) = 255
+            .DrawBitmap(redmat.ToBitmap, 0.1, 0.9, 0.2, 0.95)
+            .DrawBitmap(greenmat.ToBitmap, 0.2, 0.9, 0.3, 0.95)
+            .DrawBitmap(bluemat.ToBitmap, 0.3, 0.9, 0.4, 0.95)
+            .DrawBitmap(redmat.ToGrayMatrix.ToBitmap, 0.4, 0.9, 0.5, 0.95)
+            .DrawBitmap(greenmat.ToGrayMatrix.ToRGBMatrix.ToBitmap, 0.5, 0.9, 0.6, 0.95)
+
+        End With
+        OverlayDisplay1.Refresh()
+    End Sub
 End Class

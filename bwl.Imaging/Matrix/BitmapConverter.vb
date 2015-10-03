@@ -4,6 +4,7 @@ Public Class BitmapConverter
     Private Class BitmapOperations
         Private _rawBytes As Byte()
         Private _width As Integer, _height As Integer
+
         Public Property RawBytes() As Byte()
             Set(value As Byte())
                 _rawBytes = value
@@ -12,6 +13,7 @@ Public Class BitmapConverter
                 Return _rawBytes
             End Get
         End Property
+
         Public Sub LoadBitmap(bitmap As Bitmap)
             _width = bitmap.Width
             _height = bitmap.Height
@@ -24,6 +26,7 @@ Public Class BitmapConverter
             Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, _rawBytes, 0, size * 3)
             bitmap.UnlockBits(tmpBD)
         End Sub
+
         Public Function GetGrayMatrix() As GrayMatrix
             Dim bytesGray2D(_width - 1, _height - 1) As Byte
             Dim i, x, y As Integer
@@ -38,6 +41,24 @@ Public Class BitmapConverter
             Return New GrayMatrix(bytesGray2D)
         End Function
 
+        Public Function GetRGBMatrix() As RGBMatrix
+            Dim bytesRed2D(_width - 1, _height - 1) As Byte
+            Dim bytesGreen2D(_width - 1, _height - 1) As Byte
+            Dim bytesBlue2D(_width - 1, _height - 1) As Byte
+            Dim i, x, y As Integer
+            For i = 0 To _width * _height - 1
+                bytesRed2D(x, y) = _rawBytes(i * 3 + 2)
+                bytesGreen2D(x, y) = _rawBytes(i * 3 + 1)
+                bytesBlue2D(x, y) = _rawBytes(i * 3 )
+                x += 1
+                If x = _width Then
+                    x = 0
+                    y += 1
+                End If
+            Next
+            Return New RGBMatrix(bytesRed2D, bytesGreen2D, bytesBlue2D)
+        End Function
+
         Public Sub LoadGrayMatrix(matrix As GrayMatrix)
             _width = matrix.Width
             _height = matrix.Height
@@ -49,6 +70,21 @@ Public Class BitmapConverter
                     _rawBytes(i * 3) = matrix.Gray(x, y)
                     _rawBytes(i * 3 + 1) = matrix.Gray(x, y)
                     _rawBytes(i * 3 + 2) = matrix.Gray(x, y)
+                Next
+            Next
+        End Sub
+
+        Public Sub LoadRGBMatrix(matrix As RGBMatrix)
+            _width = matrix.Width
+            _height = matrix.Height
+            ReDim _rawBytes(_width * _height * 3 - 1)
+            Dim i, x, y As Integer
+            For x = 0 To _width - 1
+                For y = 0 To _height - 1
+                    i = _width * y + x
+                    _rawBytes(i * 3 + 2) = matrix.Red(x, y)
+                    _rawBytes(i * 3 + 1) = matrix.Green(x, y)
+                    _rawBytes(i * 3) = matrix.Blue(x, y)
                 Next
             Next
         End Sub
@@ -71,13 +107,23 @@ Public Class BitmapConverter
         Return processor.GetGrayMatrix
     End Function
 
+    Public Shared Function BitmapToRGBMatrix(bitmap As Bitmap) As RGBMatrix
+        Dim processor As New BitmapOperations
+        processor.LoadBitmap(bitmap)
+        Return processor.GetRGBMatrix
+    End Function
+
     Public Shared Function GrayMatrixToBitmap(matrix As GrayMatrix) As Bitmap
         Dim processor As New BitmapOperations
         processor.LoadGrayMatrix(matrix)
         Return processor.GetBitmap
     End Function
 
-
+    Public Shared Function RGBMatrixToBitmap(matrix As RGBMatrix) As Bitmap
+        Dim processor As New BitmapOperations
+        processor.LoadRGBMatrix(matrix)
+        Return processor.GetBitmap
+    End Function
 End Class
 
 Public Module BitmapConverterExtensions
@@ -87,7 +133,17 @@ Public Module BitmapConverterExtensions
     End Function
 
     <Extension()>
+    Public Function BitmapToRgbMatrix(bitmap As Bitmap) As RGBMatrix
+        Return BitmapConverter.BitmapToRGBMatrix(bitmap)
+    End Function
+
+    <Extension()>
     Public Function ToBitmap(matrix As GrayMatrix) As Bitmap
         Return BitmapConverter.GrayMatrixToBitmap(matrix)
+    End Function
+
+    <Extension()>
+    Public Function ToBitmap(matrix As RGBMatrix) As Bitmap
+        Return BitmapConverter.RGBMatrixToBitmap(matrix)
     End Function
 End Module

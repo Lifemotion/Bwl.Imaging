@@ -29,6 +29,7 @@ Partial Class TestForm
         Me.Button4 = New System.Windows.Forms.Button()
         Me.DisplayControl1 = New Bwl.Imaging.DisplayObjectsControl()
         Me.OverlayDisplay1 = New Bwl.Imaging.DisplayBitmapControl()
+        Me.Button5 = New System.Windows.Forms.Button()
         Me.SuspendLayout()
         '
         'Button1
@@ -92,16 +93,28 @@ Partial Class TestForm
         '
         Me.OverlayDisplay1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.OverlayDisplay1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.OverlayDisplay1.Location = New System.Drawing.Point(12, 12)
         Me.OverlayDisplay1.Name = "OverlayDisplay1"
         Me.OverlayDisplay1.Size = New System.Drawing.Size(882, 197)
         Me.OverlayDisplay1.TabIndex = 0
+        '
+        'Button5
+        '
+        Me.Button5.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Button5.Location = New System.Drawing.Point(900, 70)
+        Me.Button5.Name = "Button5"
+        Me.Button5.Size = New System.Drawing.Size(75, 23)
+        Me.Button5.TabIndex = 6
+        Me.Button5.Text = "Button5"
+        Me.Button5.UseVisualStyleBackColor = True
         '
         'TestForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(987, 829)
+        Me.Controls.Add(Me.Button5)
         Me.Controls.Add(Me.Button4)
         Me.Controls.Add(Me.Button3)
         Me.Controls.Add(Me.DisplayControl1)
@@ -119,5 +132,5 @@ Partial Class TestForm
     Friend WithEvents DisplayControl1 As bwl.Imaging.DisplayObjectsControl
     Friend WithEvents Button3 As System.Windows.Forms.Button
     Friend WithEvents Button4 As System.Windows.Forms.Button
-
+    Friend WithEvents Button5 As Windows.Forms.Button
 End Class
