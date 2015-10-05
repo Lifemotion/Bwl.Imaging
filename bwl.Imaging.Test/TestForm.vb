@@ -118,6 +118,19 @@ Public Class TestForm
             .DrawBitmap(redmat.ToGrayMatrix.ToBitmap, 0.4, 0.9, 0.5, 0.95)
             .DrawBitmap(greenmat.ToGrayMatrix.ToRGBMatrix.ToBitmap, 0.5, 0.9, 0.6, 0.95)
 
+            Dim rows = 20
+            Dim cols = 20
+            Dim rgbResult As New RGBMatrix(cols, rows)
+            '-------------------------------------------------------------------------
+            For i = 0 To rows - 1
+                For j = 0 To cols - 1
+                    rgbResult.Red(j, i) = 255.0
+                    rgbResult.Green(j, i) = 0
+                    rgbResult.Blue(j, i) = 0
+                Next
+            Next
+            .DrawBitmap(rgbResult.ToBitmap, 0.6, 0.9, 0.7, 0.95)
+
         End With
         OverlayDisplay1.Refresh()
     End Sub

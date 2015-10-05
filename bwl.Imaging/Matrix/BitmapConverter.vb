@@ -90,6 +90,7 @@ Public Class BitmapConverter
         End Sub
 
         Public Function GetBitmap() As Bitmap
+            If _width Mod 4 <> 0 Then Throw New Exception("GetBitmap() - image width must be multiplicity of 4 to create bitmaps correctly")
             Dim tmpBitmap As New Bitmap(_width, _height, PixelFormat.Format24bppRgb)
             Dim tmpBD As BitmapData
             Dim tmpRect As Rectangle
