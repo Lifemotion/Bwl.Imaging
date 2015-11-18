@@ -7,6 +7,8 @@ Public Class Polygon
     <DataMemberAttribute()>
     Protected _isClosed As Boolean
 
+    Public Property Parameters As New ParametersDictionary
+
     Public ReadOnly Property Points As PointF()
         Get
             Return _points
