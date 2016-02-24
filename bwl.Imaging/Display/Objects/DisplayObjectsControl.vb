@@ -123,6 +123,7 @@
 
     ' Public Event MoveModeChanged(sender As DisplayControl, moveMode As Boolean)
     Public Event DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject)
+    Public Event DisplayObjectSelected(sender As DisplayObjectsControl, displayObject As DisplayObject)
 
     Private Sub _pictureBox_Click(sender As Object, e As MouseEventArgs) Handles _pictureBox.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Right Then
@@ -219,10 +220,12 @@
                     Label1.Text = SelectedObject.ID
                     If SelectedObject.Caption > "" Then Label1.Text = SelectedObject.Caption
                     Refresh()
+                    RaiseEvent DisplayObjectSelected(Me, SelectedObject)
                 Else
                     SelectedObject = Nothing
                     Label1.Text = "-"
                     Refresh()
+                    RaiseEvent DisplayObjectSelected(Me, SelectedObject)
                 End If
             End If
         End If
