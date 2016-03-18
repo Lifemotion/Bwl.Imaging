@@ -5,6 +5,10 @@
         MyBase.New({matrix})
     End Sub
 
+    Sub New(matrix(,) As Single, multiplier As Single)
+        MyBase.New({matrix}, multiplier)
+    End Sub
+
     Sub New(width As Integer, height As Integer)
         MyBase.New(1, width, height)
     End Sub

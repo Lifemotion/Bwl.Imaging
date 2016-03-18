@@ -106,9 +106,21 @@ Public Class TestForm
             .DrawBitmap(image, 0.1, 0.1, 0.2, 0.8)
             .DrawBitmap(image.BitmapToGrayMatrix.ToBitmap, 0.3, 0.1, 0.4, 0.8)
             .DrawBitmap(image.BitmapToRgbMatrix.ToBitmap, 0.5, 0.1, 0.6, 0.8)
-            Dim redmat = New RGBMatrix(1, 1)
-            Dim greenmat = New RGBMatrix(1, 1)
-            Dim bluemat = New RGBMatrix(1, 1)
+
+            Dim byteRgb = image.BitmapToRgbMatrix
+            Dim floatRgb = New RGBFloatMatrix(byteRgb.Red, byteRgb.Green, byteRgb.Blue, 1 / 256)
+            Dim newByteRgb = New RGBMatrix(floatRgb.Red, floatRgb.Green, floatRgb.Blue, 512)
+
+            Dim byteGray = image.BitmapToGrayMatrix
+            Dim floatGray = New GrayFloatMatrix(byteGray.Gray, 1 / 256)
+            Dim newByteGray = New GrayMatrix(floatGray.Gray, 512)
+
+            .DrawBitmap(newByteRgb.ToBitmap, 0.7, 0.1, 0.8, 0.8)
+            .DrawBitmap(newByteGray.ToBitmap, 0.9, 0.1, 0.99, 0.8)
+
+            Dim redmat = New RGBMatrix(4, 1)
+            Dim greenmat = New RGBMatrix(4, 1)
+            Dim bluemat = New RGBMatrix(4, 1)
             redmat.Red(0, 0) = 255
             greenmat.Green(0, 0) = 255
             bluemat.Blue(0, 0) = 255

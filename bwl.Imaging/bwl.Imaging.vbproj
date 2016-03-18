@@ -84,6 +84,9 @@
     <Compile Include="Display\Bitmap\DisplayBitmap.vb" />
     <Compile Include="Display\Objects\BitmapObject.vb" />
     <Compile Include="Display\Objects\ParametersDictionary.vb" />
+    <Compile Include="FloatMatrix\CommonFloatMatrix.vb" />
+    <Compile Include="FloatMatrix\GrayFloatMatrix.vb" />
+    <Compile Include="FloatMatrix\RGBFloatMatrix.vb" />
     <Compile Include="Matrix\CommonMatrix.vb" />
     <Compile Include="Matrix\RGBMatrix.vb" />
     <Compile Include="PointClass\PointC.vb" />
