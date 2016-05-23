@@ -1,0 +1,13 @@
+﻿<Properties StartupItem="bwl.Imaging.Test\bwl.Imaging.Test.Mono.vbproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="bwl.Imaging.Test\TestForm.vb">
+    <Files>
+      <File FileName="bwl.Imaging.Test\TestForm.vb" Line="25" Column="36" />
+      <File FileName="bwl.Imaging\Display\Bitmap\DisplayGraphics.vb" Line="54" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

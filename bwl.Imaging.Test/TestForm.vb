@@ -22,7 +22,7 @@ Public Class TestForm
     End Sub
 
     Private Sub Form1_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        image = Bitmap.FromFile("mOABkQ1wC1Q.jpg")
+        image = new Bitmap(100,100)
     End Sub
 
     Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
