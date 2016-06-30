@@ -4,6 +4,7 @@
 
     Public Sub New()
         InitializeComponent()
+        DisplayBitmap = New DisplayBitmap(Me.Width, Me.Height)
     End Sub
 
     Private Sub OverlayDisplay_Load(sender As Object, e As EventArgs) Handles MyBase.Load

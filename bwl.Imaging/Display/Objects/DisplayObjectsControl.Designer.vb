@@ -28,7 +28,6 @@ Partial Class DisplayObjectsControl
         '
         '_pictureBox
         '
-        Me._pictureBox.BorderStyle = System.Windows.Forms.BorderStyle.None
         Me._pictureBox.Size = New System.Drawing.Size(348, 293)
         '
         'Label1
@@ -41,15 +40,15 @@ Partial Class DisplayObjectsControl
         Me.Label1.TabIndex = 1
         Me.Label1.Text = "-"
         '
-        'DisplayControl
+        'DisplayObjectsControl
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.Controls.Add(Me.Label1)
-        Me.Name = "DisplayControl"
+        Me.Name = "DisplayObjectsControl"
         Me.Size = New System.Drawing.Size(348, 319)
-        Me.Controls.SetChildIndex(Me._pictureBox, 0)
         Me.Controls.SetChildIndex(Me.Label1, 0)
+        Me.Controls.SetChildIndex(Me._pictureBox, 0)
         CType(Me._pictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()

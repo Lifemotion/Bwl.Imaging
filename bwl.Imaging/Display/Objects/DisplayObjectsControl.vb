@@ -11,6 +11,8 @@
         End Get
     End Property
 
+    Public Property ShowStatusBar As Boolean = True
+
     Public Sub Add(displayObject As DisplayObject)
         SyncLock Me
             _displayObjects.Add(displayObject)
@@ -55,6 +57,11 @@
     End Sub
 
     Public Overrides Sub Refresh()
+        If ShowStatusBar Then
+            _pictureBox.Dock = DockStyle.None
+        Else
+            _pictureBox.Dock = DockStyle.Fill
+        End If
         RedrawObjects()
         MyBase.Refresh()
     End Sub
