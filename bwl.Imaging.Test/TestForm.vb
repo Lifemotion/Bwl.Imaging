@@ -96,6 +96,8 @@ Public Class TestForm
 
     End Sub
 
+
+
     Private Sub DisplayControl1_DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject) Handles DisplayControl1.DisplayObjectMoved
 
     End Sub
@@ -145,5 +147,10 @@ Public Class TestForm
 
         End With
         OverlayDisplay1.Refresh()
+    End Sub
+
+    Private Sub DisplayControl1_DisplayRightBtnMouseClick(sender As DisplayObjectsControl, ByRef needClear As Boolean) Handles DisplayControl1.DisplayRightBtnMouseClick
+        'needClear = False
+        'DisplayControl1.ClearSelectedAndPoints
     End Sub
 End Class

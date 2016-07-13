@@ -86,6 +86,7 @@ Partial Class TestForm
         Me.DisplayControl1.Name = "DisplayControl1"
         Me.DisplayControl1.RedrawObjectsWhenCollectionChanged = True
         Me.DisplayControl1.SelectedObject = Nothing
+        Me.DisplayControl1.ShowStatusBar = True
         Me.DisplayControl1.Size = New System.Drawing.Size(882, 612)
         Me.DisplayControl1.TabIndex = 3
         '

@@ -131,13 +131,22 @@
     ' Public Event MoveModeChanged(sender As DisplayControl, moveMode As Boolean)
     Public Event DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject)
     Public Event DisplayObjectSelected(sender As DisplayObjectsControl, displayObject As DisplayObject)
+    Public Event DisplayRightBtnMouseClick(sender As DisplayObjectsControl, ByRef needClear As Boolean)
+
+    Public Sub ClearSelectedAndPoints()
+        MoveMode = Not MoveMode
+        If SelectedObject IsNot Nothing AndAlso SelectedObject.IsMoveable = False Then MoveMode = False
+        MovePoints.Clear()
+        Me.Refresh()
+    End Sub
 
     Private Sub _pictureBox_Click(sender As Object, e As MouseEventArgs) Handles _pictureBox.MouseClick
         If e.Button = Windows.Forms.MouseButtons.Right Then
-            MoveMode = Not MoveMode
-            If SelectedObject IsNot Nothing AndAlso SelectedObject.IsMoveable = False Then MoveMode = False
-            MovePoints.Clear()
-            Me.Refresh()
+            Dim needClear = True
+            RaiseEvent DisplayRightBtnMouseClick(Me, needClear)
+            If needClear Then
+                ClearSelectedAndPoints()
+            End If
         End If
         If e.Button = Windows.Forms.MouseButtons.Left Then
             If MoveMode AndAlso SelectedObject IsNot Nothing Then
