@@ -123,6 +123,9 @@
     </Compile>
     <Compile Include="Processing\BrightnessStats.vb" />
     <Compile Include="Processing\Filters.vb" />
+    <Compile Include="Tools\ImagingMath.vb" />
+    <Compile Include="Tools\MatrixTools.vb" />
+    <Compile Include="Tools\VectorTools.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Display\Objects\DisplayObjectsControl.resx">

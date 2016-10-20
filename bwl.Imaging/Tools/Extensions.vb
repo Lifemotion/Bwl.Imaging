@@ -38,5 +38,4 @@ Public Module Extensions
         Dim bottom = Math.Max(this.Top, this.Bottom)
         Return Rectangle.FromLTRB(left, top, right, bottom)
     End Function
-
 End Module
