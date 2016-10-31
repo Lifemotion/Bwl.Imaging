@@ -117,9 +117,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\bwl.Imaging\bwl.Imaging.vbproj">
+    <ProjectReference Include="..\bwl.Imaging\Bwl.Imaging.vbproj">
       <Project>{33e5778d-caa3-42b6-b144-9ae1da4a00b3}</Project>
-      <Name>bwl.Imaging</Name>
+      <Name>Bwl.Imaging</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

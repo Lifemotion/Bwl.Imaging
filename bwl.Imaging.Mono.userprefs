@@ -2,8 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
   <MonoDevelop.Ide.Workbench ActiveDocument="bwl.Imaging.Test\TestForm.vb">
     <Files>
-      <File FileName="bwl.Imaging.Test\TestForm.vb" Line="25" Column="36" />
-      <File FileName="bwl.Imaging\Display\Bitmap\DisplayGraphics.vb" Line="54" Column="1" />
+      <File FileName="Bwl.Imaging.Test\TestForm.vb" Line="25" Column="36" />
+      <File FileName="Bwl.Imaging\Display\Bitmap\DisplayGraphics.vb" Line="54" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
