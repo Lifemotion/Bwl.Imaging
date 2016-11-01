@@ -28,7 +28,7 @@ Public Class BitmapConverter
             Dim tmpBD As BitmapData
             Dim tmpRect As Rectangle
             tmpRect = Rectangle.FromLTRB(0, 0, bitmap.Width, bitmap.Height)
-            tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, If(_channels = 3, PixelFormat.Format24bppRgb, PixelFormat.Format8bppIndexed))
+            tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
             Dim size As Integer = bitmap.Width * bitmap.Height
             ReDim _rawBytes(size * _channels)
             Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, _rawBytes, 0, size * _channels)
@@ -134,11 +134,14 @@ Public Class BitmapConverter
 
         Public Function GetBitmap() As Bitmap
             If _width Mod 4 <> 0 Then Throw New Exception("GetBitmap() - image width must be multiplicity of 4 to create bitmaps correctly")
-            Dim tmpBitmap As New Bitmap(_width, _height, If(_channels = 3, PixelFormat.Format24bppRgb, PixelFormat.Format8bppIndexed))
+            Dim tmpBitmap As New Bitmap(_width, _height, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
+            If _channels = 1 Then
+                tmpBitmap.Palette = GetGrayScalePalette()
+            End If
             Dim tmpBD As BitmapData
             Dim tmpRect As Rectangle
             tmpRect = Rectangle.FromLTRB(0, 0, _width, _height)
-            tmpBD = tmpBitmap.LockBits(tmpRect, ImageLockMode.ReadWrite, If(_channels = 3, PixelFormat.Format24bppRgb, PixelFormat.Format8bppIndexed))
+            tmpBD = tmpBitmap.LockBits(tmpRect, ImageLockMode.ReadWrite, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
             System.Runtime.InteropServices.Marshal.Copy(_rawBytes, 0, tmpBD.Scan0, _rawBytes.Length)
             tmpBitmap.UnlockBits(tmpBD)
             Return tmpBitmap
