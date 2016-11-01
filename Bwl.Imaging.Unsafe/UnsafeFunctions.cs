@@ -17,7 +17,7 @@ namespace Bwl.Imaging.Unsafe
         {
             if (srcBmp == null)
             {
-                return null;
+                throw new Exception("srcBmp == null");
             }
             lock (srcBmp)
             {
@@ -43,21 +43,21 @@ namespace Bwl.Imaging.Unsafe
                 }
                 else
                 {
-                    return null;
+                    throw new Exception("Unsupported pixel format");
                 }
             }
         }
-              
+
         public static Bitmap Sharpen5Gray(Bitmap srcBmp)
         {
             if (srcBmp == null)
             {
-                return null;
+                throw new Exception("srcBmp == null");
             }
             lock (srcBmp)
-            {                
+            {
                 if (srcBmp.PixelFormat == PixelFormat.Format8bppIndexed)
-                {                    
+                {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
                     trgtBmp.Palette = GetGrayScalePalette();
@@ -94,9 +94,10 @@ namespace Bwl.Imaging.Unsafe
                     trgtBmp.UnlockBits(trgtBmd);
 
                     return trgtBmp;
-                } else
+                }
+                else
                 {
-                    return null;
+                    throw new Exception("Unsupported pixel format");
                 }
             }
         }
@@ -105,12 +106,12 @@ namespace Bwl.Imaging.Unsafe
         {
             if (srcBmp == null)
             {
-                return null;
+                throw new Exception("srcBmp == null");
             }
             lock (srcBmp)
-            {                
+            {
                 if (srcBmp.PixelFormat == PixelFormat.Format8bppIndexed)
-                {                    
+                {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
                     trgtBmp.Palette = GetGrayScalePalette();
@@ -137,9 +138,10 @@ namespace Bwl.Imaging.Unsafe
                     trgtBmp.UnlockBits(trgtBmd);
 
                     return trgtBmp;
-                } else
+                }
+                else
                 {
-                    return null;
+                    throw new Exception("Unsupported pixel format");
                 }
             }
         }
@@ -148,32 +150,25 @@ namespace Bwl.Imaging.Unsafe
         {
             if (srcBmp == null)
             {
-                return null;
+                throw new Exception("srcBmp == null");
             }
             lock (srcBmp)
             {
                 int pixelSize = GetPixelSize(srcBmp.PixelFormat);
-                if (pixelSize != 0)
+                BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
+                if (pixelSize == 1)
                 {
-                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                    Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
-                    if (pixelSize == 1)
-                    {
-                        trgtBmp.Palette = GetGrayScalePalette();
-                    }
-                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
-                    unsafe
-                    {
-                        memcpy((byte*)trgtBmd.Scan0, (byte*)srcBmd.Scan0, (ulong)(srcBmd.Width * srcBmd.Height * pixelSize));
-                    }
-                    srcBmp.UnlockBits(srcBmd);
-                    trgtBmp.UnlockBits(trgtBmd);
-                    return trgtBmp;
+                    trgtBmp.Palette = GetGrayScalePalette();
                 }
-                else
+                BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                unsafe
                 {
-                    return new Bitmap(srcBmp);
+                    memcpy((byte*)trgtBmd.Scan0, (byte*)srcBmd.Scan0, (ulong)(srcBmd.Width * srcBmd.Height * pixelSize));
                 }
+                srcBmp.UnlockBits(srcBmd);
+                trgtBmp.UnlockBits(trgtBmd);
+                return trgtBmp;
             }
         }
 
@@ -181,30 +176,23 @@ namespace Bwl.Imaging.Unsafe
         {
             if (srcBmp == null)
             {
-                return 0;
+                throw new Exception("srcBmp == null");
             }
             lock (srcBmp)
             {
                 int pixelSize = GetPixelSize(srcBmp.PixelFormat);
-                if (pixelSize != 0)
+                BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                long hash = 0;
+                unsafe
                 {
-                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                    long hash = 0;
-                    unsafe
+                    byte* srcBytes = (byte*)srcBmd.Scan0;
+                    for (int i = 0; i < srcBmd.Width * srcBmd.Height * pixelSize; i++)
                     {
-                        byte* srcBytes = (byte*)srcBmd.Scan0;
-                        for (int i = 0; i < srcBmd.Width * srcBmd.Height * pixelSize; i++)
-                        {
-                            Interlocked.Add(ref hash, (long)srcBytes[i]);
-                        }
+                        Interlocked.Add(ref hash, (long)srcBytes[i]);
                     }
-                    srcBmp.UnlockBits(srcBmd);
-                    return (ulong)hash;
                 }
-                else
-                {
-                    return 0;
-                }
+                srcBmp.UnlockBits(srcBmd);
+                return (ulong)hash;
             }
         }
 
@@ -240,7 +228,7 @@ namespace Bwl.Imaging.Unsafe
                     }
                 default:
                     {
-                        break;
+                        throw new Exception("Unsupported pixel format");
                     }
             }
             return pixelSize;

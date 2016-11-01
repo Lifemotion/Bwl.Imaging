@@ -26,5 +26,4 @@
     Public Function ToRGBMatrix() As RGBMatrix
         Return New RGBMatrix(Gray, Gray, Gray)
     End Function
-
 End Class

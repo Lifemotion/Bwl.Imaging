@@ -4,6 +4,7 @@ Public Class BitmapConverter
     Private Class BitmapOperations
         Private _rawBytes As Byte()
         Private _width As Integer, _height As Integer
+        Private _channels As Integer
 
         Public Property RawBytes() As Byte()
             Set(value As Byte())
@@ -14,67 +15,109 @@ Public Class BitmapConverter
             End Get
         End Property
 
+        Public ReadOnly Property Channels As Integer
+            Get
+                Return _channels
+            End Get
+        End Property
+
         Public Sub LoadBitmap(bitmap As Bitmap)
+            _channels = If(bitmap.PixelFormat = PixelFormat.Format8bppIndexed, 1, 3)
             _width = bitmap.Width
             _height = bitmap.Height
             Dim tmpBD As BitmapData
             Dim tmpRect As Rectangle
             tmpRect = Rectangle.FromLTRB(0, 0, bitmap.Width, bitmap.Height)
-            tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, PixelFormat.Format24bppRgb)
+            tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
             Dim size As Integer = bitmap.Width * bitmap.Height
-            ReDim _rawBytes(size * 3)
-            Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, _rawBytes, 0, size * 3)
+            ReDim _rawBytes(size * _channels)
+            Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, _rawBytes, 0, size * _channels)
             bitmap.UnlockBits(tmpBD)
         End Sub
 
         Public Function GetGrayMatrix() As GrayMatrix
+            Dim result As GrayMatrix = Nothing
             Dim bytesGray2D(_width - 1, _height - 1) As Byte
-            Dim i, x, y As Integer
-            For i = 0 To _width * _height - 1
-                bytesGray2D(x, y) = _rawBytes(i * 3) * 0.222 + _rawBytes(i * 3 + 1) * 0.707 + _rawBytes(i * 3 + 2) * 0.071
-                x += 1
-                If x = _width Then
-                    x = 0
-                    y += 1
-                End If
-            Next
-            Return New GrayMatrix(bytesGray2D)
+            Select Case _channels
+                Case 1
+                    Dim i, x, y As Integer
+                    For i = 0 To _width * _height - 1
+                        bytesGray2D(x, y) = _rawBytes(i)
+                        x += 1
+                        If x = _width Then
+                            x = 0
+                            y += 1
+                        End If
+                    Next
+                    result = New GrayMatrix(bytesGray2D)
+                Case 3
+                    Dim i, x, y As Integer
+                    For i = 0 To _width * _height - 1
+                        bytesGray2D(x, y) = _rawBytes(i * 3) * 0.222 + _rawBytes(i * 3 + 1) * 0.707 + _rawBytes(i * 3 + 2) * 0.071
+                        x += 1
+                        If x = _width Then
+                            x = 0
+                            y += 1
+                        End If
+                    Next
+                    result = New GrayMatrix(bytesGray2D)
+            End Select
+            Return result
         End Function
 
         Public Function GetRGBMatrix() As RGBMatrix
+            Dim result As RGBMatrix = Nothing
             Dim bytesRed2D(_width - 1, _height - 1) As Byte
             Dim bytesGreen2D(_width - 1, _height - 1) As Byte
             Dim bytesBlue2D(_width - 1, _height - 1) As Byte
-            Dim i, x, y As Integer
-            For i = 0 To _width * _height - 1
-                bytesRed2D(x, y) = _rawBytes(i * 3 + 2)
-                bytesGreen2D(x, y) = _rawBytes(i * 3 + 1)
-                bytesBlue2D(x, y) = _rawBytes(i * 3 )
-                x += 1
-                If x = _width Then
-                    x = 0
-                    y += 1
-                End If
-            Next
-            Return New RGBMatrix(bytesRed2D, bytesGreen2D, bytesBlue2D)
+            Select Case _channels
+                Case 1
+                    Dim i, x, y As Integer
+                    For i = 0 To _width * _height - 1
+                        Dim rawByte = _rawBytes(i)
+                        bytesRed2D(x, y) = rawByte
+                        bytesGreen2D(x, y) = rawByte
+                        bytesBlue2D(x, y) = rawByte
+                        x += 1
+                        If x = _width Then
+                            x = 0
+                            y += 1
+                        End If
+                    Next
+                    result = New RGBMatrix(bytesRed2D, bytesGreen2D, bytesBlue2D)
+                Case 3
+                    Dim i, x, y As Integer
+                    For i = 0 To _width * _height - 1
+                        bytesRed2D(x, y) = _rawBytes(i * 3 + 2)
+                        bytesGreen2D(x, y) = _rawBytes(i * 3 + 1)
+                        bytesBlue2D(x, y) = _rawBytes(i * 3)
+                        x += 1
+                        If x = _width Then
+                            x = 0
+                            y += 1
+                        End If
+                    Next
+                    result = New RGBMatrix(bytesRed2D, bytesGreen2D, bytesBlue2D)
+            End Select
+            Return result
         End Function
 
         Public Sub LoadGrayMatrix(matrix As GrayMatrix)
+            _channels = 1
             _width = matrix.Width
             _height = matrix.Height
-            ReDim _rawBytes(_width * _height * 3 - 1)
+            ReDim _rawBytes(_width * _height - 1)
             Dim i, x, y As Integer
             For x = 0 To _width - 1
                 For y = 0 To _height - 1
                     i = _width * y + x
-                    _rawBytes(i * 3) = matrix.Gray(x, y)
-                    _rawBytes(i * 3 + 1) = matrix.Gray(x, y)
-                    _rawBytes(i * 3 + 2) = matrix.Gray(x, y)
+                    _rawBytes(i) = matrix.Gray(x, y)
                 Next
             Next
         End Sub
 
         Public Sub LoadRGBMatrix(matrix As RGBMatrix)
+            _channels = 3
             _width = matrix.Width
             _height = matrix.Height
             ReDim _rawBytes(_width * _height * 3 - 1)
@@ -91,11 +134,14 @@ Public Class BitmapConverter
 
         Public Function GetBitmap() As Bitmap
             If _width Mod 4 <> 0 Then Throw New Exception("GetBitmap() - image width must be multiplicity of 4 to create bitmaps correctly")
-            Dim tmpBitmap As New Bitmap(_width, _height, PixelFormat.Format24bppRgb)
+            Dim tmpBitmap As New Bitmap(_width, _height, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
+            If _channels = 1 Then
+                tmpBitmap.Palette = GetGrayScalePalette()
+            End If
             Dim tmpBD As BitmapData
             Dim tmpRect As Rectangle
             tmpRect = Rectangle.FromLTRB(0, 0, _width, _height)
-            tmpBD = tmpBitmap.LockBits(tmpRect, ImageLockMode.ReadWrite, PixelFormat.Format24bppRgb)
+            tmpBD = tmpBitmap.LockBits(tmpRect, ImageLockMode.ReadWrite, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
             System.Runtime.InteropServices.Marshal.Copy(_rawBytes, 0, tmpBD.Scan0, _rawBytes.Length)
             tmpBitmap.UnlockBits(tmpBD)
             Return tmpBitmap
@@ -124,6 +170,16 @@ Public Class BitmapConverter
         Dim processor As New BitmapOperations
         processor.LoadRGBMatrix(matrix)
         Return processor.GetBitmap
+    End Function
+
+    Private Shared Function GetGrayScalePalette() As ColorPalette
+        Dim bmp As Bitmap = New Bitmap(1, 1, PixelFormat.Format8bppIndexed)
+        Dim monoPalette As ColorPalette = bmp.Palette
+        Dim entries() As Color = monoPalette.Entries
+        For i = 0 To 255
+            entries(i) = Color.FromArgb(i, i, i)
+        Next
+        Return monoPalette
     End Function
 End Class
 
