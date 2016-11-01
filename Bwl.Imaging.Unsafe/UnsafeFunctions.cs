@@ -26,7 +26,7 @@ namespace Bwl.Imaging.Unsafe
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, PixelFormat.Format8bppIndexed);
                     trgtBmp.Palette = GetGrayScalePalette();
-                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
                     unsafe
                     {
                         byte* srcBytes = (byte*)srcBmd.Scan0;
@@ -61,7 +61,7 @@ namespace Bwl.Imaging.Unsafe
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
                     trgtBmp.Palette = GetGrayScalePalette();
-                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
                     unsafe
                     {
                         int msize = 5;
@@ -69,18 +69,19 @@ namespace Bwl.Imaging.Unsafe
                         byte* trgtBytes = (byte*)trgtBmd.Scan0;
                         Parallel.For(0, (srcBmd.Height - msize), (int row) =>
                         {
-                            byte* srcScan = srcBytes + (row * srcBmd.Width);
-                            byte* srcScan2 = srcScan + (2 * srcBmd.Width);
-                            byte* srcScan4 = srcScan + (4 * srcBmd.Width);
+                            byte* srcScan0 = srcBytes + (row * srcBmd.Width);
+                            byte* srcScan2 = srcScan0 + (2 * srcBmd.Width);
+                            byte* srcScan4 = srcScan2 + (2 * srcBmd.Width);
 
-                            byte* trgtScan = trgtBytes + (row * trgtBmd.Width);
+                            byte* trgtScan0 = trgtBytes + (row * trgtBmd.Width);
+                            byte* trgtScan2 = trgtScan0 + (2 * trgtBmd.Width);
 
                             for (int col = 0; col < (srcBmd.Width - msize); col++)
                             {
-                                byte* m0 = srcScan + col;
-                                byte* m2 = srcScan + col;
-                                byte* m4 = srcScan + col;
-                                byte* t2 = trgtScan + col;
+                                byte* m0 = srcScan0 + col;
+                                byte* m2 = srcScan2 + col;
+                                byte* m4 = srcScan4 + col;
+                                byte* t2 = trgtScan2 + col;
                                 double value = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
                                                -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
                                                -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
@@ -115,7 +116,7 @@ namespace Bwl.Imaging.Unsafe
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
                     trgtBmp.Palette = GetGrayScalePalette();
-                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
                     unsafe
                     {
                         byte* srcBytes = (byte*)srcBmd.Scan0;
@@ -161,7 +162,7 @@ namespace Bwl.Imaging.Unsafe
                 {
                     trgtBmp.Palette = GetGrayScalePalette();
                 }
-                BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
                 unsafe
                 {
                     memcpy((byte*)trgtBmd.Scan0, (byte*)srcBmd.Scan0, (ulong)(srcBmd.Width * srcBmd.Height * pixelSize));
