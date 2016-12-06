@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports System.Threading.Tasks
 
 Public Class BitmapConverter
     Private Class BitmapOperations
@@ -28,10 +29,22 @@ Public Class BitmapConverter
             Dim tmpBD As BitmapData
             Dim tmpRect As Rectangle
             tmpRect = Rectangle.FromLTRB(0, 0, bitmap.Width, bitmap.Height)
-            tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
             Dim size As Integer = bitmap.Width * bitmap.Height
             ReDim _rawBytes(size * _channels)
-            Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, _rawBytes, 0, size * _channels)
+            Dim tmpChannels = If(bitmap.PixelFormat = PixelFormat.Format32bppArgb, 4, _channels)
+            If tmpChannels = 4 Then
+                tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb)
+                Dim tmpBytes = New Byte(size * tmpChannels - 1) {}
+                Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, tmpBytes, 0, size * tmpChannels)
+                For i = 0 To tmpBytes.Length \ 4 - 1
+                    _rawBytes(i * 3 + 0) = tmpBytes(i * 4 + 0)
+                    _rawBytes(i * 3 + 1) = tmpBytes(i * 4 + 1)
+                    _rawBytes(i * 3 + 2) = tmpBytes(i * 4 + 2)
+                Next
+            Else
+                tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
+                Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, _rawBytes, 0, size * _channels)
+            End If
             bitmap.UnlockBits(tmpBD)
         End Sub
 

@@ -38,17 +38,17 @@
         Dim M = ((N * N) - 1) \ 2
         Dim trgt = New GrayMatrix(img.Width, img.Height)
         Dim median = New Byte((N * N) - 1) {}
-        For i = NR To trgt.Height - NR - 1
-            For j = NR To trgt.Width - NR - 1
+        For x = NR To trgt.Width - NR - 1
+            For y = NR To trgt.Height - NR - 1
                 Dim k = 0
-                For p = i - NR To i + NR
-                    For q = j - NR To j + NR
-                        median(k) = img.Gray(q, p)
+                For x2 = x - NR To x + NR
+                    For y2 = y - NR To y + NR
+                        median(k) = img.Gray(x2, y2)
                         k += 1
                     Next
                 Next
                 Array.Sort(median)
-                trgt.Gray(j, i) = median(M)
+                trgt.Gray(x, y) = median(M)
             Next
         Next
         Return trgt
@@ -63,9 +63,9 @@
     Public Sub MinMax2D(img As GrayMatrix, ByRef min As Byte, ByRef max As Byte)
         min = img.Gray(0, 0)
         max = img.Gray(0, 0)
-        For i = 0 To img.Height - 1
-            For j = 0 To img.Width - 1
-                Dim val = img.Gray(j, i)
+        For x = 0 To img.Width - 1
+            For y = 0 To img.Height - 1
+                Dim val = img.Gray(x, y)
                 min = If(min < val, min, val)
                 max = If(max > val, max, val)
             Next

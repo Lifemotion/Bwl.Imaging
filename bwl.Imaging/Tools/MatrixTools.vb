@@ -8,11 +8,10 @@ Public Module MatrixTools
         If img.Width Mod 4 <> 0 Then
             Dim padding = 4 - img.Width Mod 4
             Dim paddingL = padding \ 2
-            Dim paddingR = padding - paddingL
             Dim result = New GrayMatrix(img.Width + padding, img.Height)
-            For i = 0 To result.Height - 1
-                For j = paddingL To result.Width - 1 - paddingR
-                    result.Gray(j, i) = img.Gray(j - paddingL, i)
+            For x = 0 To img.Width - 1
+                For y = 0 To img.Height - 1
+                    result.Gray(x + paddingL, y) = img.Gray(x, y)
                 Next
             Next
             Return result
@@ -28,12 +27,11 @@ Public Module MatrixTools
         If img.Width Mod 4 <> 0 Then
             Dim padding = 4 - img.Width Mod 4
             Dim paddingL = padding \ 2
-            Dim paddingR = padding - paddingL
             Dim result = New RGBMatrix(img.Width + padding, img.Height)
             Parallel.For(0, 3, Sub(channel As Integer)
-                                   For i = 0 To result.Height - 1
-                                       For j = paddingL To result.Width - 1 - paddingR
-                                           result.Matrix(channel)(j, i) = img.Matrix(channel)(j - paddingL, i)
+                                   For x = 0 To img.Width - 1
+                                       For y = 0 To img.Height - 1
+                                           result.Matrix(channel)(x + paddingL, y) = img.Matrix(channel)(x, y)
                                        Next
                                    Next
                                End Sub)
@@ -65,8 +63,8 @@ Public Module MatrixTools
     ''' </summary>
     Public Function GrayMatrixSubRect(img As GrayMatrix, rect As Rectangle) As GrayMatrix
         Dim result = New GrayMatrix(rect.Width, rect.Height)
-        For i = 0 To rect.Height - 1
-            For j = 0 To rect.Width - 1
+        For j = 0 To rect.Width - 1
+            For i = 0 To rect.Height - 1
                 result.Gray(j, i) = img.Gray(rect.X + j, rect.Y + i)
             Next
         Next
@@ -79,9 +77,9 @@ Public Module MatrixTools
     Public Function RGBMatrixSubRect(img As RGBMatrix, rect As Rectangle) As RGBMatrix
         Dim result = New RGBMatrix(rect.Width, rect.Height)
         Parallel.For(0, 3, Sub(channel As Integer)
-                               For i = 0 To rect.Height - 1
-                                   For j = 0 To rect.Width - 1
-                                       result.Matrix(channel)(j, i) = img.Matrix(channel)(rect.X + j, rect.Y + i)
+                               For x = 0 To rect.Width - 1
+                                   For y = 0 To rect.Height - 1
+                                       result.Matrix(channel)(x, y) = img.Matrix(channel)(rect.X + x, rect.Y + y)
                                    Next
                                Next
                            End Sub)
@@ -108,9 +106,9 @@ Public Module MatrixTools
     ''' Инверсия полутонового изображения
     ''' </summary>    
     Public Sub InverseGray(img As GrayMatrix)
-        For i = 0 To img.Height - 1
-            For j = 0 To img.Width - 1
-                img.Gray(j, i) = Byte.MaxValue - img.Gray(j, i)
+        For x = 0 To img.Width - 1
+            For y = 0 To img.Height - 1
+                img.Gray(x, y) = Byte.MaxValue - img.Gray(x, y)
             Next
         Next
     End Sub
@@ -120,9 +118,9 @@ Public Module MatrixTools
     ''' </summary>
     Public Sub InverseRGB(img As RGBMatrix)
         Parallel.For(0, 3, Sub(channel As Integer)
-                               For i = 0 To img.Height - 1
-                                   For j = 0 To img.Width - 1
-                                       img.Matrix(channel)(j, i) = Byte.MaxValue - img.Matrix(channel)(j, i)
+                               For x = 0 To img.Width - 1
+                                   For y = 0 To img.Height - 1
+                                       img.Matrix(channel)(x, y) = Byte.MaxValue - img.Matrix(channel)(x, y)
                                    Next
                                Next
                            End Sub)
