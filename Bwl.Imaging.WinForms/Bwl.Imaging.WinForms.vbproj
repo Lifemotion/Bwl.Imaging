@@ -70,18 +70,14 @@
     <Compile Include="Display\Bitmap\DisplayBitmapControl.Designer.vb">
       <DependentUpon>DisplayBitmapControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Display\Bitmap\DisplayBitmapControl.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Display\Bitmap\DisplayBitmapControl.vb" />
     <Compile Include="Display\Bitmap\DisplayGraphics.vb" />
     <Compile Include="Display\Objects\BitmapObject.vb" />
     <Compile Include="Display\Objects\DisplayObject.vb" />
     <Compile Include="Display\Objects\DisplayObjectsControl.Designer.vb">
       <DependentUpon>DisplayObjectsControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="Display\Objects\DisplayObjectsControl.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
+    <Compile Include="Display\Objects\DisplayObjectsControl.vb" />
     <Compile Include="Display\Objects\ParametersDictionary.vb" />
     <Compile Include="Display\Objects\TextObject.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
