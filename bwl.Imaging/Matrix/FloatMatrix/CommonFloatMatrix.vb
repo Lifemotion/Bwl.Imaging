@@ -1,5 +1,5 @@
-﻿Public Class CommonMatrix
-    Protected _matrices As List(Of Integer())
+﻿Public Class CommonFloatMatrix
+    Protected _matrices As List(Of Double())
     Protected _width As Integer
     Protected _height As Integer
 
@@ -10,9 +10,9 @@
         If height < 1 Then Throw New ArgumentException("height must be >0")
         _width = width
         _height = height
-        _matrices = New List(Of Integer())
+        _matrices = New List(Of Double())
         For i = 1 To channels
-            Dim channel(width * height - 1) As Integer
+            Dim channel(width * height - 1) As Double
             _matrices.Add(channel)
         Next
     End Sub
@@ -26,19 +26,19 @@
         End Set
     End Property
 
-    Public ReadOnly Property Matrix(channel As Integer) As Integer()
+    Public ReadOnly Property Matrix(channel As Integer) As Double()
         Get
             Return _matrices(channel)
         End Get
     End Property
 
-    Public Sub New(matrices As IEnumerable(Of Integer()), width As Integer, height As Integer)
+    Public Sub New(matrices As IEnumerable(Of Double()), width As Integer, height As Integer)
         If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
         If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
         _width = width
         _height = height
         _height = matrices(0).Length / width
-        _matrices = New List(Of Integer())
+        _matrices = New List(Of Double())
 
         For Each mtr In matrices
             If mtr.Length <> width * height Then Throw New Exception("all matrices must have width*height elements")
@@ -46,21 +46,19 @@
         Next
     End Sub
 
-    Public Sub New(matrices As IEnumerable(Of Double()), width As Integer, height As Integer, multiplier As Double)
+    Public Sub New(matrices As IEnumerable(Of Integer()), width As Integer, height As Integer, multiplier As Double)
         If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
         If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
         _width = width
         _height = height
-        _matrices = New List(Of Integer())
+        _matrices = New List(Of Double())
 
         For Each mtr In matrices
             If mtr.Length <> width * height Then Throw New Exception("all matrices must have width*height elements")
-            Dim channel(mtr.Length - 1) As Integer
+            Dim channel(mtr.Length - 1) As Double
 
             For i = 0 To mtr.Length - 1
-                Dim pixel As Double = mtr(i) * multiplier
-                If pixel < 0 Then pixel = 0
-                If pixel > 255 Then pixel = 255
+                Dim pixel As Single = mtr(i) * multiplier
                 channel(i) = pixel
             Next
             _matrices.Add(channel)
@@ -79,20 +77,20 @@
         End Get
     End Property
 
-    Public Function CloneMatrix(matrix As Integer()) As Integer()
-        Dim arr(matrix.Length - 1) As Integer
+    Public Function CloneMatrix(matrix As Double()) As Double()
+        Dim arr(matrix.Length - 1) As Double
         Array.Copy(matrix, arr, matrix.Length)
         Return arr
     End Function
 
-    Public Function ResizeMatrixHalf(matrix As Integer()) As Integer()
-        Dim result(_width * _height \ 4 - 1) As Integer
+    Public Function ResizeMatrixHalf(matrix As Double()) As Double()
+        Dim result(_width * _height \ 4 - 1) As Double
 
         For y = 0 To _height \ 2 - 1
             Dim lineOffset1 = y * 2 * _width
             Dim lineOffset2 = (y * 2 + 1) * _width
             For x = 0 To _width \ 2 - 1
-                Dim point As Integer = 0
+                Dim point As Double = 0
                 point += matrix(x * 2 + lineOffset1)
                 point += matrix(x * 2 + 1 + lineOffset1)
                 point += matrix(x * 2 + lineOffset2)
@@ -104,8 +102,8 @@
         Return result
     End Function
 
-    Public Function ResizeMatrixTwo(matrix As Integer()) As Integer()
-        Dim result(_width * _height * 4 - 1) As Integer
+    Public Function ResizeMatrixTwo(matrix As Double()) As Double()
+        Dim result(_width * _height * 4 - 1) As Double
         For x = 0 To Width - 1
             For y = 0 To Height - 1
                 result(x * 2 + (y * 2) * _width * 2) = matrix(x + y * Width)
@@ -117,28 +115,28 @@
         Return result
     End Function
 
-    Public Overridable Function Clone() As CommonMatrix
-        Dim list As New List(Of Integer())
+    Public Overridable Function Clone() As CommonFloatMatrix
+        Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(CloneMatrix(mtr))
         Next
-        Return New CommonMatrix(list, Width, Height)
+        Return New CommonFloatMatrix(list, Width, Height)
     End Function
 
-    Public Overridable Function ResizeTwo() As CommonMatrix
-        Dim list As New List(Of Integer())
+    Public Overridable Function ResizeTwo() As CommonFloatMatrix
+        Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(ResizeMatrixTwo(mtr))
         Next
-        Return New CommonMatrix(list, Width * 2, Height * 2)
+        Return New CommonFloatMatrix(list, Width * 2, Height * 2)
     End Function
 
-    Public Overridable Function ResizeHalf() As CommonMatrix
-        Dim list As New List(Of Integer())
+    Public Overridable Function ResizeHalf() As CommonFloatMatrix
+        Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(ResizeMatrixHalf(mtr))
         Next
-        Return New CommonMatrix(list, Width / 2, Height * 2)
+        Return New CommonFloatMatrix(list, Width / 2, Height * 2)
     End Function
 
 End Class

@@ -5,7 +5,7 @@
         MyBase.New({matrix}, width, height)
     End Sub
 
-    Sub New(matrix() As Double, width As Integer, height As Integer, multiplier As Single)
+    Sub New(matrix() As Double, width As Integer, height As Integer, multiplier As Double)
         MyBase.New({matrix}, width, height, multiplier)
     End Sub
 
