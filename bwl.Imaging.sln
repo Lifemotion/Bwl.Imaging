@@ -13,7 +13,7 @@ Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "rapp-client-gui", "Bwl.Imag
 		Executable = C:\Users\Igor\Dropbox\Programming\NET\Graphics\bwl.Imaging\bwl.Imaging.Test\rapp-client-gui.exe
 		RemoteMachine = LFMTBOOKPC
 		StartingDirectory = C:\Users\Igor\Dropbox\Programming\NET\Graphics\bwl.Imaging\bwl.Imaging.Test
-		Environment = Default
+		Environment = По умолчанию
 		LaunchingEngine = 00000000-0000-0000-0000-000000000000
 		UseLegacyDebugEngines = No
 		LaunchSQLEngine = No
@@ -21,6 +21,8 @@ Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "rapp-client-gui", "Bwl.Imag
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwl.Imaging.Unsafe", "Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj", "{E10C92BB-489B-481A-B032-6A52A3D9CD8C}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Bwl.Imaging.WinForms", "Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj", "{CF1BA304-7402-46B4-9D06-AB226BC72293}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +44,10 @@ Global
 		{E10C92BB-489B-481A-B032-6A52A3D9CD8C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E10C92BB-489B-481A-B032-6A52A3D9CD8C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E10C92BB-489B-481A-B032-6A52A3D9CD8C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CF1BA304-7402-46B4-9D06-AB226BC72293}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF1BA304-7402-46B4-9D06-AB226BC72293}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF1BA304-7402-46B4-9D06-AB226BC72293}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF1BA304-7402-46B4-9D06-AB226BC72293}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

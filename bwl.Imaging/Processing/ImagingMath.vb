@@ -43,12 +43,12 @@
                 Dim k = 0
                 For x2 = x - NR To x + NR
                     For y2 = y - NR To y + NR
-                        median(k) = img.Gray(x2, y2)
+                        median(k) = img.GrayPixel(x2, y2)
                         k += 1
                     Next
                 Next
                 Array.Sort(median)
-                trgt.Gray(x, y) = median(M)
+                trgt.GrayPixel(x, y) = median(M)
             Next
         Next
         Return trgt
@@ -61,11 +61,11 @@
     ''' <param name="min">Найденный минимум.</param>
     ''' <param name="max">Найденный максимум.</param>
     Public Sub MinMax2D(img As GrayMatrix, ByRef min As Byte, ByRef max As Byte)
-        min = img.Gray(0, 0)
-        max = img.Gray(0, 0)
+        min = img.GrayPixel(0, 0)
+        max = img.GrayPixel(0, 0)
         For x = 0 To img.Width - 1
             For y = 0 To img.Height - 1
-                Dim val = img.Gray(x, y)
+                Dim val = img.GrayPixel(x, y)
                 min = If(min < val, min, val)
                 max = If(max > val, max, val)
             Next

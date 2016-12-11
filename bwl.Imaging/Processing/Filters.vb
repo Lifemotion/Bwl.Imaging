@@ -1,20 +1,19 @@
 ﻿Public Class Filters
 
     Public Function GetBrightnessStats(bmp As GrayMatrix) As BrightnessStats
-        Dim tmpSum As Long, i = 0
+        Dim tmpSum As Long
         Dim stats As New BrightnessStats With {.BrMax = 0, .BrMin = 255}
         Dim tmpHist(255) As Long, tmpMax As Long
 
-        For x = 0 To bmp.Width - 1
+        For k = 0 To bmp.Width * bmp.Height - 1
             For y = 0 To bmp.Height - 1
-                If bmp.Gray(x, y) < stats.BrMin Then stats.BrMin = bmp.Gray(x, y)
-                If bmp.Gray(x, y) > stats.BrMax Then stats.BrMax = bmp.Gray(x, y)
-                tmpSum += bmp.Gray(x, y)
-                tmpHist(bmp.Gray(x, y)) += 1
-                i += 1
+                If bmp.Gray(k) < stats.BrMin Then stats.BrMin = bmp.Gray(k)
+                If bmp.Gray(k) > stats.BrMax Then stats.BrMax = bmp.Gray(k)
+                tmpSum += bmp.Gray(k)
+                tmpHist(bmp.Gray(k)) += 1
             Next
         Next
-        tmpSum /= i
+        tmpSum /= bmp.Width * bmp.Height
         stats.BrAvg = tmpSum
 
         For i = 0 To 255
@@ -33,11 +32,10 @@
         Dim height As Integer = bmp.Height
         Dim xmin As Integer = stats.BrMin
         Dim xmax As Integer = stats.BrMax
+
         If xmax > xmin Then
-            For x = 0 To bmp.Width - 1
-                For y = 0 To bmp.Height - 1
-                    bmp.Gray(x, y) = (bmp.Gray(x, y) - xmin) / (xmax - xmin) * (ymax - ymin) + ymin
-                Next
+            For k = 0 To bmp.Width * bmp.Height - 1
+                bmp.Gray(k) = (bmp.Gray(k) - xmin) / (xmax - xmin) * (ymax - ymin) + ymin
             Next
         End If
     End Sub

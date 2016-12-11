@@ -50,67 +50,41 @@ Public Class BitmapConverter
 
         Public Function GetGrayMatrix() As GrayMatrix
             Dim result As GrayMatrix = Nothing
-            Dim bytesGray2D(_width - 1, _height - 1) As Byte
+            Dim bytesGray2D(_width * _height - 1) As Integer
             Select Case _channels
                 Case 1
-                    Dim i, x, y As Integer
                     For i = 0 To _width * _height - 1
-                        bytesGray2D(x, y) = _rawBytes(i)
-                        x += 1
-                        If x = _width Then
-                            x = 0
-                            y += 1
-                        End If
+                        bytesGray2D(i) = _rawBytes(i)
                     Next
-                    result = New GrayMatrix(bytesGray2D)
+                    result = New GrayMatrix(bytesGray2D, _width, _height)
                 Case 3
-                    Dim i, x, y As Integer
                     For i = 0 To _width * _height - 1
-                        bytesGray2D(x, y) = _rawBytes(i * 3) * 0.222 + _rawBytes(i * 3 + 1) * 0.707 + _rawBytes(i * 3 + 2) * 0.071
-                        x += 1
-                        If x = _width Then
-                            x = 0
-                            y += 1
-                        End If
+                        bytesGray2D(i) = _rawBytes(i * 3) * 0.222 + _rawBytes(i * 3 + 1) * 0.707 + _rawBytes(i * 3 + 2) * 0.071
                     Next
-                    result = New GrayMatrix(bytesGray2D)
+                    result = New GrayMatrix(bytesGray2D, _width, _height)
             End Select
             Return result
         End Function
 
         Public Function GetRGBMatrix() As RGBMatrix
             Dim result As RGBMatrix = Nothing
-            Dim bytesRed2D(_width - 1, _height - 1) As Byte
-            Dim bytesGreen2D(_width - 1, _height - 1) As Byte
-            Dim bytesBlue2D(_width - 1, _height - 1) As Byte
+            Dim bytesRed2D(_width * _height - 1) As Integer
+            Dim bytesGreen2D(_width * _height - 1) As Integer
+            Dim bytesBlue2D(_width * _height - 1) As Integer
             Select Case _channels
                 Case 1
-                    Dim i, x, y As Integer
                     For i = 0 To _width * _height - 1
                         Dim rawByte = _rawBytes(i)
-                        bytesRed2D(x, y) = rawByte
-                        bytesGreen2D(x, y) = rawByte
-                        bytesBlue2D(x, y) = rawByte
-                        x += 1
-                        If x = _width Then
-                            x = 0
-                            y += 1
-                        End If
+                        bytesRed2D(i) = rawByte
                     Next
-                    result = New RGBMatrix(bytesRed2D, bytesGreen2D, bytesBlue2D)
+                    result = New RGBMatrix(bytesRed2D, bytesGreen2D, bytesBlue2D, _width, _height)
                 Case 3
-                    Dim i, x, y As Integer
                     For i = 0 To _width * _height - 1
-                        bytesRed2D(x, y) = _rawBytes(i * 3 + 2)
-                        bytesGreen2D(x, y) = _rawBytes(i * 3 + 1)
-                        bytesBlue2D(x, y) = _rawBytes(i * 3)
-                        x += 1
-                        If x = _width Then
-                            x = 0
-                            y += 1
-                        End If
+                        bytesRed2D(i) = _rawBytes(i * 3 + 2)
+                        bytesGreen2D(i) = _rawBytes(i * 3 + 1)
+                        bytesBlue2D(i) = _rawBytes(i * 3)
                     Next
-                    result = New RGBMatrix(bytesRed2D, bytesGreen2D, bytesBlue2D)
+                    result = New RGBMatrix(bytesRed2D, bytesGreen2D, bytesBlue2D, _width, _height)
             End Select
             Return result
         End Function
@@ -124,7 +98,7 @@ Public Class BitmapConverter
             For x = 0 To _width - 1
                 For y = 0 To _height - 1
                     i = _width * y + x
-                    _rawBytes(i) = matrix.Gray(x, y)
+                    _rawBytes(i) = matrix.Gray(i)
                 Next
             Next
         End Sub
@@ -138,9 +112,9 @@ Public Class BitmapConverter
             For x = 0 To _width - 1
                 For y = 0 To _height - 1
                     i = _width * y + x
-                    _rawBytes(i * 3 + 2) = matrix.Red(x, y)
-                    _rawBytes(i * 3 + 1) = matrix.Green(x, y)
-                    _rawBytes(i * 3) = matrix.Blue(x, y)
+                    _rawBytes(i * 3 + 2) = matrix.Red(i)
+                    _rawBytes(i * 3 + 1) = matrix.Green(i)
+                    _rawBytes(i * 3) = matrix.Blue(i)
                 Next
             Next
         End Sub

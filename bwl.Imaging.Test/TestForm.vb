@@ -110,22 +110,22 @@ Public Class TestForm
             .DrawBitmap(image.BitmapToRgbMatrix.ToBitmap, 0.5, 0.1, 0.6, 0.8)
 
             Dim byteRgb = image.BitmapToRgbMatrix
-            Dim floatRgb = New RGBFloatMatrix(byteRgb.Red, byteRgb.Green, byteRgb.Blue, 1 / 256)
-            Dim newByteRgb = New RGBMatrix(floatRgb.Red, floatRgb.Green, floatRgb.Blue, 512)
+            'Dim floatRgb = New RGBFloatMatrix(byteRgb.Red, byteRgb.Green, byteRgb.Blue, 1 / 256)
+            'Dim newByteRgb = New RGBMatrix(floatRgb.Red, floatRgb.Green, floatRgb.Blue, 512)
 
             Dim byteGray = image.BitmapToGrayMatrix
-            Dim floatGray = New GrayFloatMatrix(byteGray.Gray, 1 / 256)
-            Dim newByteGray = New GrayMatrix(floatGray.Gray, 512)
+            'Dim floatGray = New GrayFloatMatrix(byteGray.Gray, 1 / 256)
+            'Dim newByteGray = New GrayMatrix(floatGray.Gray, 512)
 
-            .DrawBitmap(newByteRgb.ToBitmap, 0.7, 0.1, 0.8, 0.8)
-            .DrawBitmap(newByteGray.ToBitmap, 0.9, 0.1, 0.99, 0.8)
+            '.DrawBitmap(newByteRgb.ToBitmap, 0.7, 0.1, 0.8, 0.8)
+            '.DrawBitmap(newByteGray.ToBitmap, 0.9, 0.1, 0.99, 0.8)
 
             Dim redmat = New RGBMatrix(4, 1)
             Dim greenmat = New RGBMatrix(4, 1)
             Dim bluemat = New RGBMatrix(4, 1)
-            redmat.Red(0, 0) = 255
-            greenmat.Green(0, 0) = 255
-            bluemat.Blue(0, 0) = 255
+            redmat.RedPixel(0, 0) = 255
+            greenmat.GreenPixel(0, 0) = 255
+            bluemat.BluePixel(0, 0) = 255
             .DrawBitmap(redmat.ToBitmap, 0.1, 0.9, 0.2, 0.95)
             .DrawBitmap(greenmat.ToBitmap, 0.2, 0.9, 0.3, 0.95)
             .DrawBitmap(bluemat.ToBitmap, 0.3, 0.9, 0.4, 0.95)
@@ -138,9 +138,9 @@ Public Class TestForm
             '-------------------------------------------------------------------------
             For i = 0 To rows - 1
                 For j = 0 To cols - 1
-                    rgbResult.Red(j, i) = 255.0
-                    rgbResult.Green(j, i) = 0
-                    rgbResult.Blue(j, i) = 0
+                    rgbResult.RedPixel(j, i) = 255.0
+                    rgbResult.GreenPixel(j, i) = 0
+                    rgbResult.BluePixel(j, i) = 0
                 Next
             Next
             .DrawBitmap(rgbResult.ToBitmap, 0.6, 0.9, 0.7, 0.95)

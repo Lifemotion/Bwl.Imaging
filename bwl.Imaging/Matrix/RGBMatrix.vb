@@ -1,47 +1,72 @@
 ﻿Public Class RGBMatrix
     Inherits CommonMatrix
 
-    Sub New(red(,) As Byte, green(,) As Byte, blue(,) As Byte)
-        MyBase.New({red, green, blue})
+    Sub New(red() As Integer, green() As Integer, blue() As Integer, width As Integer, height As Integer)
+        MyBase.New({red, green, blue}, width, height)
     End Sub
 
-    Sub New(red(,) As Single, green(,) As Single, blue(,) As Single, multiplier As Single)
-        MyBase.New({red, green, blue}, multiplier)
+    Sub New(red() As Double, green() As Double, blue() As Double, width As Integer, height As Integer, multiplier As Single)
+        MyBase.New({red, green, blue}, width, height, multiplier)
     End Sub
 
     Sub New(width As Integer, height As Integer)
         MyBase.New(3, width, height)
     End Sub
 
-    Public ReadOnly Property Red As Byte(,)
+    Public Property RedPixel(x As Integer, y As Integer) As Integer
+        Get
+            Return _matrices(0)(x + y * Width)
+        End Get
+        Set(value As Integer)
+            _matrices(0)(x + y * Width) = value
+        End Set
+    End Property
+
+    Public Property GreenPixel(x As Integer, y As Integer) As Integer
+        Get
+            Return _matrices(1)(x + y * Width)
+        End Get
+        Set(value As Integer)
+            _matrices(1)(x + y * Width) = value
+        End Set
+    End Property
+
+    Public Property BluePixel(x As Integer, y As Integer) As Integer
+        Get
+            Return _matrices(2)(x + y * Width)
+        End Get
+        Set(value As Integer)
+            _matrices(2)(x + y * Width) = value
+        End Set
+    End Property
+
+    Public ReadOnly Property Red As Integer()
         Get
             Return _matrices(0)
         End Get
     End Property
 
-    Public ReadOnly Property Green As Byte(,)
+    Public ReadOnly Property Green As Integer()
         Get
             Return _matrices(1)
         End Get
     End Property
 
-    Public ReadOnly Property Blue As Byte(,)
+    Public ReadOnly Property Blue As Integer()
         Get
             Return _matrices(2)
         End Get
     End Property
 
     Public Shadows Function Clone() As RGBMatrix
-        Return New RGBMatrix(CloneMatrix(Red), CloneMatrix(Green), CloneMatrix(Blue))
+        Return New RGBMatrix(CloneMatrix(Red), CloneMatrix(Green), CloneMatrix(Blue), Width, Height)
     End Function
 
     Public Function ToGrayMatrix() As GrayMatrix
-        Dim gray(Width - 1, Height - 1) As Byte
-        For x = 0 To Width - 1
-            For y = 0 To Height - 1
-                gray(x, y) = Red(x, y) * 0.222 + Green(x, y) * 0.707 + Blue(x, y) * 0.071
-            Next
+        Dim gray(Width * Height - 1) As Integer
+        For i = 0 To Width * Height - 1
+            gray(i) = Red(i) * 0.222 + Green(i) * 0.707 + Blue(i) * 0.071
         Next
-        Return New GrayMatrix(gray)
+        Return New GrayMatrix(gray, Width, Height)
     End Function
 End Class

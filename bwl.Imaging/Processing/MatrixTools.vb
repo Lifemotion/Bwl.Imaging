@@ -11,7 +11,7 @@ Public Module MatrixTools
             Dim result = New GrayMatrix(img.Width + padding, img.Height)
             For x = 0 To img.Width - 1
                 For y = 0 To img.Height - 1
-                    result.Gray(x + paddingL, y) = img.Gray(x, y)
+                    result.GrayPixel(x + paddingL, y) = img.GrayPixel(x, y)
                 Next
             Next
             Return result
@@ -31,7 +31,7 @@ Public Module MatrixTools
             Parallel.For(0, 3, Sub(channel As Integer)
                                    For x = 0 To img.Width - 1
                                        For y = 0 To img.Height - 1
-                                           result.Matrix(channel)(x + paddingL, y) = img.Matrix(channel)(x, y)
+                                           result.MatrixPixel(channel, x + paddingL, y) = img.MatrixPixel(channel, x, y)
                                        Next
                                    Next
                                End Sub)
@@ -65,7 +65,7 @@ Public Module MatrixTools
         Dim result = New GrayMatrix(rect.Width, rect.Height)
         For j = 0 To rect.Width - 1
             For i = 0 To rect.Height - 1
-                result.Gray(j, i) = img.Gray(rect.X + j, rect.Y + i)
+                result.GrayPixel(j, i) = img.GrayPixel(rect.X + j, rect.Y + i)
             Next
         Next
         Return result
@@ -79,7 +79,7 @@ Public Module MatrixTools
         Parallel.For(0, 3, Sub(channel As Integer)
                                For x = 0 To rect.Width - 1
                                    For y = 0 To rect.Height - 1
-                                       result.Matrix(channel)(x, y) = img.Matrix(channel)(rect.X + x, rect.Y + y)
+                                       result.MatrixPixel(channel, x, y) = img.MatrixPixel(channel, rect.X + x, rect.Y + y)
                                    Next
                                Next
                            End Sub)
@@ -108,7 +108,7 @@ Public Module MatrixTools
     Public Sub InverseGray(img As GrayMatrix)
         For x = 0 To img.Width - 1
             For y = 0 To img.Height - 1
-                img.Gray(x, y) = Byte.MaxValue - img.Gray(x, y)
+                img.GrayPixel(x, y) = Byte.MaxValue - img.GrayPixel(x, y)
             Next
         Next
     End Sub
@@ -120,7 +120,7 @@ Public Module MatrixTools
         Parallel.For(0, 3, Sub(channel As Integer)
                                For x = 0 To img.Width - 1
                                    For y = 0 To img.Height - 1
-                                       img.Matrix(channel)(x, y) = Byte.MaxValue - img.Matrix(channel)(x, y)
+                                       img.MatrixPixel(channel, x, y) = Byte.MaxValue - img.MatrixPixel(channel, x, y)
                                    Next
                                Next
                            End Sub)
