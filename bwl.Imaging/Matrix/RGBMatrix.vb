@@ -13,6 +13,20 @@
         MyBase.New(3, width, height)
     End Sub
 
+    Public Property ColorPixel(x As Integer, y As Integer) As Color
+        Get
+            Dim r = _matrices(0)(x + y * Width)
+            Dim g = _matrices(1)(x + y * Width)
+            Dim b = _matrices(2)(x + y * Width)
+            Return Color.FromArgb(r, g, b)
+        End Get
+        Set(value As Color)
+            _matrices(0)(x + y * Width) = value.R
+            _matrices(1)(x + y * Width) = value.G
+            _matrices(2)(x + y * Width) = value.B
+        End Set
+    End Property
+
     Public Property RedPixel(x As Integer, y As Integer) As Integer
         Get
             Return _matrices(0)(x + y * Width)

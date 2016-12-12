@@ -46,6 +46,26 @@
         Next
     End Sub
 
+    Public Function FitX(x As Integer) As Integer
+        If x < 0 Then x = 0
+        If x >= Width Then x = Width - 1
+        Return x
+    End Function
+
+    Public Function FitY(y As Integer) As Integer
+        If y < 0 Then y = 0
+        If y >= Height Then y = Height - 1
+        Return y
+    End Function
+
+    Public Function HalfWidth() As Integer
+        Return Width / 2
+    End Function
+
+    Public Function HalfHeight() As Integer
+        Return Height / 2
+    End Function
+
     Public Sub New(matrices As IEnumerable(Of Double()), width As Integer, height As Integer, multiplier As Double)
         If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
         If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")

@@ -33,6 +33,6 @@
     End Function
 
     Public Function ToRGBMatrix() As RGBMatrix
-        Return New RGBMatrix(Gray, Gray, Gray, Width, Height)
+        Return New RGBMatrix(CloneMatrix(Gray), CloneMatrix(Gray), CloneMatrix(Gray), Width, Height)
     End Function
 End Class
