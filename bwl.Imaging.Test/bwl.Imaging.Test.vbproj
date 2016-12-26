@@ -71,6 +71,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MoveDetectorTest.Designer.vb">
+      <DependentUpon>MoveDetectorTest.vb</DependentUpon>
+    </Compile>
+    <Compile Include="MoveDetectorTest.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Serializer.vb" />
     <Compile Include="TestForm.designer.vb">
       <DependentUpon>TestForm.vb</DependentUpon>
@@ -95,6 +101,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="MoveDetectorTest.resx">
+      <DependentUpon>MoveDetectorTest.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="TestForm.resx">
       <DependentUpon>TestForm.vb</DependentUpon>
     </EmbeddedResource>
