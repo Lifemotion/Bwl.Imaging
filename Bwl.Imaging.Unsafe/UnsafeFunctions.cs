@@ -21,17 +21,18 @@ namespace Bwl.Imaging.Unsafe
             }
             lock (srcBmp)
             {
-                if (srcBmp.PixelFormat == PixelFormat.Format24bppRgb)
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, PixelFormat.Format8bppIndexed);
                     trgtBmp.Palette = GetGrayScalePalette();
                     BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                    var step = srcBmp.PixelFormat == PixelFormat.Format24bppRgb ? 3 : 4;
                     unsafe
                     {
                         byte* srcBytes = (byte*)srcBmd.Scan0;
                         byte* trgtBytes = (byte*)trgtBmd.Scan0;
-                        for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += 3)
+                        for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += step)
                         {
                             trgtBytes[i] = (byte)(0.071 * srcBytes[j] + 0.707 * srcBytes[j + 1] + 0.222 * srcBytes[j + 2]);
                         }

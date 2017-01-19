@@ -9,6 +9,10 @@
         MyBase.New({matrix}, width, height, multiplier)
     End Sub
 
+    Sub New(matrix() As Double, width As Integer, height As Integer, multiplier As Double)
+        MyBase.New({matrix}, width, height, multiplier)
+    End Sub
+
     Sub New(width As Integer, height As Integer)
         MyBase.New(1, width, height)
     End Sub
@@ -35,5 +39,4 @@
     Public Function ToRGBMatrix() As RGBFloatMatrix
         Return New RGBFloatMatrix(Gray, Gray, Gray, Width, Height)
     End Function
-
 End Class

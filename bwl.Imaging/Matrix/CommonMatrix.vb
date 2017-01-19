@@ -59,11 +59,11 @@
     End Function
 
     Public Function HalfWidth() As Integer
-        Return Width / 2
+        Return Width \ 2
     End Function
 
     Public Function HalfHeight() As Integer
-        Return Height / 2
+        Return Height \ 2
     End Function
 
     Public Sub New(matrices As IEnumerable(Of Double()), width As Integer, height As Integer, multiplier As Double)
@@ -79,8 +79,9 @@
 
             For i = 0 To mtr.Length - 1
                 Dim pixel As Double = mtr(i) * multiplier
-                If pixel < 0 Then pixel = 0
-                If pixel > 255 Then pixel = 255
+                If pixel < Integer.MinValue OrElse pixel > Integer.MaxValue Then
+                    Throw New Exception("matrice element is out of integer's range after multiplier")
+                End If
                 channel(i) = pixel
             Next
             _matrices.Add(channel)
@@ -107,10 +108,10 @@
 
     Public Function ResizeMatrixHalf(matrix As Integer()) As Integer()
         Dim result(_width * _height \ 4 - 1) As Integer
-
         For y = 0 To _height \ 2 - 1
             Dim lineOffset1 = y * 2 * _width
             Dim lineOffset2 = (y * 2 + 1) * _width
+            Dim resOffset = y * _width \ 2
             For x = 0 To _width \ 2 - 1
                 Dim point As Integer = 0
                 point += matrix(x * 2 + lineOffset1)
@@ -118,7 +119,7 @@
                 point += matrix(x * 2 + lineOffset2)
                 point += matrix(x * 2 + 1 + lineOffset2)
                 point \= 4
-                result(x + y * _width \ 2) = point
+                result(x + resOffset) = point
             Next
         Next
         Return result
@@ -126,12 +127,16 @@
 
     Public Function ResizeMatrixTwo(matrix As Integer()) As Integer()
         Dim result(_width * _height * 4 - 1) As Integer
-        For x = 0 To Width - 1
-            For y = 0 To Height - 1
-                result(x * 2 + (y * 2) * _width * 2) = matrix(x + y * Width)
-                result(x * 2 + 1 + (y * 2) * _width * 2) = matrix(x + y * Width)
-                result(x * 2 + (y * 2 + 1) * _width * 2) = matrix(x + y * Width)
-                result(x * 2 + 1 + (y * 2 + 1) * _width * 2) = matrix(x + y * Width)
+        For y = 0 To Height - 1
+            Dim lineOffset1 = (y * 2) * _width * 2
+            Dim lineOffset2 = (y * 2 + 1) * _width * 2
+            Dim offset = y * _width
+            For x = 0 To _width - 1
+                Dim elem = matrix(x + offset)
+                result(x * 2 + lineOffset1) = elem
+                result(x * 2 + 1 + lineOffset1) = elem
+                result(x * 2 + lineOffset2) = elem
+                result(x * 2 + 1 + lineOffset2) = elem
             Next
         Next
         Return result
@@ -158,7 +163,6 @@
         For Each mtr In _matrices
             list.Add(ResizeMatrixHalf(mtr))
         Next
-        Return New CommonMatrix(list, Width / 2, Height * 2)
+        Return New CommonMatrix(list, Width \ 2, Height \ 2)
     End Function
-
 End Class

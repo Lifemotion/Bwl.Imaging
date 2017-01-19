@@ -54,7 +54,5 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
         Assert.AreEqual(CByte(255), clr.R)
         Assert.AreEqual(CByte(0), clr.G)
         Assert.AreEqual(CByte(0), clr.B)
-
     End Sub
-
 End Class

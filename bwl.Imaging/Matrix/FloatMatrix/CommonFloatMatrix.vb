@@ -17,11 +17,11 @@
         Next
     End Sub
 
-    Public Property MatrixPixel(channel As Integer, x As Integer, y As Integer) As Integer
+    Public Property MatrixPixel(channel As Integer, x As Integer, y As Integer) As Double
         Get
             Return _matrices(channel)(x + y * Width)
         End Get
-        Set(value As Integer)
+        Set(value As Double)
             _matrices(channel)(x + y * Width) = value
         End Set
     End Property
@@ -46,6 +46,26 @@
         Next
     End Sub
 
+    Public Function FitX(x As Integer) As Integer
+        If x < 0 Then x = 0
+        If x >= Width Then x = Width - 1
+        Return x
+    End Function
+
+    Public Function FitY(y As Integer) As Integer
+        If y < 0 Then y = 0
+        If y >= Height Then y = Height - 1
+        Return y
+    End Function
+
+    Public Function HalfWidth() As Integer
+        Return Width \ 2
+    End Function
+
+    Public Function HalfHeight() As Integer
+        Return Height \ 2
+    End Function
+
     Public Sub New(matrices As IEnumerable(Of Integer()), width As Integer, height As Integer, multiplier As Double)
         If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
         If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
@@ -58,7 +78,26 @@
             Dim channel(mtr.Length - 1) As Double
 
             For i = 0 To mtr.Length - 1
-                Dim pixel As Single = mtr(i) * multiplier
+                Dim pixel As Double = mtr(i) * multiplier
+                channel(i) = pixel
+            Next
+            _matrices.Add(channel)
+        Next
+    End Sub
+
+    Public Sub New(matrices As IEnumerable(Of Double()), width As Integer, height As Integer, multiplier As Double)
+        If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
+        If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
+        _width = width
+        _height = height
+        _matrices = New List(Of Double())
+
+        For Each mtr In matrices
+            If mtr.Length <> width * height Then Throw New Exception("all matrices must have width*height elements")
+            Dim channel(mtr.Length - 1) As Double
+
+            For i = 0 To mtr.Length - 1
+                Dim pixel As Double = mtr(i) * multiplier
                 channel(i) = pixel
             Next
             _matrices.Add(channel)
@@ -85,18 +124,18 @@
 
     Public Function ResizeMatrixHalf(matrix As Double()) As Double()
         Dim result(_width * _height \ 4 - 1) As Double
-
         For y = 0 To _height \ 2 - 1
             Dim lineOffset1 = y * 2 * _width
             Dim lineOffset2 = (y * 2 + 1) * _width
+            Dim resOffset = y * _width \ 2
             For x = 0 To _width \ 2 - 1
-                Dim point As Double = 0
+                Dim point As Integer = 0
                 point += matrix(x * 2 + lineOffset1)
                 point += matrix(x * 2 + 1 + lineOffset1)
                 point += matrix(x * 2 + lineOffset2)
                 point += matrix(x * 2 + 1 + lineOffset2)
                 point \= 4
-                result(x + y * _width \ 2) = point
+                result(x + resOffset) = point
             Next
         Next
         Return result
@@ -104,39 +143,42 @@
 
     Public Function ResizeMatrixTwo(matrix As Double()) As Double()
         Dim result(_width * _height * 4 - 1) As Double
-        For x = 0 To Width - 1
-            For y = 0 To Height - 1
-                result(x * 2 + (y * 2) * _width * 2) = matrix(x + y * Width)
-                result(x * 2 + 1 + (y * 2) * _width * 2) = matrix(x + y * Width)
-                result(x * 2 + (y * 2 + 1) * _width * 2) = matrix(x + y * Width)
-                result(x * 2 + 1 + (y * 2 + 1) * _width * 2) = matrix(x + y * Width)
+        For y = 0 To Height - 1
+            Dim lineOffset1 = (y * 2) * _width * 2
+            Dim lineOffset2 = (y * 2 + 1) * _width * 2
+            Dim offset = y * _width
+            For x = 0 To _width - 1
+                Dim elem = matrix(x + offset)
+                result(x * 2 + lineOffset1) = elem
+                result(x * 2 + 1 + lineOffset1) = elem
+                result(x * 2 + lineOffset2) = elem
+                result(x * 2 + 1 + lineOffset2) = elem
             Next
         Next
         Return result
     End Function
 
-    Public Overridable Function Clone() As CommonFloatMatrix
+    Public Overridable Function Clone() As CommonMatrix
         Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(CloneMatrix(mtr))
         Next
-        Return New CommonFloatMatrix(list, Width, Height)
+        Return New CommonMatrix(list, Width, Height)
     End Function
 
-    Public Overridable Function ResizeTwo() As CommonFloatMatrix
+    Public Overridable Function ResizeTwo() As CommonMatrix
         Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(ResizeMatrixTwo(mtr))
         Next
-        Return New CommonFloatMatrix(list, Width * 2, Height * 2)
+        Return New CommonMatrix(list, Width * 2, Height * 2)
     End Function
 
-    Public Overridable Function ResizeHalf() As CommonFloatMatrix
+    Public Overridable Function ResizeHalf() As CommonMatrix
         Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(ResizeMatrixHalf(mtr))
         Next
-        Return New CommonFloatMatrix(list, Width / 2, Height * 2)
+        Return New CommonMatrix(list, Width \ 2, Height \ 2)
     End Function
-
 End Class
