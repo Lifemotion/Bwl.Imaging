@@ -96,8 +96,9 @@ Public Class BitmapConverter
             _width = matrix.Width
             _height = matrix.Height
             ReDim _rawBytes(_width * _height - 1)
+            Dim matrixGray = matrix.Gray
             For i = 0 To _width * _height - 1
-                _rawBytes(i) = matrix.Gray(i) And &HFF
+                _rawBytes(i) = matrixGray(i) And &HFF
             Next
         End Sub
 
@@ -106,8 +107,9 @@ Public Class BitmapConverter
             _width = matrix.Width
             _height = matrix.Height
             ReDim _rawBytes(_width * _height - 1)
+            Dim matrixGray = matrix.Gray
             For i = 0 To _width * _height - 1
-                Dim pixel = matrix.Gray(i)
+                Dim pixel = matrixGray(i)
                 If pixel < 0 Then pixel = 0
                 If pixel > 255 Then pixel = 255
                 _rawBytes(i) = pixel
@@ -119,14 +121,17 @@ Public Class BitmapConverter
             _width = matrix.Width
             _height = matrix.Height
             ReDim _rawBytes(_width * _height * 3 - 1)
+            Dim matrixRed = matrix.Red
+            Dim matrixGreen = matrix.Green
+            Dim matrixBlue = matrix.Blue
             Dim i, x, y As Integer
             For y = 0 To _height - 1
                 Dim offset = _width * y
                 For x = 0 To _width - 1
                     i = x + offset
-                    _rawBytes(i * 3 + 2) = matrix.Red(i) And &HFF
-                    _rawBytes(i * 3 + 1) = matrix.Green(i) And &HFF
-                    _rawBytes(i * 3) = matrix.Blue(i) And &HFF
+                    _rawBytes(i * 3 + 2) = matrixRed(i) And &HFF
+                    _rawBytes(i * 3 + 1) = matrixGreen(i) And &HFF
+                    _rawBytes(i * 3) = matrixBlue(i) And &HFF
                 Next
             Next
         End Sub
@@ -136,14 +141,17 @@ Public Class BitmapConverter
             _width = matrix.Width
             _height = matrix.Height
             ReDim _rawBytes(_width * _height * 3 - 1)
+            Dim matrixRed = matrix.Red
+            Dim matrixGreen = matrix.Green
+            Dim matrixBlue = matrix.Blue
             Dim i, x, y As Integer
             For y = 0 To _height - 1
                 Dim offset = _width * y
                 For x = 0 To _width - 1
                     i = x + offset
-                    Dim pixelR = matrix.Red(i)
-                    Dim pixelG = matrix.Green(i)
-                    Dim pixelB = matrix.Blue(i)
+                    Dim pixelR = matrixRed(i)
+                    Dim pixelG = matrixGreen(i)
+                    Dim pixelB = matrixBlue(i)
                     If pixelR < 0 Then pixelR = 0
                     If pixelR > 255 Then pixelR = 255
                     If pixelG < 0 Then pixelG = 0

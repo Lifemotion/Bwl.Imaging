@@ -1,4 +1,32 @@
 ﻿Public Module ImagingMath
+
+    ''' <summary>
+    '''  Статистика по яркости
+    ''' </summary>    
+    Public Function GetBrightnessStats(img As GrayMatrix) As BrightnessStats
+        Dim tmpSum As Long
+        Dim stats As New BrightnessStats With {.BrMax = 0, .BrMin = 255}
+        Dim tmpHist(255) As Long, tmpMax As Long
+
+        Dim imgGray = img.Gray
+        For k = 0 To img.Width * img.Height - 1
+            If imgGray(k) < stats.BrMin Then stats.BrMin = imgGray(k)
+            If imgGray(k) > stats.BrMax Then stats.BrMax = imgGray(k)
+            tmpSum += imgGray(k)
+            tmpHist(imgGray(k)) += 1
+        Next
+        tmpSum /= img.Width * img.Height
+        stats.BrAvg = tmpSum
+
+        For i = 0 To 255
+            tmpMax += tmpHist(i) / 255
+        Next
+        For i = 0 To 255
+            stats.Histogram(i) = tmpHist(i) \ (tmpMax \ 128 + 1)
+        Next
+        Return stats
+    End Function
+
     ''' <summary>
     ''' Билинейная интерполяция между двумя значениями
     ''' </summary>
@@ -28,33 +56,6 @@
     End Function
 
     ''' <summary>
-    ''' 2D-медианный фильтр
-    ''' </summary>    
-    ''' <param name="img">Исходные данные.</param>
-    ''' <param name="N">Размер фильтра (нечетное значение).</param>    
-    Public Function MedianFilter2D(img As GrayMatrix, N As Integer) As GrayMatrix
-        N = If(N Mod 2 = 0, N + 1, N)
-        Dim NR = (N - 1) \ 2
-        Dim M = ((N * N) - 1) \ 2
-        Dim trgt = New GrayMatrix(img.Width, img.Height)
-        Dim median = New Byte((N * N) - 1) {}
-        For x = NR To trgt.Width - NR - 1
-            For y = NR To trgt.Height - NR - 1
-                Dim k = 0
-                For x2 = x - NR To x + NR
-                    For y2 = y - NR To y + NR
-                        median(k) = img.GrayPixel(x2, y2)
-                        k += 1
-                    Next
-                Next
-                Array.Sort(median)
-                trgt.GrayPixel(x, y) = median(M)
-            Next
-        Next
-        Return trgt
-    End Function
-
-    ''' <summary>
     ''' Поиск минимального/максимального значения в полутоновой матрице
     ''' </summary>
     ''' <param name="img">Исходная матрица.</param>
@@ -63,9 +64,11 @@
     Public Sub MinMax2D(img As GrayMatrix, ByRef min As Byte, ByRef max As Byte)
         min = img.GrayPixel(0, 0)
         max = img.GrayPixel(0, 0)
-        For x = 0 To img.Width - 1
-            For y = 0 To img.Height - 1
-                Dim val = img.GrayPixel(x, y)
+        Dim imgGray = img.Gray
+        For y = 0 To img.Height - 1
+            Dim offset = y * img.Width
+            For x = 0 To img.Width - 1
+                Dim val = imgGray(x + offset)
                 min = If(min < val, min, val)
                 max = If(max > val, max, val)
             Next
