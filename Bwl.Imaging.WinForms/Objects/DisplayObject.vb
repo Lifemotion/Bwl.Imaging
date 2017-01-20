@@ -25,7 +25,6 @@ Public Class DisplayObject
     Public Property Parameters As New ParametersDictionary
 
     Public Sub New()
-
     End Sub
 
     Public Sub New(id As String, color As Color, obj As Object)
@@ -58,5 +57,4 @@ Public Class DisplayObject
     Public Function Clone() As Object Implements ICloneable.Clone
         Return New DisplayObject(Me)
     End Function
-
 End Class

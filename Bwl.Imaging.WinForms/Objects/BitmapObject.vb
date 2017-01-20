@@ -1,11 +1,8 @@
 ﻿Public Class BitmapObject
-
     Public Property RectangleF As RectangleF
-
     Public Property Bitmap As Bitmap
 
     Public Sub New()
-
     End Sub
 
     Public Sub New(bitmap As Bitmap, rectangle As RectangleF)

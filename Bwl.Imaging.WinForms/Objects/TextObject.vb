@@ -6,7 +6,6 @@ Public Class TextObject
     Public Property Size As Single = 0.03
 
     Public Sub New()
-
     End Sub
 
     Public Sub New(point1 As PointF, text As String, size As Single)

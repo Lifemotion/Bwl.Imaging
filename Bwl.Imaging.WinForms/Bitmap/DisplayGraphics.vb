@@ -1,18 +1,19 @@
 ﻿
 Public Class DisplayGraphics
+    Private _width As Integer
+    Private _height As Integer
+    Private _mulX As Single
+    Private _mulY As Single
+    Private _multiplyOnBitmapSize As Boolean = True
+
     Protected _graphics As Graphics
     Protected _pen As New Pen(Brushes.Black)
     Protected _brush As New SolidBrush(Color.Black)
     Protected _font As New Font(FontFamily.GenericSansSerif, 21)
 
-    Private _mulX As Single
-    Private _mulY As Single
-    Private _multiplyOnBitmapSize As Boolean = True
     Public Property BackgroundColor As Color = Color.White
     Public Property DefaultWidth As Single = 1.0
     Public Property DefaultPointSize As Single = 5.0
-    Private _width As Integer
-    Private _height As Integer
 
     Public Sub New(graphics As Graphics, width As Integer, height As Integer)
         If graphics Is Nothing Then Throw New ArgumentException("grpahics is nothing")
@@ -85,8 +86,7 @@ Public Class DisplayGraphics
         SyncLock Me
             If width <= 0 Then width = DefaultWidth
             If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
-            _graphics.DrawLine(_pen, x1 * _mulX, y1 * _mulY,
-                                     x2 * _mulX, y2 * _mulY)
+            _graphics.DrawLine(_pen, x1 * _mulX, y1 * _mulY, x2 * _mulX, y2 * _mulY)
         End SyncLock
     End Sub
 
@@ -102,7 +102,7 @@ Public Class DisplayGraphics
 
                 Dim sz = 5
                 _graphics.DrawLine(_pen, x1 * _mulX + CSng(Math.Cos(angle - Math.PI / 2) * sz), y1 * _mulY + CSng(Math.Sin(angle - Math.PI / 2) * sz),
-                                              x2 * _mulX, y2 * _mulY)
+                                         x2 * _mulX, y2 * _mulY)
                 _graphics.DrawLine(_pen, x1 * _mulX + CSng(Math.Cos(angle + Math.PI / 2) * sz), y1 * _mulY + CSng(Math.Sin(angle + Math.PI / 2) * sz),
                                    x2 * _mulX, y2 * _mulY)
                 _graphics.DrawLine(_pen, x1 * _mulX + CSng(Math.Cos(angle - Math.PI / 2) * sz), y1 * _mulY + CSng(Math.Sin(angle - Math.PI / 2) * sz),
@@ -127,8 +127,7 @@ Public Class DisplayGraphics
             Dim tmp As Single
             If x1 > x2 Then tmp = x2 : x2 = x1 : x1 = tmp
             If y1 > y2 Then tmp = y2 : y2 = y1 : y1 = tmp
-            _graphics.DrawRectangle(_pen, x1 * _mulX, y1 * _mulY,
-                                         (x2 - x1) * _mulX, (y2 - y1) * _mulY)
+            _graphics.DrawRectangle(_pen, x1 * _mulX, y1 * _mulY, (x2 - x1) * _mulX, (y2 - y1) * _mulY)
         End SyncLock
     End Sub
 
@@ -136,8 +135,7 @@ Public Class DisplayGraphics
         SyncLock Me
             If size <= 0 Then size = DefaultPointSize
             If _brush.Color <> color Then _brush = New SolidBrush(color)
-            _graphics.FillEllipse(_brush, x1 * _mulX - size / 2, y1 * _mulY - size / 2,
-                                         size, size)
+            _graphics.FillEllipse(_brush, x1 * _mulX - size / 2, y1 * _mulY - size / 2, size, size)
         End SyncLock
     End Sub
 
@@ -145,8 +143,7 @@ Public Class DisplayGraphics
         SyncLock Me
             If width <= 0 Then width = DefaultWidth
             If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
-            _graphics.DrawEllipse(_pen, x1 * _mulX, y1 * _mulY,
-                                         radius * _mulX, radius * _mulX)
+            _graphics.DrawEllipse(_pen, x1 * _mulX, y1 * _mulY, radius * _mulX, radius * _mulX)
         End SyncLock
     End Sub
 
@@ -160,7 +157,6 @@ Public Class DisplayGraphics
 
     Public Sub DrawText(color As Color, textObj As TextObject)
         SyncLock Me
-
             If _brush.Color <> color Then _brush = New SolidBrush(color)
             If _font.Size <> textObj.Size * _mulX Then _font = New Font(FontFamily.GenericSansSerif, textObj.Size * _mulX)
             _graphics.DrawString(textObj.Text, _font, _brush, textObj.Point1.X * _mulX, textObj.Point1.Y * _mulY)
@@ -178,7 +174,7 @@ Public Class DisplayGraphics
             If poligon.Points.Count > 2 And poligon.IsClosed Then
                 Dim last = poligon.Points.Count - 1
                 _graphics.DrawLine(_pen, poligon.Points(last).X * _mulX, poligon.Points(last).Y * _mulY,
-                                      poligon.Points(0).X * _mulX, poligon.Points(0).Y * _mulY)
+                                         poligon.Points(0).X * _mulX, poligon.Points(0).Y * _mulY)
             End If
         End SyncLock
     End Sub
@@ -187,17 +183,17 @@ Public Class DisplayGraphics
         If GetType(Vector).IsAssignableFrom(obj.GetType) Then
             Dim vector As Vector = obj
             DrawVector(color, vector.Point1.X, vector.Point1.Y, vector.Point2.X, vector.Point2.Y)
-        ElseIf GetType(Polygon).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(Polygon).IsAssignableFrom(obj.GetType) Then
             DrawPoligon(color, obj, lineWidth)
-        ElseIf GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType) Then
             DrawPoint(color, obj.x, obj.y, pointSize)
-        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType) Or GetType(RectangleC).IsAssignableFrom(obj.GetType) Or GetType(Rectangle).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType) Or GetType(RectangleC).IsAssignableFrom(obj.GetType) Or GetType(Rectangle).IsAssignableFrom(obj.GetType) Then
             DrawRectangle(color, obj, lineWidth)
-        ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType) Then
             DrawBitmap(obj)
-        ElseIf GetType(Bitmap).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(Bitmap).IsAssignableFrom(obj.GetType) Then
             DrawBitmap(obj, 0, 0, 1, 1)
-        ElseIf GetType(TextObject).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(TextObject).IsAssignableFrom(obj.GetType) Then
             DrawText(color, obj)
         End If
     End Sub
@@ -241,22 +237,22 @@ Public Class DisplayGraphics
             Dim sx = DefaultPointSize * 2 / _mulX
             Dim bound = New RectangleF(px - sx / 2, py - sx / 2, sx, sx)
             Return ExtendRectangleAtLineWidth(bound)
-        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType) Then
             Dim bound = DirectCast(obj, RectangleF)
             Return ExtendRectangleAtLineWidth(bound)
-        ElseIf GetType(Rectangle).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(Rectangle).IsAssignableFrom(obj.GetType) Then
             Dim bound = DirectCast(obj, Rectangle)
             Return ExtendRectangleAtLineWidth(bound)
         ElseIf GetType(Polygon).IsAssignableFrom(obj.GetType) Then
             Dim bound = DirectCast(obj, Polygon).GetBoundRectangleF
             Return ExtendRectangleAtLineWidth(bound)
-        ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType) Then
             Dim bound = DirectCast(obj, BitmapObject).RectangleF
             Return ExtendRectangleAtLineWidth(bound)
-        ElseIf GetType(Bitmap).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(Bitmap).IsAssignableFrom(obj.GetType) Then
             Dim bound = New RectangleF(0, 0, 1, 1)
             Return ExtendRectangleAtLineWidth(bound)
-        ElseIf GetType(TextObject).IsAssignableFrom(obj.GetType)
+        ElseIf GetType(TextObject).IsAssignableFrom(obj.GetType) Then
             Dim bound = New RectangleF(DirectCast(obj, TextObject).Point1, New SizeF(0.1, 0.1))
             Return ExtendRectangleAtLineWidth(bound)
         End If
@@ -277,19 +273,18 @@ Public Class DisplayGraphics
         _graphics = graphics
         _width = width
         _height = height
-        If Quality = QualityMode.fast Then
+        If Quality = QualityMode.Fast Then
             _graphics.SmoothingMode = Drawing2D.SmoothingMode.None
             _graphics.InterpolationMode = Drawing2D.InterpolationMode.NearestNeighbor
             _graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half
-
         End If
         ComputeMultipliers()
     End Sub
 
-    Public Property Quality As QualityMode = QualityMode.fast
+    Public Property Quality As QualityMode = QualityMode.Fast
 
     Public Enum QualityMode
-        normal
-        fast
+        Normal
+        Fast
     End Enum
 End Class
