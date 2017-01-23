@@ -91,17 +91,6 @@ Public Class BitmapConverter
             Return result
         End Function
 
-        Public Sub LoadGrayMatrixFast(matrix As GrayMatrix)
-            _channels = 1
-            _width = matrix.Width
-            _height = matrix.Height
-            ReDim _rawBytes(_width * _height - 1)
-            Dim matrixGray = matrix.Gray
-            For i = 0 To _width * _height - 1
-                _rawBytes(i) = matrixGray(i) And &HFF
-            Next
-        End Sub
-
         Public Sub LoadGrayMatrixWithLimiter(matrix As GrayMatrix)
             _channels = 1
             _width = matrix.Width
@@ -113,26 +102,6 @@ Public Class BitmapConverter
                 If pixel < 0 Then pixel = 0
                 If pixel > 255 Then pixel = 255
                 _rawBytes(i) = pixel
-            Next
-        End Sub
-
-        Public Sub LoadRGBMatrixFast(matrix As RGBMatrix)
-            _channels = 3
-            _width = matrix.Width
-            _height = matrix.Height
-            ReDim _rawBytes(_width * _height * 3 - 1)
-            Dim matrixRed = matrix.Red
-            Dim matrixGreen = matrix.Green
-            Dim matrixBlue = matrix.Blue
-            Dim i, x, y As Integer
-            For y = 0 To _height - 1
-                Dim offset = _width * y
-                For x = 0 To _width - 1
-                    i = x + offset
-                    _rawBytes(i * 3 + 2) = matrixRed(i) And &HFF
-                    _rawBytes(i * 3 + 1) = matrixGreen(i) And &HFF
-                    _rawBytes(i * 3) = matrixBlue(i) And &HFF
-                Next
             Next
         End Sub
 
@@ -193,23 +162,15 @@ Public Class BitmapConverter
         Return processor.GetRGBMatrix
     End Function
 
-    Public Shared Function GrayMatrixToBitmap(matrix As GrayMatrix, Optional useLimiter As Boolean = False) As Bitmap
+    Public Shared Function GrayMatrixToBitmap(matrix As GrayMatrix) As Bitmap
         Dim processor As New BitmapOperations
-        If useLimiter Then
-            processor.LoadGrayMatrixWithLimiter(matrix)
-        Else
-            processor.LoadGrayMatrixFast(matrix)
-        End If
+        processor.LoadGrayMatrixWithLimiter(matrix)
         Return processor.GetBitmap
     End Function
 
     Public Shared Function RGBMatrixToBitmap(matrix As RGBMatrix, Optional useLimiter As Boolean = False) As Bitmap
         Dim processor As New BitmapOperations
-        If useLimiter Then
-            processor.LoadRGBMatrixWithLimiter(matrix)
-        Else
-            processor.LoadRGBMatrixFast(matrix)
-        End If
+        processor.LoadRGBMatrixWithLimiter(matrix)
         Return processor.GetBitmap
     End Function
 

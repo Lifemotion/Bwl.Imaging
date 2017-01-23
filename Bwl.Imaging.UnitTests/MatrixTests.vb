@@ -1,6 +1,4 @@
 ﻿Imports System.Drawing
-Imports System.Text
-Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
 <TestClass()> Public Class MatrixTests
 

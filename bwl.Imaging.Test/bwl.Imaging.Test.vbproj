@@ -117,20 +117,20 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj">
-      <Project>{cf1ba304-7402-46b4-9d06-ab226bc72293}</Project>
-      <Name>Bwl.Imaging.WinForms</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\bwl.Imaging\Bwl.Imaging.vbproj">
-      <Project>{33e5778d-caa3-42b6-b144-9ae1da4a00b3}</Project>
-      <Name>Bwl.Imaging</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="mOABkQ1wC1Q.jpg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="rapp-client-gui.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj">
+      <Project>{cf1ba304-7402-46b4-9d06-ab226bc72293}</Project>
+      <Name>Bwl.Imaging.WinForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.vbproj">
+      <Project>{33e5778d-caa3-42b6-b144-9ae1da4a00b3}</Project>
+      <Name>Bwl.Imaging</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
