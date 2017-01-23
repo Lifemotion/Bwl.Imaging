@@ -17,27 +17,12 @@
         Next
     End Sub
 
-    Public Property MatrixPixel(channel As Integer, x As Integer, y As Integer) As Integer
-        Get
-            Return _matrices(channel)(x + y * Width)
-        End Get
-        Set(value As Integer)
-            _matrices(channel)(x + y * Width) = value
-        End Set
-    End Property
-
-    Public ReadOnly Property Matrix(channel As Integer) As Integer()
-        Get
-            Return _matrices(channel)
-        End Get
-    End Property
-
     Public Sub New(matrices As IEnumerable(Of Integer()), width As Integer, height As Integer)
         If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
         If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
         _width = width
         _height = height
-        _height = matrices(0).Length / width
+        _height = matrices(0).Length \ width
         _matrices = New List(Of Integer())
 
         For Each mtr In matrices
@@ -46,25 +31,49 @@
         Next
     End Sub
 
-    Public Function FitX(x As Integer) As Integer
-        If x < 0 Then x = 0
-        If x >= Width Then x = Width - 1
-        Return x
-    End Function
+    Public Sub New(matrices As IEnumerable(Of Double()), width As Integer, height As Integer)
+        If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
+        If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
+        _width = width
+        _height = height
+        _matrices = New List(Of Integer())
 
-    Public Function FitY(y As Integer) As Integer
-        If y < 0 Then y = 0
-        If y >= Height Then y = Height - 1
-        Return y
-    End Function
+        For Each mtr In matrices
+            If mtr.Length <> width * height Then Throw New Exception("all matrices must have width*height elements")
+            Dim channel(mtr.Length - 1) As Integer
 
-    Public Function HalfWidth() As Integer
-        Return Width \ 2
-    End Function
+            For i = 0 To mtr.Length - 1
+                Dim pixel As Double = mtr(i)
+                If pixel < Integer.MinValue OrElse pixel > Integer.MaxValue Then
+                    Throw New Exception("matrice element is out of integer's range")
+                End If
+                channel(i) = pixel
+            Next
+            _matrices.Add(channel)
+        Next
+    End Sub
 
-    Public Function HalfHeight() As Integer
-        Return Height \ 2
-    End Function
+    Public Sub New(matrices As IEnumerable(Of Integer()), width As Integer, height As Integer, multiplier As Double)
+        If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
+        If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
+        _width = width
+        _height = height
+        _matrices = New List(Of Integer())
+
+        For Each mtr In matrices
+            If mtr.Length <> width * height Then Throw New Exception("all matrices must have width*height elements")
+            Dim channel(mtr.Length - 1) As Integer
+
+            For i = 0 To mtr.Length - 1
+                Dim pixel As Double = mtr(i) * multiplier
+                If pixel < Integer.MinValue OrElse pixel > Integer.MaxValue Then
+                    Throw New Exception("matrice element is out of integer's range after multiplier")
+                End If
+                channel(i) = pixel
+            Next
+            _matrices.Add(channel)
+        Next
+    End Sub
 
     Public Sub New(matrices As IEnumerable(Of Double()), width As Integer, height As Integer, multiplier As Double)
         If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
@@ -87,6 +96,41 @@
             _matrices.Add(channel)
         Next
     End Sub
+
+    Public Property MatrixPixel(channel As Integer, x As Integer, y As Integer) As Integer
+        Get
+            Return _matrices(channel)(x + y * Width)
+        End Get
+        Set(value As Integer)
+            _matrices(channel)(x + y * Width) = value
+        End Set
+    End Property
+
+    Public ReadOnly Property Matrix(channel As Integer) As Integer()
+        Get
+            Return _matrices(channel)
+        End Get
+    End Property
+
+    Public Function FitX(x As Integer) As Integer
+        If x < 0 Then x = 0
+        If x >= Width Then x = Width - 1
+        Return x
+    End Function
+
+    Public Function FitY(y As Integer) As Integer
+        If y < 0 Then y = 0
+        If y >= Height Then y = Height - 1
+        Return y
+    End Function
+
+    Public Function HalfWidth() As Integer
+        Return Width \ 2
+    End Function
+
+    Public Function HalfHeight() As Integer
+        Return Height \ 2
+    End Function
 
     Public ReadOnly Property Width As Integer
         Get

@@ -1,16 +1,24 @@
 ﻿Public Class RGBFloatMatrix
     Inherits CommonFloatMatrix
 
+    Sub New(width As Integer, height As Integer)
+        MyBase.New(3, width, height)
+    End Sub
+
     Sub New(red() As Double, green() As Double, blue() As Double, width As Integer, height As Integer)
         MyBase.New({red, green, blue}, width, height)
     End Sub
 
-    Sub New(red() As Integer, green() As Integer, blue() As Integer, width As Integer, height As Integer, multiplier As Double)
+    Sub New(red() As Integer, green() As Integer, blue() As Integer, width As Integer, height As Integer)
+        MyBase.New({red, green, blue}, width, height)
+    End Sub
+
+    Sub New(red() As Double, green() As Double, blue() As Double, width As Integer, height As Integer, multiplier As Double)
         MyBase.New({red, green, blue}, width, height, multiplier)
     End Sub
 
-    Sub New(width As Integer, height As Integer)
-        MyBase.New(3, width, height)
+    Sub New(red() As Integer, green() As Integer, blue() As Integer, width As Integer, height As Integer, multiplier As Double)
+        MyBase.New({red, green, blue}, width, height, multiplier)
     End Sub
 
     Public Property RedPixel(x As Integer, y As Integer) As Double
@@ -68,5 +76,15 @@
             gray(i) = Red(i) * 0.222 + Green(i) * 0.707 + Blue(i) * 0.071
         Next
         Return New GrayFloatMatrix(gray, Width, Height)
+    End Function
+
+    Public Overloads Function ResizeTwo() As RGBFloatMatrix
+        Dim resized = MyBase.ResizeTwo()
+        Return New RGBFloatMatrix(resized.Matrix(0), resized.Matrix(1), resized.Matrix(2), resized.Width, resized.Height)
+    End Function
+
+    Public Overloads Function ResizeHalf() As RGBFloatMatrix
+        Dim resized = MyBase.ResizeHalf()
+        Return New RGBFloatMatrix(resized.Matrix(0), resized.Matrix(1), resized.Matrix(2), resized.Width, resized.Height)
     End Function
 End Class

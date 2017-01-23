@@ -17,27 +17,12 @@
         Next
     End Sub
 
-    Public Property MatrixPixel(channel As Integer, x As Integer, y As Integer) As Double
-        Get
-            Return _matrices(channel)(x + y * Width)
-        End Get
-        Set(value As Double)
-            _matrices(channel)(x + y * Width) = value
-        End Set
-    End Property
-
-    Public ReadOnly Property Matrix(channel As Integer) As Double()
-        Get
-            Return _matrices(channel)
-        End Get
-    End Property
-
     Public Sub New(matrices As IEnumerable(Of Double()), width As Integer, height As Integer)
         If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
         If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
         _width = width
         _height = height
-        _height = matrices(0).Length / width
+        _height = matrices(0).Length \ width
         _matrices = New List(Of Double())
 
         For Each mtr In matrices
@@ -46,27 +31,7 @@
         Next
     End Sub
 
-    Public Function FitX(x As Integer) As Integer
-        If x < 0 Then x = 0
-        If x >= Width Then x = Width - 1
-        Return x
-    End Function
-
-    Public Function FitY(y As Integer) As Integer
-        If y < 0 Then y = 0
-        If y >= Height Then y = Height - 1
-        Return y
-    End Function
-
-    Public Function HalfWidth() As Integer
-        Return Width \ 2
-    End Function
-
-    Public Function HalfHeight() As Integer
-        Return Height \ 2
-    End Function
-
-    Public Sub New(matrices As IEnumerable(Of Integer()), width As Integer, height As Integer, multiplier As Double)
+    Public Sub New(matrices As IEnumerable(Of Integer()), width As Integer, height As Integer)
         If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
         If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
         _width = width
@@ -78,7 +43,7 @@
             Dim channel(mtr.Length - 1) As Double
 
             For i = 0 To mtr.Length - 1
-                Dim pixel As Double = mtr(i) * multiplier
+                Dim pixel As Double = mtr(i)
                 channel(i) = pixel
             Next
             _matrices.Add(channel)
@@ -103,6 +68,60 @@
             _matrices.Add(channel)
         Next
     End Sub
+
+    Public Sub New(matrices As IEnumerable(Of Integer()), width As Integer, height As Integer, multiplier As Double)
+        If matrices Is Nothing Then Throw New ArgumentException("matrices must not be null")
+        If matrices.Count = 0 Then Throw New ArgumentException("matrices must contain at least one matrix")
+        _width = width
+        _height = height
+        _matrices = New List(Of Double())
+
+        For Each mtr In matrices
+            If mtr.Length <> width * height Then Throw New Exception("all matrices must have width*height elements")
+            Dim channel(mtr.Length - 1) As Double
+
+            For i = 0 To mtr.Length - 1
+                Dim pixel As Double = mtr(i) * multiplier
+                channel(i) = pixel
+            Next
+            _matrices.Add(channel)
+        Next
+    End Sub
+
+    Public Property MatrixPixel(channel As Integer, x As Integer, y As Integer) As Double
+        Get
+            Return _matrices(channel)(x + y * Width)
+        End Get
+        Set(value As Double)
+            _matrices(channel)(x + y * Width) = value
+        End Set
+    End Property
+
+    Public ReadOnly Property Matrix(channel As Integer) As Double()
+        Get
+            Return _matrices(channel)
+        End Get
+    End Property
+
+    Public Function FitX(x As Integer) As Integer
+        If x < 0 Then x = 0
+        If x >= Width Then x = Width - 1
+        Return x
+    End Function
+
+    Public Function FitY(y As Integer) As Integer
+        If y < 0 Then y = 0
+        If y >= Height Then y = Height - 1
+        Return y
+    End Function
+
+    Public Function HalfWidth() As Integer
+        Return Width \ 2
+    End Function
+
+    Public Function HalfHeight() As Integer
+        Return Height \ 2
+    End Function
 
     Public ReadOnly Property Width As Integer
         Get
@@ -158,27 +177,27 @@
         Return result
     End Function
 
-    Public Overridable Function Clone() As CommonMatrix
+    Public Overridable Function Clone() As CommonFloatMatrix
         Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(CloneMatrix(mtr))
         Next
-        Return New CommonMatrix(list, Width, Height)
+        Return New CommonFloatMatrix(list, Width, Height)
     End Function
 
-    Public Overridable Function ResizeTwo() As CommonMatrix
+    Public Overridable Function ResizeTwo() As CommonFloatMatrix
         Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(ResizeMatrixTwo(mtr))
         Next
-        Return New CommonMatrix(list, Width * 2, Height * 2)
+        Return New CommonFloatMatrix(list, Width * 2, Height * 2)
     End Function
 
-    Public Overridable Function ResizeHalf() As CommonMatrix
+    Public Overridable Function ResizeHalf() As CommonFloatMatrix
         Dim list As New List(Of Double())
         For Each mtr In _matrices
             list.Add(ResizeMatrixHalf(mtr))
         Next
-        Return New CommonMatrix(list, Width \ 2, Height \ 2)
+        Return New CommonFloatMatrix(list, Width \ 2, Height \ 2)
     End Function
 End Class

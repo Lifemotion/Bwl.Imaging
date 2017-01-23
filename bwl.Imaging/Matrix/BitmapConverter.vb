@@ -153,25 +153,25 @@ Public Class BitmapConverter
     Public Shared Function BitmapToGrayMatrix(bitmap As Bitmap) As GrayMatrix
         Dim processor As New BitmapOperations
         processor.LoadBitmap(bitmap)
-        Return processor.GetGrayMatrix
+        Return processor.GetGrayMatrix()
     End Function
 
     Public Shared Function BitmapToRGBMatrix(bitmap As Bitmap) As RGBMatrix
         Dim processor As New BitmapOperations
         processor.LoadBitmap(bitmap)
-        Return processor.GetRGBMatrix
+        Return processor.GetRGBMatrix()
     End Function
 
     Public Shared Function GrayMatrixToBitmap(matrix As GrayMatrix) As Bitmap
         Dim processor As New BitmapOperations
         processor.LoadGrayMatrixWithLimiter(matrix)
-        Return processor.GetBitmap
+        Return processor.GetBitmap()
     End Function
 
     Public Shared Function RGBMatrixToBitmap(matrix As RGBMatrix, Optional useLimiter As Boolean = False) As Bitmap
         Dim processor As New BitmapOperations
         processor.LoadRGBMatrixWithLimiter(matrix)
-        Return processor.GetBitmap
+        Return processor.GetBitmap()
     End Function
 
     Private Shared Function GetGrayScalePalette() As ColorPalette
