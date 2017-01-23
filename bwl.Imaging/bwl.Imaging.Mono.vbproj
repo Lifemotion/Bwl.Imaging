@@ -36,6 +36,7 @@
     <DocumentationFile>Bwl.Imaging.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
     <Prefer32Bit>false</Prefer32Bit>
+    <RemoveIntegerChecks>true</RemoveIntegerChecks>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
@@ -54,52 +55,33 @@
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
     <Import Include="System" />
     <Import Include="System.Collections" />
     <Import Include="System.Collections.Generic" />
+    <Import Include="System.Diagnostics" />
     <Import Include="System.Drawing" />
     <Import Include="System.Drawing.Imaging" />
     <Import Include="System.Linq" />
-    <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Display\Objects\DisplayObjectsControl.Designer.vb">
-      <DependentUpon>DisplayObjectsControl.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Display\Objects\DisplayObjectsControl.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Display\Objects\DisplayObject.vb" />
-    <Compile Include="Display\Bitmap\DisplayGraphics.vb" />
-    <Compile Include="Display\Bitmap\DisplayBitmap.vb" />
-    <Compile Include="Display\Objects\BitmapObject.vb" />
-    <Compile Include="Display\Objects\ParametersDictionary.vb" />
-    <Compile Include="FloatMatrix\CommonFloatMatrix.vb" />
-    <Compile Include="FloatMatrix\GrayFloatMatrix.vb" />
-    <Compile Include="FloatMatrix\RGBFloatMatrix.vb" />
+    <Compile Include="Matrix\FloatMatrix\CommonFloatMatrix.vb" />
+    <Compile Include="Matrix\FloatMatrix\GrayFloatMatrix.vb" />
+    <Compile Include="Matrix\FloatMatrix\RGBFloatMatrix.vb" />
     <Compile Include="Matrix\CommonMatrix.vb" />
     <Compile Include="Matrix\RGBMatrix.vb" />
-    <Compile Include="PointClass\PointC.vb" />
-    <Compile Include="Polygon\Line.vb" />
+    <Compile Include="Geometry\ParametersDictionary.vb" />
+    <Compile Include="Geometry\Point\PointC.vb" />
+    <Compile Include="Geometry\Polygon\Line.vb" />
     <Compile Include="Matrix\BitmapConverter.vb" />
     <Compile Include="Matrix\GrayMatrix.vb" />
-    <Compile Include="Display\Bitmap\DisplayBitmapControl.Designer.vb">
-      <DependentUpon>DisplayBitmapControl.vb</DependentUpon>
-    </Compile>
-    <Compile Include="Display\Bitmap\DisplayBitmapControl.vb">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Display\Objects\TextObject.vb" />
-    <Compile Include="Polygon\Polygon.vb" />
-    <Compile Include="PointClass\RectangleC.vb" />
-    <Compile Include="Polygon\Tetragon.vb" />
-    <Compile Include="Polygon\Vector.vb" />
-    <Compile Include="Tools\Extensions.vb" />
+    <Compile Include="Geometry\Polygon\Polygon.vb" />
+    <Compile Include="Geometry\Point\RectangleC.vb" />
+    <Compile Include="Geometry\Polygon\Tetragon.vb" />
+    <Compile Include="Geometry\Polygon\Vector.vb" />
+    <Compile Include="MatrixProcessing\Extensions.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -115,21 +97,18 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Processing\BrightnessStats.vb" />
-    <Compile Include="Processing\Filters.vb" />
+    <Compile Include="MatrixProcessing\BrightnessStats.vb" />
+    <Compile Include="MatrixProcessing\Filters.vb" />
+    <Compile Include="MatrixProcessing\ImagingMath.vb" />
+    <Compile Include="MatrixProcessing\MatrixTools.vb" />
+    <Compile Include="GeometryProcessing\VectorTools.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Display\Objects\DisplayObjectsControl.resx">
-      <DependentUpon>DisplayObjectsControl.vb</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
       <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Display\Bitmap\DisplayBitmapControl.resx">
-      <DependentUpon>DisplayBitmapControl.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -146,9 +125,7 @@
   <ItemGroup>
     <Service Include="{94E38DFF-614B-4CBD-B67C-F211BB35CE8B}" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Capture\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

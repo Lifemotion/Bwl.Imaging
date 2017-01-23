@@ -1,37 +1,38 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7BF41D8B-B121-49C3-AF64-6182A227CD78}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
-    <RootNamespace>bwl.Imaging.Test</RootNamespace>
-    <AssemblyName>bwl.Imaging.Test</AssemblyName>
+    <ProjectGuid>{CF1BA304-7402-46B4-9D06-AB226BC72293}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <StartupObject>
+    </StartupObject>
+    <RootNamespace>Bwl.Imaging</RootNamespace>
+    <AssemblyName>Bwl.Imaging.WinForms</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>WindowsForms</MyType>
+    <MyType>Windows</MyType>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Debug-mono\</OutputPath>
-    <DocumentationFile>bwl.Imaging.Test.xml</DocumentationFile>
+    <OutputPath>..\debug\dll-mono\</OutputPath>
+    <DocumentationFile>Bwl.Imaging.WinForms.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <DefineDebug>false</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release-mono\</OutputPath>
-    <DocumentationFile>bwl.Imaging.Test.xml</DocumentationFile>
+    <OutputPath>..\release\dll-mono\</OutputPath>
+    <DocumentationFile>Bwl.Imaging.WinForms.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <OptionExplicit>On</OptionExplicit>
@@ -45,16 +46,11 @@
   <PropertyGroup>
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>bwl.Imaging.Test.My.MyApplication</StartupObject>
-  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
     <Import Include="Microsoft.VisualBasic" />
@@ -65,15 +61,26 @@
     <Import Include="System.Drawing" />
     <Import Include="System.Linq" />
     <Import Include="System.Threading.Tasks" />
+    <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Serializer.vb" />
-    <Compile Include="TestForm.designer.vb">
-      <DependentUpon>TestForm.vb</DependentUpon>
+    <Compile Include="Bitmap\DisplayBitmap.vb" />
+    <Compile Include="Bitmap\DisplayBitmapControl.Designer.vb">
+      <DependentUpon>DisplayBitmapControl.vb</DependentUpon>
     </Compile>
-    <Compile Include="TestForm.vb">
-      <SubType>Form</SubType>
+    <Compile Include="Bitmap\DisplayBitmapControl.vb">
+      <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Bitmap\DisplayGraphics.vb" />
+    <Compile Include="Objects\BitmapObject.vb" />
+    <Compile Include="Objects\DisplayObject.vb" />
+    <Compile Include="Objects\DisplayObjectsControl.Designer.vb">
+      <DependentUpon>DisplayObjectsControl.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Objects\DisplayObjectsControl.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Objects\TextObject.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -91,8 +98,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="TestForm.resx">
-      <DependentUpon>TestForm.vb</DependentUpon>
+    <EmbeddedResource Include="Bitmap\DisplayBitmapControl.resx">
+      <DependentUpon>DisplayBitmapControl.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Objects\DisplayObjectsControl.resx">
+      <DependentUpon>DisplayObjectsControl.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
@@ -113,10 +123,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.Mono.vbproj">
-      <Project>{cf1ba304-7402-46b4-9d06-ab226bc72293}</Project>
-      <Name>Bwl.Imaging.WinForms.Mono</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.Mono.vbproj">
       <Project>{33e5778d-caa3-42b6-b144-9ae1da4a00b3}</Project>
       <Name>Bwl.Imaging.Mono</Name>
