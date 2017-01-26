@@ -80,6 +80,7 @@
     <Compile Include="Geometry\Polygon\Tetragon.vb" />
     <Compile Include="Geometry\Polygon\Vector.vb" />
     <Compile Include="MatrixProcessing\Extensions.vb" />
+    <Compile Include="MatrixProcessing\MoveDetector.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
