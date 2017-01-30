@@ -151,7 +151,7 @@
     End Function
 
     Public Function ResizeMatrixHalf(matrix As Integer()) As Integer()
-        Dim result(_width * _height \ 4 - 1) As Integer
+        Dim result((_width \ 2) * (_height \ 2) - 1) As Integer
         For y = 0 To _height \ 2 - 1
             Dim lineOffset1 = y * 2 * _width
             Dim lineOffset2 = (y * 2 + 1) * _width
@@ -170,7 +170,7 @@
     End Function
 
     Public Function ResizeMatrixTwo(matrix As Integer()) As Integer()
-        Dim result(_width * _height * 4 - 1) As Integer
+        Dim result((_width * 2) * (_height * 2) - 1) As Integer
         For y = 0 To Height - 1
             Dim lineOffset1 = (y * 2) * _width * 2
             Dim lineOffset2 = (y * 2 + 1) * _width * 2
