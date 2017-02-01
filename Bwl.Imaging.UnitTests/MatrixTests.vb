@@ -200,4 +200,44 @@
             Next
         Next
     End Sub
+
+    <TestMethod()> Public Sub MatrixAlignAndCropTestGray()
+        Dim bmpGray = New Bitmap(My.Resources._4x3_gray, New Size(7, 5))
+        Dim matrixGray = BitmapConverter.BitmapToGrayMatrix(bmpGray)
+        Dim matrixGrayAligned = MatrixTools.GrayMatrixAlign4(matrixGray)
+        Dim matrixGrayCropped = MatrixTools.GrayMatrixSubRect(matrixGrayAligned, New Rectangle(0, 0, matrixGray.Width, matrixGray.Height))
+        If matrixGray.Width <> matrixGrayCropped.Width AndAlso matrixGray.Height <> matrixGrayCropped.Height Then
+            Throw New Exception("matrixGray.Width <> matrixGrayCropped.Width AndAlso matrixGray.Height <> matrixGrayCropped.Height")
+        End If
+        For y = 0 To matrixGray.Height - 1
+            For x = 0 To matrixGray.Width - 1
+                If matrixGray.GrayPixel(x, y) <> matrixGrayCropped.GrayPixel(x, y) Then
+                    Throw New Exception("matrixGray.GrayPixel(x, y) <> matrixGrayCropped.GrayPixel(x, y)")
+                End If
+            Next
+        Next
+    End Sub
+
+    <TestMethod()> Public Sub MatrixAlignAndCropTestRgb()
+        Dim bmpRgb = New Bitmap(My.Resources._4x3_rgb, New Size(7, 5))
+        Dim matrixRgb = BitmapConverter.BitmapToRGBMatrix(bmpRgb)
+        Dim matrixRgbAligned = MatrixTools.RGBMatrixAlign4(matrixRgb)
+        Dim matrixRGBCropped = MatrixTools.RGBMatrixSubRect(matrixRgbAligned, New Rectangle(0, 0, matrixRgb.Width, matrixRgb.Height))
+        If matrixRgb.Width <> matrixRGBCropped.Width AndAlso matrixRgb.Height <> matrixRGBCropped.Height Then
+            Throw New Exception("matrixGray.Width <> matrixGrayCropped.Width AndAlso matrixGray.Height <> matrixGrayCropped.Height")
+        End If
+        For y = 0 To matrixRgb.Height - 1
+            For x = 0 To matrixRgb.Width - 1
+                If matrixRgb.RedPixel(x, y) <> matrixRGBCropped.RedPixel(x, y) Then
+                    Throw New Exception("matrixGray.GrayPixel(x, y) <> matrixGrayCropped.GrayPixel(x, y)")
+                End If
+                If matrixRgb.GreenPixel(x, y) <> matrixRGBCropped.GreenPixel(x, y) Then
+                    Throw New Exception("matrixRgb.GreenPixel(x, y) <> matrixRGBCropped.GreenPixel(x, y)")
+                End If
+                If matrixRgb.BluePixel(x, y) <> matrixRGBCropped.BluePixel(x, y) Then
+                    Throw New Exception("matrixRgb.BluePixel(x, y) <> matrixRGBCropped.BluePixel(x, y)")
+                End If
+            Next
+        Next
+    End Sub
 End Class
