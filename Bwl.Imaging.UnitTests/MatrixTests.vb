@@ -240,4 +240,104 @@
             Next
         Next
     End Sub
+
+    <TestMethod()> Public Sub MatrixCropTestGray()
+        Dim bmpGray = New Bitmap(My.Resources._4x3_gray, New Size(9, 7))
+        Dim testRect = New Rectangle(3, 3, 4, 3)
+        Dim bmpGrayCroppedEthalon = bmpGray.Clone(testRect, Drawing.Imaging.PixelFormat.DontCare)
+        Dim bmpGrayCroppedEthalonMatrix = BitmapConverter.BitmapToGrayMatrix(bmpGrayCroppedEthalon)
+        Dim matrixGray = BitmapConverter.BitmapToGrayMatrix(bmpGray)
+        Dim matrixGrayCropped = MatrixTools.GrayMatrixSubRect(matrixGray, testRect)
+        If matrixGrayCropped.Width <> bmpGrayCroppedEthalonMatrix.Width AndAlso matrixGrayCropped.Height <> bmpGrayCroppedEthalonMatrix.Height Then
+            Throw New Exception("matrixGrayCropped.Width <> bmpGrayCroppedEthalonMatrix.Width AndAlso matrixGrayCropped.Height <> bmpGrayCroppedEthalonMatrix.Height")
+        End If
+        For y = 0 To matrixGrayCropped.Height - 1
+            For x = 0 To matrixGrayCropped.Width - 1
+                If matrixGrayCropped.GrayPixel(x, y) <> bmpGrayCroppedEthalonMatrix.GrayPixel(x, y) Then
+                    Throw New Exception("matrixGray.GrayPixel(x, y) <> matrixGrayCropped.GrayPixel(x, y)")
+                End If
+            Next
+        Next
+    End Sub
+
+    <TestMethod()> Public Sub MatrixCropTestRgb()
+        Dim bmpRgb = New Bitmap(My.Resources._4x3_rgb, New Size(9, 7))
+        Dim testRect = New Rectangle(3, 3, 4, 3)
+        Dim bmpRgbCroppedEthalon = bmpRgb.Clone(testRect, Drawing.Imaging.PixelFormat.DontCare)
+        Dim bmpRgbCroppedEthalonMatrix = BitmapConverter.BitmapToRGBMatrix(bmpRgbCroppedEthalon)
+        Dim matrixRgb = BitmapConverter.BitmapToRGBMatrix(bmpRgb)
+        Dim matrixRgbCropped = MatrixTools.RGBMatrixSubRect(matrixRgb, testRect)
+        If matrixRgbCropped.Width <> bmpRgbCroppedEthalonMatrix.Width AndAlso matrixRgbCropped.Height <> bmpRgbCroppedEthalonMatrix.Height Then
+            Throw New Exception("matrixRgbCropped.Width <> bmpRgbCroppedEthalonMatrix.Width AndAlso matrixRgbCropped.Height <> bmpRgbCroppedEthalonMatrix.Height")
+        End If
+        For y = 0 To matrixRgbCropped.Height - 1
+            For x = 0 To matrixRgbCropped.Width - 1
+                If matrixRgbCropped.RedPixel(x, y) <> bmpRgbCroppedEthalonMatrix.RedPixel(x, y) Then
+                    Throw New Exception("matrixRgbCropped.RedPixel(x, y) <> bmpRgbCroppedEthalonMatrix.RedPixel(x, y)")
+                End If
+                If matrixRgbCropped.GreenPixel(x, y) <> bmpRgbCroppedEthalonMatrix.GreenPixel(x, y) Then
+                    Throw New Exception("matrixRgbCropped.GreenPixel(x, y) <> bmpRgbCroppedEthalonMatrix.GreenPixel(x, y)")
+                End If
+                If matrixRgbCropped.BluePixel(x, y) <> bmpRgbCroppedEthalonMatrix.BluePixel(x, y) Then
+                    Throw New Exception("matrixRgbCropped.BluePixel(x, y) <> bmpRgbCroppedEthalonMatrix.BluePixel(x, y)")
+                End If
+            Next
+        Next
+    End Sub
+
+    <TestMethod()> Public Sub MatrixInverseTestGray()
+        Dim bmpGray = My.Resources._4x3_gray
+        Dim grayMatrix1 = BitmapConverter.BitmapToGrayMatrix(bmpGray)
+        Dim grayMatrix2 = grayMatrix1.Clone()
+        MatrixTools.InverseGray(grayMatrix2)
+        For y = 0 To grayMatrix1.Height - 1
+            For x = 0 To grayMatrix1.Width - 1
+                If grayMatrix1.GrayPixel(x, y) <> Byte.MaxValue - grayMatrix2.GrayPixel(x, y) Then
+                    Throw New Exception("grayMatrix1.GrayPixel(x, y) <> Byte.MaxValue - grayMatrix2.GrayPixel(x, y)")
+                End If
+            Next
+        Next
+        MatrixTools.InverseGray(grayMatrix2)
+        For y = 0 To grayMatrix1.Height - 1
+            For x = 0 To grayMatrix1.Width - 1
+                If grayMatrix1.GrayPixel(x, y) <> grayMatrix2.GrayPixel(x, y) Then
+                    Throw New Exception("grayMatrix1.GrayPixel(x, y) <> grayMatrix2.GrayPixel(x, y)")
+                End If
+            Next
+        Next
+    End Sub
+
+    <TestMethod()> Public Sub MatrixInverseTestRgb()
+        Dim bmpRgb = My.Resources._4x3_rgb
+        Dim rgbMatrix1 = BitmapConverter.BitmapToRGBMatrix(bmpRgb)
+        Dim rgbMatrix2 = rgbMatrix1.Clone()
+        MatrixTools.InverseRGB(rgbMatrix2)
+        For y = 0 To rgbMatrix1.Height - 1
+            For x = 0 To rgbMatrix1.Width - 1
+                If rgbMatrix1.RedPixel(x, y) <> Byte.MaxValue - rgbMatrix2.RedPixel(x, y) Then
+                    Throw New Exception("rgbMatrix1.RedPixel(x, y) <> Byte.MaxValue - rgbMatrix2.RedPixel(x, y)")
+                End If
+                If rgbMatrix1.GreenPixel(x, y) <> Byte.MaxValue - rgbMatrix2.GreenPixel(x, y) Then
+                    Throw New Exception("rgbMatrix1.GreenPixel(x, y) <> Byte.MaxValue - rgbMatrix2.GreenPixel(x, y)")
+                End If
+                If rgbMatrix1.BluePixel(x, y) <> Byte.MaxValue - rgbMatrix2.BluePixel(x, y) Then
+                    Throw New Exception("rgbMatrix1.BluePixel(x, y) <> Byte.MaxValue - rgbMatrix2.BluePixel(x, y)")
+                End If
+            Next
+        Next
+        MatrixTools.InverseRGB(rgbMatrix2)
+        For y = 0 To rgbMatrix1.Height - 1
+            For x = 0 To rgbMatrix1.Width - 1
+                If rgbMatrix1.RedPixel(x, y) <> rgbMatrix2.RedPixel(x, y) Then
+                    Throw New Exception("rgbMatrix1.RedPixel(x, y) <> rgbMatrix2.RedPixel(x, y)")
+                End If
+                If rgbMatrix1.GreenPixel(x, y) <> rgbMatrix2.GreenPixel(x, y) Then
+                    Throw New Exception("rgbMatrix1.GreenPixel(x, y) <> rgbMatrix2.GreenPixel(x, y)")
+                End If
+                If rgbMatrix1.BluePixel(x, y) <> rgbMatrix2.BluePixel(x, y) Then
+                    Throw New Exception("rgbMatrix1.BluePixel(x, y) <> rgbMatrix2.BluePixel(x, y)")
+                End If
+            Next
+        Next
+    End Sub
 End Class

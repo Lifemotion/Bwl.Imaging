@@ -9,10 +9,16 @@ Public Module MatrixTools
             Dim padding = 4 - img.Width Mod 4
             Dim paddingL = padding \ 2
             Dim result = New GrayMatrix(img.Width + padding, img.Height)
-            For x = 0 To img.Width - 1
-                For y = 0 To img.Height - 1
-                    result.GrayPixel(x + paddingL, y) = img.GrayPixel(x, y)
+            Dim imgGray = img.Gray
+            Dim resultGray = result.Gray
+            Dim offsetImg = 0
+            Dim offsetRes = 0
+            For y = 0 To img.Height - 1
+                For x = 0 To img.Width - 1
+                    resultGray(x + paddingL + offsetRes) = imgGray(x + offsetImg)
                 Next
+                offsetImg += img.Width
+                offsetRes += result.Width
             Next
             Return result
         Else
@@ -29,10 +35,16 @@ Public Module MatrixTools
             Dim paddingL = padding \ 2
             Dim result = New RGBMatrix(img.Width + padding, img.Height)
             Parallel.For(0, 3, Sub(channel As Integer)
-                                   For x = 0 To img.Width - 1
-                                       For y = 0 To img.Height - 1
-                                           result.MatrixPixel(channel, x + paddingL, y) = img.MatrixPixel(channel, x, y)
+                                   Dim imgMatrix = img.Matrix(channel)
+                                   Dim resultMatrix = result.Matrix(channel)
+                                   Dim offsetImg = 0
+                                   Dim offsetRes = 0
+                                   For y = 0 To img.Height - 1
+                                       For x = 0 To img.Width - 1
+                                           resultMatrix(x + paddingL + offsetRes) = imgMatrix(x + offsetImg)
                                        Next
+                                       offsetImg += img.Width
+                                       offsetRes += result.Width
                                    Next
                                End Sub)
             Return result
@@ -63,10 +75,16 @@ Public Module MatrixTools
     ''' </summary>
     Public Function GrayMatrixSubRect(img As GrayMatrix, rect As Rectangle) As GrayMatrix
         Dim result = New GrayMatrix(rect.Width, rect.Height)
-        For j = 0 To rect.Width - 1
-            For i = 0 To rect.Height - 1
-                result.GrayPixel(j, i) = img.GrayPixel(rect.X + j, rect.Y + i)
+        Dim imgGray = img.Gray
+        Dim resultGray = result.Gray
+        Dim offsetImg = rect.X + rect.Y * img.Width
+        Dim offsetRes = 0
+        For y = 0 To rect.Height - 1
+            For x = 0 To rect.Width - 1
+                resultGray(x + offsetRes) = imgGray(x + offsetImg)
             Next
+            offsetImg += img.Width
+            offsetRes += result.Width
         Next
         Return result
     End Function
@@ -77,10 +95,16 @@ Public Module MatrixTools
     Public Function RGBMatrixSubRect(img As RGBMatrix, rect As Rectangle) As RGBMatrix
         Dim result = New RGBMatrix(rect.Width, rect.Height)
         Parallel.For(0, 3, Sub(channel As Integer)
-                               For x = 0 To rect.Width - 1
-                                   For y = 0 To rect.Height - 1
-                                       result.MatrixPixel(channel, x, y) = img.MatrixPixel(channel, rect.X + x, rect.Y + y)
+                               Dim imgMatrix = img.Matrix(channel)
+                               Dim resultMatrix = result.Matrix(channel)
+                               Dim offsetImg = rect.X + rect.Y * img.Width
+                               Dim offsetRes = 0
+                               For y = 0 To rect.Height - 1
+                                   For x = 0 To rect.Width - 1
+                                       resultMatrix(x + offsetRes) = imgMatrix(x + offsetImg)
                                    Next
+                                   offsetImg += img.Width
+                                   offsetRes += result.Width
                                Next
                            End Sub)
         Return result
@@ -106,10 +130,13 @@ Public Module MatrixTools
     ''' Инверсия полутонового изображения
     ''' </summary>    
     Public Sub InverseGray(img As GrayMatrix)
-        For x = 0 To img.Width - 1
-            For y = 0 To img.Height - 1
-                img.GrayPixel(x, y) = Byte.MaxValue - img.GrayPixel(x, y)
+        Dim imgGray = img.Gray
+        Dim offset = 0
+        For y = 0 To img.Height - 1
+            For x = 0 To img.Width - 1
+                imgGray(x + offset) = Byte.MaxValue - imgGray(x + offset)
             Next
+            offset += img.Width
         Next
     End Sub
 
@@ -118,10 +145,13 @@ Public Module MatrixTools
     ''' </summary>
     Public Sub InverseRGB(img As RGBMatrix)
         Parallel.For(0, 3, Sub(channel As Integer)
-                               For x = 0 To img.Width - 1
-                                   For y = 0 To img.Height - 1
-                                       img.MatrixPixel(channel, x, y) = Byte.MaxValue - img.MatrixPixel(channel, x, y)
+                               Dim imgMatrix = img.Matrix(channel)
+                               Dim offset = 0
+                               For y = 0 To img.Height - 1
+                                   For x = 0 To img.Width - 1
+                                       imgMatrix(x + offset) = Byte.MaxValue - imgMatrix(x + offset)
                                    Next
+                                   offset += img.Width
                                Next
                            End Sub)
     End Sub
