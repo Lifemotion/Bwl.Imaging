@@ -65,13 +65,14 @@
         min = img.GrayPixel(0, 0)
         max = img.GrayPixel(0, 0)
         Dim imgGray = img.Gray
+        Dim offset = 0
         For y = 0 To img.Height - 1
-            Dim offset = y * img.Width
             For x = 0 To img.Width - 1
                 Dim val = imgGray(x + offset)
                 min = If(min < val, min, val)
                 max = If(max > val, max, val)
             Next
+            offset += img.Width
         Next
     End Sub
 End Module
