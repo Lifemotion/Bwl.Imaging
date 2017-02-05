@@ -42,7 +42,7 @@ Public Module Filters
         Dim imgGray = img.Gray
         Dim resGray = res.Gray
         Parallel.For(NR, res.Height - NR, Sub(y As Integer)
-                                              Dim median = New Byte((N * N) - 1) {}
+                                              Dim median = New Integer((N * N) - 1) {}
                                               Dim offset = y * img.Width
                                               For x = NR To res.Width - NR - 1
                                                   Dim k = 0

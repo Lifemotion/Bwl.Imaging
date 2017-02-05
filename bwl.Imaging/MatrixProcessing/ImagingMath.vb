@@ -61,7 +61,7 @@
     ''' <param name="img">Исходная матрица.</param>
     ''' <param name="min">Найденный минимум.</param>
     ''' <param name="max">Найденный максимум.</param>
-    Public Sub MinMax2D(img As GrayMatrix, ByRef min As Byte, ByRef max As Byte)
+    Public Sub MinMax2D(img As GrayMatrix, ByRef min As Integer, ByRef max As Integer)
         min = img.GrayPixel(0, 0)
         max = img.GrayPixel(0, 0)
         Dim imgGray = img.Gray
