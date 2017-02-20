@@ -174,7 +174,7 @@ namespace Bwl.Imaging.Unsafe
             }
         }
 
-        public static ulong BitmapHash(Bitmap srcBmp)
+        public static ulong BitmapHash(Bitmap srcBmp, int step)
         {
             if (srcBmp == null)
             {
@@ -184,13 +184,13 @@ namespace Bwl.Imaging.Unsafe
             {
                 int pixelSize = GetPixelSize(srcBmp.PixelFormat);
                 BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                long hash = 0;
+                ulong hash = 0;
                 unsafe
-                {
-                    byte* srcBytes = (byte*)srcBmd.Scan0;
-                    for (int i = 0; i < srcBmd.Width * srcBmd.Height * pixelSize; i++)
+                {                    
+                    ulong* srcLongs = (ulong*)srcBmd.Scan0;
+                    for (int i = 0; i < (srcBmd.Width * srcBmd.Height * pixelSize) / 8; i += step)
                     {
-                        Interlocked.Add(ref hash, (long)srcBytes[i]);
+                        hash += srcLongs[i];
                     }
                 }
                 srcBmp.UnlockBits(srcBmd);
