@@ -183,7 +183,7 @@ namespace Bwl.Imaging.Unsafe
                                 byte* m4 = srcScan4 + col;
                                 byte* t2 = trgtScan2 + col;
                                 double value = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
-                                               -0.1 * m2[0] +  1.8 * m2[2] + -0.1 * m2[4] +
+                                               -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
                                                -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
                                 value = value < 0 ? 0 : value;
                                 value = value > 255 ? 255 : value;
@@ -212,7 +212,7 @@ namespace Bwl.Imaging.Unsafe
             else
             {
                 throw new Exception("Unsupported pixel format");
-            }            
+            }
         }
 
         public static void NormalizeGray(Bitmap srcBmp, Bitmap trgtBmp)
@@ -279,8 +279,8 @@ namespace Bwl.Imaging.Unsafe
             lock (srcBmp)
             {
                 if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb) && (trgtBmp.PixelFormat == PixelFormat.Format8bppIndexed))
-                {                    
-                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);                    
+                {
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     trgtBmp.Palette = GetGrayScalePalette();
                     BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
                     int pixelSize = GetPixelSize(srcBmp.PixelFormat);
@@ -295,7 +295,8 @@ namespace Bwl.Imaging.Unsafe
                             {
                                 trgtBytes[i] = (byte)(0.071 * srcBytes[j] + 0.707 * srcBytes[j + 1] + 0.222 * srcBytes[j + 2]);
                             }
-                        } else
+                        }
+                        else
                         {
                             for (int row = 0; row < srcBmd.Height; row++)
                             {
@@ -327,7 +328,7 @@ namespace Bwl.Imaging.Unsafe
                 throw new Exception("srcBmp == null");
             }
             lock (srcBmp)
-            {                
+            {
                 BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                 Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
                 int pixelSize = GetPixelSize(srcBmp.PixelFormat);
@@ -346,6 +347,44 @@ namespace Bwl.Imaging.Unsafe
             }
         }
 
+        public static byte[] BitmapProbe(Bitmap srcBmp, int step)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            lock (srcBmp)
+            {
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+                {
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    int targetSize = (srcBmd.Width * srcBmd.Height) / step;
+                    byte[] trgtData = new byte[targetSize];
+                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    int t = 0;
+                    unsafe
+                    {
+                        byte* srcBytes = (byte*)srcBmd.Scan0;
+                        for (int row = 0; row < srcBmd.Height; row += step)
+                        {
+                            byte* rowBytes = srcBytes + row * srcBmd.Stride;
+                            for (int col = 0; col < srcBmd.Width; col += step * pixelSize)
+                            {
+                                int k = col * 3;
+                                trgtData[t++] = (byte)(0.071 * rowBytes[k] + 0.707 * rowBytes[k + 1] + 0.222 * rowBytes[k + 2]);
+                            }
+                        }
+                    }
+                    srcBmp.UnlockBits(srcBmd);
+                    return trgtData;
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
         public static ulong BitmapHash(Bitmap srcBmp, int step)
         {
             if (srcBmp == null)
@@ -353,16 +392,21 @@ namespace Bwl.Imaging.Unsafe
                 throw new Exception("srcBmp == null");
             }
             lock (srcBmp)
-            {                
+            {
                 BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                 int pixelSize = GetPixelSize(srcBmp.PixelFormat);
                 ulong hash = 0;
                 unsafe
                 {
-                    ulong* srcLongs = (ulong*)srcBmd.Scan0;
-                    for (int i = 0; i < (srcBmd.Stride * srcBmd.Height) / 8; i += step)
+                    byte* srcBytes = (byte*)srcBmd.Scan0;
+                    for (int row = 0; row < srcBmd.Height; row += step)
                     {
-                        hash += srcLongs[i];
+                        byte* rowBytes = srcBytes + row * srcBmd.Stride;
+                        for (int col = 0; col < srcBmd.Width; col += step * pixelSize)
+                        {
+                            int k = col * 3;
+                            hash += (byte)(0.071 * rowBytes[k] + 0.707 * rowBytes[k + 1] + 0.222 * rowBytes[k + 2]);
+                        }
                     }
                 }
                 srcBmp.UnlockBits(srcBmd);
