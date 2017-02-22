@@ -65,6 +65,7 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Matrix\BitmapOperations.vb" />
     <Compile Include="Matrix\FloatMatrix\CommonFloatMatrix.vb" />
     <Compile Include="Matrix\FloatMatrix\GrayFloatMatrix.vb" />
     <Compile Include="Matrix\FloatMatrix\RGBFloatMatrix.vb" />
