@@ -5,6 +5,7 @@ Public Class BitmapOperations
     Private _rawBytes As Byte()
     Private _width As Integer, _height As Integer
     Private _channels As Integer
+    Private _bytesGray2D As Integer()
 
     Public Property RawBytes() As Byte()
         Set(value As Byte())
@@ -51,18 +52,20 @@ Public Class BitmapOperations
 
     Public Function GetGrayMatrix() As GrayMatrix
         Dim result As GrayMatrix = Nothing
-        Dim bytesGray2D(_width * _height - 1) As Integer
+        If _bytesGray2D Is Nothing OrElse _bytesGray2D.Length <> (_width * _height) Then
+            ReDim _bytesGray2D(_width * _height - 1)
+        End If
         Select Case _channels
             Case 1
                 For i = 0 To _width * _height - 1
-                    bytesGray2D(i) = _rawBytes(i)
+                    _bytesGray2D(i) = _rawBytes(i)
                 Next
-                result = New GrayMatrix(bytesGray2D, _width, _height)
+                result = New GrayMatrix(_bytesGray2D, _width, _height)
             Case 3
                 For i = 0 To _width * _height - 1
-                    bytesGray2D(i) = _rawBytes(i * 3) * 0.222 + _rawBytes(i * 3 + 1) * 0.707 + _rawBytes(i * 3 + 2) * 0.071
+                    _bytesGray2D(i) = _rawBytes(i * 3) * 0.222 + _rawBytes(i * 3 + 1) * 0.707 + _rawBytes(i * 3 + 2) * 0.071
                 Next
-                result = New GrayMatrix(bytesGray2D, _width, _height)
+                result = New GrayMatrix(_bytesGray2D, _width, _height)
         End Select
         Return result
     End Function
