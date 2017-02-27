@@ -325,7 +325,7 @@ namespace Bwl.Imaging.Unsafe
         {
             if (srcBmp == null)
             {
-                throw new Exception("srcBmp == null");
+                return null;
             }
             lock (srcBmp)
             {
