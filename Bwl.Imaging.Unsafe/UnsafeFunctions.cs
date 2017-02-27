@@ -17,7 +17,7 @@ namespace Bwl.Imaging.Unsafe
         {
             if (srcBmp.PixelFormat == PixelFormat.Format8bppIndexed)
             {
-                Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
+                Bitmap trgtBmp = new Bitmap(region.Width, region.Height, srcBmp.PixelFormat);
                 CropGray(srcBmp, trgtBmp, region);
                 return trgtBmp;
             }
@@ -65,7 +65,7 @@ namespace Bwl.Imaging.Unsafe
                     }
                     else
                     {
-                        throw new Exception("Target bitmap's size != region's size");
+                        throw new Exception("Inconsistent target image and source region");
                     }
                 }
                 else
@@ -79,7 +79,7 @@ namespace Bwl.Imaging.Unsafe
         {
             if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
             {
-                Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
+                Bitmap trgtBmp = new Bitmap(region.Width, region.Height, srcBmp.PixelFormat);
                 CropRgb(srcBmp, trgtBmp, region);
                 return trgtBmp;
             }
@@ -110,22 +110,44 @@ namespace Bwl.Imaging.Unsafe
                             int regionY = region.Y;
                             int regionW = region.Width;
                             int regionH = region.Height;
-                            byte* srcBytes = (byte*)srcBmd.Scan0 + (regionY * srcBmd.Stride) + regionX;
+                            byte* srcBytes = (byte*)srcBmd.Scan0 + (regionY * srcBmd.Stride) + (regionX * pixelSize);
                             byte* trgtBytes = (byte*)trgtBmd.Scan0;
-                            for (int rectRow = 0; rectRow < regionH; rectRow++)
+                            if (pixelSize == 3)
                             {
-                                for (int rectCol = 0; rectCol < regionW * pixelSize; rectCol += pixelSize)
+                                for (int rectRow = 0; rectRow < regionH; rectRow++)
                                 {
-                                    trgtBytes[rectCol] = srcBytes[rectCol];
-                                    trgtBytes[rectCol + 1] = srcBytes[rectCol + 1];
-                                    trgtBytes[rectCol + 2] = srcBytes[rectCol + 2];
+                                    for (int rectCol = 0; rectCol < regionW * 3; rectCol += 3)
+                                    {
+                                        trgtBytes[rectCol] = srcBytes[rectCol];
+                                        trgtBytes[rectCol + 1] = srcBytes[rectCol + 1];
+                                        trgtBytes[rectCol + 2] = srcBytes[rectCol + 2];
+                                    }
+                                    srcBytes += srcBmd.Stride;
+                                    trgtBytes += trgtBmd.Stride;
                                 }
-                                srcBytes += srcBmd.Stride;
-                                trgtBytes += trgtBmd.Stride;
                             }
+                            else
+                            {
+                                for (int rectRow = 0; rectRow < regionH; rectRow++)
+                                {
+                                    for (int rectCol = 0; rectCol < regionW * 4; rectCol += 4)
+                                    {
+                                        trgtBytes[rectCol] = srcBytes[rectCol];
+                                        trgtBytes[rectCol + 1] = srcBytes[rectCol + 1];
+                                        trgtBytes[rectCol + 2] = srcBytes[rectCol + 2];
+                                        trgtBytes[rectCol + 3] = srcBytes[rectCol + 3];
+                                    }
+                                    srcBytes += srcBmd.Stride;
+                                    trgtBytes += trgtBmd.Stride;
+                                }
+                            }                            
                         }
                         srcBmp.UnlockBits(srcBmd);
                         trgtBmp.UnlockBits(trgtBmd);
+                    }
+                    else
+                    {
+                        throw new Exception("Inconsistent target image and source region");
                     }
                 }
                 else
