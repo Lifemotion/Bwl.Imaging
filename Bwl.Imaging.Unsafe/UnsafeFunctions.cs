@@ -380,8 +380,8 @@ namespace Bwl.Imaging.Unsafe
                 if (srcBmp.PixelFormat == PixelFormat.Format8bppIndexed)
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                    int targetW = (int)Math.Ceiling(srcBmd.Width / (double)step);
-                    int targetH = (int)Math.Ceiling(srcBmd.Height / (double)step);
+                    int targetW = 1 + ((srcBmd.Width - 1) / step);
+                    int targetH = 1 + ((srcBmd.Height - 1) / step);
                     byte[] trgtData = new byte[targetW * targetH];
                     int t = 0;
                     unsafe
@@ -417,8 +417,8 @@ namespace Bwl.Imaging.Unsafe
                 if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                    int targetW = (int)Math.Ceiling(srcBmd.Width / (double)step);
-                    int targetH = (int)Math.Ceiling(srcBmd.Height / (double)step);
+                    int targetW = 1 + ((srcBmd.Width - 1) / step);
+                    int targetH = 1 + ((srcBmd.Height - 1) / step);
                     byte[] trgtData = new byte[targetW * targetH];
                     int pixelSize = GetPixelSize(srcBmp.PixelFormat);
                     int t = 0;
@@ -428,7 +428,7 @@ namespace Bwl.Imaging.Unsafe
                         for (int row = 0; row < srcBmd.Height; row += step)
                         {
                             byte* rowBytes = srcBytes + row * srcBmd.Stride;
-                            for (int col = 0; col < srcBmd.Width; col += step * pixelSize)
+                            for (int col = 0; col < srcBmd.Width * pixelSize; col += step * pixelSize)
                             {
                                 int k = col * 3;
                                 trgtData[t++] = (byte)(0.071 * rowBytes[k] + 0.707 * rowBytes[k + 1] + 0.222 * rowBytes[k + 2]);
