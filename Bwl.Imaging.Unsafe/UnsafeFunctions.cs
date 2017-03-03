@@ -315,7 +315,8 @@ namespace Bwl.Imaging.Unsafe
                         {
                             for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += pixelSize)
                             {
-                                trgtBytes[i] = (byte)(0.071 * srcBytes[j] + 0.707 * srcBytes[j + 1] + 0.222 * srcBytes[j + 2]);
+                                // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                                trgtBytes[i] = (byte)(0.114 * srcBytes[j] + 0.587 * srcBytes[j + 1] + 0.299 * srcBytes[j + 2]);
                             }
                         }
                         else
@@ -324,7 +325,8 @@ namespace Bwl.Imaging.Unsafe
                             {
                                 for (int i = 0, j = 0; i < srcBmd.Width; i++, j += pixelSize)
                                 {
-                                    trgtBytes[i] = (byte)(0.071 * srcBytes[j] + 0.707 * srcBytes[j + 1] + 0.222 * srcBytes[j + 2]);
+                                    // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                                    trgtBytes[i] = (byte)(0.114 * srcBytes[j] + 0.587 * srcBytes[j + 1] + 0.299 * srcBytes[j + 2]);
                                 }
                                 srcBytes += srcBmd.Stride;
                                 trgtBytes += trgtBmd.Stride;
@@ -431,7 +433,8 @@ namespace Bwl.Imaging.Unsafe
                             for (int col = 0; col < srcBmd.Width * pixelSize; col += step * pixelSize)
                             {
                                 int k = col * 3;
-                                trgtData[t++] = (byte)(0.071 * rowBytes[k] + 0.707 * rowBytes[k + 1] + 0.222 * rowBytes[k + 2]);
+                                // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                                trgtData[t++] = (byte)(0.114 * srcBytes[k] + 0.587 * srcBytes[k + 1] + 0.299 * srcBytes[k + 2]);
                             }
                         }
                     }

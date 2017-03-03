@@ -54,6 +54,15 @@
         Assert.AreEqual(CByte(0), clr.B)
     End Sub
 
+    <TestMethod()> Public Sub GrayMatrixAccess()
+        Dim bmp = New GrayMatrix(4, 4)
+        bmp.GrayPixel(1, 1) = Byte.MaxValue
+        Assert.AreEqual(255, bmp.GrayPixel(1, 1))
+        Assert.AreEqual(255, bmp.Gray(1 + 4 * 1))
+        Dim gr = CByte(bmp.GrayPixel(1, 1))
+        Assert.AreEqual(CByte(255), gr)
+    End Sub
+
     <TestMethod()> Public Sub MatrixConvertTest()
         Dim bmpRgb = My.Resources._4x3_rgb
         Dim bmpGray = My.Resources._4x3_gray
@@ -77,27 +86,18 @@
                 Dim diff_4x4_1 = Math.Abs(grayMatrixFromRgb_4x4.GrayPixel(x, y) - grayMatrixFromGray_4x4.GrayPixel(x, y))
                 Dim diff_4x4_2 = Math.Abs(grayMatrixFromRgb_4x4.Gray(x + offset) - grayMatrixFromGray_4x4.Gray(x + offset))
                 Dim diffs = {diff_4x3_1, diff_4x3_2, diff_4x4_1, diff_4x4_2}
-                If diffs.Average() <> diff_4x3_1 Then
-                    Throw New Exception("diffs.Average() <> diff_4x3_1")
-                End If
-                If diffs.Max() <> 0 Then
-                    Throw New Exception("diffs.Max() <> 0")
-                End If
+                Assert.AreEqual(CInt(diffs.Average()), diff_4x3_1)
+                Assert.IsTrue(diffs.Max() <= 1) 'Внешний редактор может рассчитывать переход RGB -> Gray немного иначе
             Next
         Next
 
         For y = 0 To grayMatrixFromRgb_4x3.Height - 1
             Dim offset = y * grayMatrixFromRgb_4x3.Width
             For x = 0 To grayMatrixFromRgb_4x3.Width - 1
-                If bmpGray.GetPixel(x, y).R <> grayMatrixFromRgb_4x3.GrayPixel(x, y) Then
-                    Throw New Exception("bmpGray.GetPixel(x, y).R <> gm1_4x3.GrayPixel(x, y)")
-                End If
-                If bmpGray.GetPixel(x, y).G <> grayMatrixFromRgb_4x3.GrayPixel(x, y) Then
-                    Throw New Exception("bmpGray.GetPixel(x, y).G <> gm1_4x3.GrayPixel(x, y)")
-                End If
-                If bmpGray.GetPixel(x, y).B <> grayMatrixFromRgb_4x3.GrayPixel(x, y) Then
-                    Throw New Exception("bmpGray.GetPixel(x, y).B <> gm1_4x3.GrayPixel(x, y)")
-                End If
+                '<= 1: Внешний редактор может рассчитывать переход RGB -> Gray немного иначе
+                Assert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).R) - grayMatrixFromRgb_4x3.GrayPixel(x, y)) <= 1)
+                Assert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).G) - grayMatrixFromRgb_4x3.GrayPixel(x, y)) <= 1)
+                Assert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).B) - grayMatrixFromRgb_4x3.GrayPixel(x, y)) <= 1)
             Next
         Next
 
@@ -106,18 +106,11 @@
         For y = 0 To grayMatrixFromRgb_4x3.Height - 1
             Dim offset = y * grayMatrixFromRgb_4x3.Width
             For x = 0 To grayMatrixFromRgb_4x3.Width - 1
-                If bmpGray2_1.GetPixel(x, y).R <> bmpGray2_2.GetPixel(x, y).R Then
-                    Throw New Exception("bmpGray2_1.GetPixel(x, y).R <> bmpGray2_2.GetPixel(x, y).R")
-                End If
-                If bmpGray.GetPixel(x, y).R <> bmpGray2_1.GetPixel(x, y).R Then
-                    Throw New Exception("bmpGray.GetPixel(x, y).R <> bmpGray2_1.GetPixel(x, y).R")
-                End If
-                If bmpGray.GetPixel(x, y).G <> bmpGray2_1.GetPixel(x, y).G Then
-                    Throw New Exception("bmpGray.GetPixel(x, y).G <> bmpGray2_1.GetPixel(x, y).G")
-                End If
-                If bmpGray.GetPixel(x, y).B <> bmpGray2_1.GetPixel(x, y).B Then
-                    Throw New Exception("bmpGray.GetPixel(x, y).B <> bmpGray2_1.GetPixel(x, y).B")
-                End If
+                '<= 1: Внешний редактор может рассчитывать переход RGB -> Gray немного иначе
+                Assert.IsTrue(Math.Abs(CInt(bmpGray2_1.GetPixel(x, y).R) - CInt(bmpGray2_2.GetPixel(x, y).R)) <= 1)
+                Assert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).R) - CInt(bmpGray2_1.GetPixel(x, y).R)) <= 1)
+                Assert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).G) - CInt(bmpGray2_1.GetPixel(x, y).G)) <= 1)
+                Assert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).B) - CInt(bmpGray2_1.GetPixel(x, y).B)) <= 1)
             Next
         Next
     End Sub
@@ -126,14 +119,11 @@
         Dim bmpGray = My.Resources._4x3_gray
         Dim grayMatrixFromGray_4x3 = BitmapConverter.BitmapToGrayMatrix(bmpGray)
         Dim grayMatrixFromGray_4x3_Resize = grayMatrixFromGray_4x3.ResizeTwo().ResizeHalf()
-        If grayMatrixFromGray_4x3.Width <> grayMatrixFromGray_4x3_Resize.Width Then
-            Throw New Exception("grayMatrixFromGray_4x3.Width <> grayMatrixFromGray_4x3_Resize.Width")
-        End If
+        Assert.AreEqual(grayMatrixFromGray_4x3.Width, grayMatrixFromGray_4x3_Resize.Width)
+
         For x = 0 To grayMatrixFromGray_4x3.Width - 1
             For y = 0 To grayMatrixFromGray_4x3.Height - 1
-                If grayMatrixFromGray_4x3.GrayPixel(x, y) <> grayMatrixFromGray_4x3_Resize.GrayPixel(x, y) Then
-                    Throw New Exception("grayMatrixFromGray_4x3.GrayPixel(x, y) <> grayMatrixFromGray_4x3_Resize.GrayPixel(x, y)")
-                End If
+                Assert.AreEqual(grayMatrixFromGray_4x3.GrayPixel(x, y), grayMatrixFromGray_4x3_Resize.GrayPixel(x, y))
             Next
         Next
     End Sub
@@ -142,20 +132,12 @@
         Dim bmpGray = My.Resources._4x3_rgb
         Dim grayMatrixFromRgb_4x3 = BitmapConverter.BitmapToRGBMatrix(bmpGray)
         Dim grayMatrixFromGray_4x3_Resize = grayMatrixFromRgb_4x3.ResizeTwo().ResizeHalf()
-        If grayMatrixFromRgb_4x3.Width <> grayMatrixFromGray_4x3_Resize.Width Then
-            Throw New Exception("grayMatrixFromGray_4x3.Width <> grayMatrixFromGray_4x3_Resize.Width")
-        End If
+        Assert.AreEqual(grayMatrixFromRgb_4x3.Width, grayMatrixFromGray_4x3_Resize.Width)
         For x = 0 To grayMatrixFromRgb_4x3.Width - 1
             For y = 0 To grayMatrixFromRgb_4x3.Height - 1
-                If grayMatrixFromRgb_4x3.RedPixel(x, y) <> grayMatrixFromGray_4x3_Resize.RedPixel(x, y) Then
-                    Throw New Exception("grayMatrixFromRgb_4x3.RedPixel(x, y) <> grayMatrixFromGray_4x3_Resize.RedPixel(x, y)")
-                End If
-                If grayMatrixFromRgb_4x3.GreenPixel(x, y) <> grayMatrixFromGray_4x3_Resize.GreenPixel(x, y) Then
-                    Throw New Exception("grayMatrixFromRgb_4x3.GreenPixel(x, y) <> grayMatrixFromGray_4x3_Resize.GreenPixel(x, y)")
-                End If
-                If grayMatrixFromRgb_4x3.BluePixel(x, y) <> grayMatrixFromGray_4x3_Resize.BluePixel(x, y) Then
-                    Throw New Exception("grayMatrixFromRgb_4x3.BluePixel(x, y) <> grayMatrixFromGray_4x3_Resize.BluePixel(x, y)")
-                End If
+                Assert.AreEqual(grayMatrixFromRgb_4x3.RedPixel(x, y), grayMatrixFromGray_4x3_Resize.RedPixel(x, y))
+                Assert.AreEqual(grayMatrixFromRgb_4x3.GreenPixel(x, y), grayMatrixFromGray_4x3_Resize.GreenPixel(x, y))
+                Assert.AreEqual(grayMatrixFromRgb_4x3.BluePixel(x, y), grayMatrixFromGray_4x3_Resize.BluePixel(x, y))
             Next
         Next
     End Sub
@@ -165,14 +147,10 @@
         Dim matrixFromGray_4x3 = BitmapConverter.BitmapToGrayMatrix(bmpGray)
         Dim floatMatrixFromGray_4x3 = New GrayFloatMatrix(matrixFromGray_4x3.Gray, matrixFromGray_4x3.Width, matrixFromGray_4x3.Height)
         Dim floatMatrixFromGray_4x3_Resize = floatMatrixFromGray_4x3.ResizeTwo().ResizeHalf()
-        If floatMatrixFromGray_4x3_Resize.Width <> floatMatrixFromGray_4x3.Width Then
-            Throw New Exception("floatMatrixFromGray_4x3_Resize.Width <> floatMatrixFromGray_4x3.Width")
-        End If
+        Assert.AreEqual(floatMatrixFromGray_4x3_Resize.Width, floatMatrixFromGray_4x3.Width)
         For x = 0 To floatMatrixFromGray_4x3.Width - 1
             For y = 0 To floatMatrixFromGray_4x3.Height - 1
-                If floatMatrixFromGray_4x3.GrayPixel(x, y) <> floatMatrixFromGray_4x3.GrayPixel(x, y) Then
-                    Throw New Exception("floatMatrixFromGray_4x3.GrayPixel(x, y) <> floatMatrixFromGray_4x3.GrayPixel(x, y)")
-                End If
+                Assert.AreEqual(floatMatrixFromGray_4x3.GrayPixel(x, y), floatMatrixFromGray_4x3.GrayPixel(x, y))
             Next
         Next
     End Sub
@@ -183,20 +161,12 @@
         Dim floatMatrixFromRgb_4x3 = New RGBFloatMatrix(matrixFromRgb_4x3.Red, matrixFromRgb_4x3.Green, matrixFromRgb_4x3.Blue,
                                                         matrixFromRgb_4x3.Width, matrixFromRgb_4x3.Height)
         Dim floatMatrixFromRgb_4x3_Resize = floatMatrixFromRgb_4x3.ResizeTwo().ResizeHalf()
-        If floatMatrixFromRgb_4x3_Resize.Width <> floatMatrixFromRgb_4x3.Width Then
-            Throw New Exception("floatMatrixFromRgb_4x3_Resize.Width <> floatMatrixFromRgb_4x3.Width")
-        End If
+        Assert.AreEqual(floatMatrixFromRgb_4x3_Resize.Width, floatMatrixFromRgb_4x3.Width)
         For x = 0 To floatMatrixFromRgb_4x3.Width - 1
             For y = 0 To floatMatrixFromRgb_4x3.Height - 1
-                If floatMatrixFromRgb_4x3.RedPixel(x, y) <> floatMatrixFromRgb_4x3_Resize.RedPixel(x, y) Then
-                    Throw New Exception("floatMatrixFromRgb_4x3.RedPixel(x, y) <> floatMatrixFromRgb_4x3_Resize.RedPixel(x, y)")
-                End If
-                If floatMatrixFromRgb_4x3.GreenPixel(x, y) <> floatMatrixFromRgb_4x3_Resize.GreenPixel(x, y) Then
-                    Throw New Exception("floatMatrixFromRgb_4x3.GreenPixel(x, y) <> floatMatrixFromRgb_4x3_Resize.GreenPixel(x, y)")
-                End If
-                If floatMatrixFromRgb_4x3.BluePixel(x, y) <> floatMatrixFromRgb_4x3_Resize.BluePixel(x, y) Then
-                    Throw New Exception("floatMatrixFromRgb_4x3.BluePixel(x, y) <> floatMatrixFromRgb_4x3_Resize.BluePixel(x, y)")
-                End If
+                Assert.AreEqual(floatMatrixFromRgb_4x3.RedPixel(x, y), floatMatrixFromRgb_4x3_Resize.RedPixel(x, y))
+                Assert.AreEqual(floatMatrixFromRgb_4x3.GreenPixel(x, y), floatMatrixFromRgb_4x3_Resize.GreenPixel(x, y))
+                Assert.AreEqual(floatMatrixFromRgb_4x3.BluePixel(x, y), floatMatrixFromRgb_4x3_Resize.BluePixel(x, y))
             Next
         Next
     End Sub
@@ -211,9 +181,7 @@
         End If
         For y = 0 To matrixGray.Height - 1
             For x = 0 To matrixGray.Width - 1
-                If matrixGray.GrayPixel(x, y) <> matrixGrayCropped.GrayPixel(x, y) Then
-                    Throw New Exception("matrixGray.GrayPixel(x, y) <> matrixGrayCropped.GrayPixel(x, y)")
-                End If
+                Assert.AreEqual(matrixGray.GrayPixel(x, y), matrixGrayCropped.GrayPixel(x, y))
             Next
         Next
     End Sub
@@ -228,15 +196,9 @@
         End If
         For y = 0 To matrixRgb.Height - 1
             For x = 0 To matrixRgb.Width - 1
-                If matrixRgb.RedPixel(x, y) <> matrixRGBCropped.RedPixel(x, y) Then
-                    Throw New Exception("matrixGray.GrayPixel(x, y) <> matrixGrayCropped.GrayPixel(x, y)")
-                End If
-                If matrixRgb.GreenPixel(x, y) <> matrixRGBCropped.GreenPixel(x, y) Then
-                    Throw New Exception("matrixRgb.GreenPixel(x, y) <> matrixRGBCropped.GreenPixel(x, y)")
-                End If
-                If matrixRgb.BluePixel(x, y) <> matrixRGBCropped.BluePixel(x, y) Then
-                    Throw New Exception("matrixRgb.BluePixel(x, y) <> matrixRGBCropped.BluePixel(x, y)")
-                End If
+                Assert.AreEqual(matrixRgb.RedPixel(x, y), matrixRGBCropped.RedPixel(x, y))
+                Assert.AreEqual(matrixRgb.GreenPixel(x, y), matrixRGBCropped.GreenPixel(x, y))
+                Assert.AreEqual(matrixRgb.BluePixel(x, y), matrixRGBCropped.BluePixel(x, y))
             Next
         Next
     End Sub
@@ -253,9 +215,7 @@
         End If
         For y = 0 To matrixGrayCropped.Height - 1
             For x = 0 To matrixGrayCropped.Width - 1
-                If matrixGrayCropped.GrayPixel(x, y) <> bmpGrayCroppedEthalonMatrix.GrayPixel(x, y) Then
-                    Throw New Exception("matrixGray.GrayPixel(x, y) <> matrixGrayCropped.GrayPixel(x, y)")
-                End If
+                Assert.AreEqual(matrixGrayCropped.GrayPixel(x, y), bmpGrayCroppedEthalonMatrix.GrayPixel(x, y))
             Next
         Next
     End Sub
@@ -272,15 +232,9 @@
         End If
         For y = 0 To matrixRgbCropped.Height - 1
             For x = 0 To matrixRgbCropped.Width - 1
-                If matrixRgbCropped.RedPixel(x, y) <> bmpRgbCroppedEthalonMatrix.RedPixel(x, y) Then
-                    Throw New Exception("matrixRgbCropped.RedPixel(x, y) <> bmpRgbCroppedEthalonMatrix.RedPixel(x, y)")
-                End If
-                If matrixRgbCropped.GreenPixel(x, y) <> bmpRgbCroppedEthalonMatrix.GreenPixel(x, y) Then
-                    Throw New Exception("matrixRgbCropped.GreenPixel(x, y) <> bmpRgbCroppedEthalonMatrix.GreenPixel(x, y)")
-                End If
-                If matrixRgbCropped.BluePixel(x, y) <> bmpRgbCroppedEthalonMatrix.BluePixel(x, y) Then
-                    Throw New Exception("matrixRgbCropped.BluePixel(x, y) <> bmpRgbCroppedEthalonMatrix.BluePixel(x, y)")
-                End If
+                Assert.AreEqual(matrixRgbCropped.RedPixel(x, y), bmpRgbCroppedEthalonMatrix.RedPixel(x, y))
+                Assert.AreEqual(matrixRgbCropped.GreenPixel(x, y), bmpRgbCroppedEthalonMatrix.GreenPixel(x, y))
+                Assert.AreEqual(matrixRgbCropped.BluePixel(x, y), bmpRgbCroppedEthalonMatrix.BluePixel(x, y))
             Next
         Next
     End Sub
@@ -292,17 +246,13 @@
         MatrixTools.InverseGray(grayMatrix2)
         For y = 0 To grayMatrix1.Height - 1
             For x = 0 To grayMatrix1.Width - 1
-                If grayMatrix1.GrayPixel(x, y) <> Byte.MaxValue - grayMatrix2.GrayPixel(x, y) Then
-                    Throw New Exception("grayMatrix1.GrayPixel(x, y) <> Byte.MaxValue - grayMatrix2.GrayPixel(x, y)")
-                End If
+                Assert.AreEqual(grayMatrix1.GrayPixel(x, y), Byte.MaxValue - grayMatrix2.GrayPixel(x, y))
             Next
         Next
         MatrixTools.InverseGray(grayMatrix2)
         For y = 0 To grayMatrix1.Height - 1
             For x = 0 To grayMatrix1.Width - 1
-                If grayMatrix1.GrayPixel(x, y) <> grayMatrix2.GrayPixel(x, y) Then
-                    Throw New Exception("grayMatrix1.GrayPixel(x, y) <> grayMatrix2.GrayPixel(x, y)")
-                End If
+                Assert.AreEqual(grayMatrix1.GrayPixel(x, y), grayMatrix2.GrayPixel(x, y))
             Next
         Next
     End Sub
@@ -314,29 +264,17 @@
         MatrixTools.InverseRGB(rgbMatrix2)
         For y = 0 To rgbMatrix1.Height - 1
             For x = 0 To rgbMatrix1.Width - 1
-                If rgbMatrix1.RedPixel(x, y) <> Byte.MaxValue - rgbMatrix2.RedPixel(x, y) Then
-                    Throw New Exception("rgbMatrix1.RedPixel(x, y) <> Byte.MaxValue - rgbMatrix2.RedPixel(x, y)")
-                End If
-                If rgbMatrix1.GreenPixel(x, y) <> Byte.MaxValue - rgbMatrix2.GreenPixel(x, y) Then
-                    Throw New Exception("rgbMatrix1.GreenPixel(x, y) <> Byte.MaxValue - rgbMatrix2.GreenPixel(x, y)")
-                End If
-                If rgbMatrix1.BluePixel(x, y) <> Byte.MaxValue - rgbMatrix2.BluePixel(x, y) Then
-                    Throw New Exception("rgbMatrix1.BluePixel(x, y) <> Byte.MaxValue - rgbMatrix2.BluePixel(x, y)")
-                End If
+                Assert.AreEqual(rgbMatrix1.RedPixel(x, y), Byte.MaxValue - rgbMatrix2.RedPixel(x, y))
+                Assert.AreEqual(rgbMatrix1.GreenPixel(x, y), Byte.MaxValue - rgbMatrix2.GreenPixel(x, y))
+                Assert.AreEqual(rgbMatrix1.BluePixel(x, y), Byte.MaxValue - rgbMatrix2.BluePixel(x, y))
             Next
         Next
         MatrixTools.InverseRGB(rgbMatrix2)
         For y = 0 To rgbMatrix1.Height - 1
             For x = 0 To rgbMatrix1.Width - 1
-                If rgbMatrix1.RedPixel(x, y) <> rgbMatrix2.RedPixel(x, y) Then
-                    Throw New Exception("rgbMatrix1.RedPixel(x, y) <> rgbMatrix2.RedPixel(x, y)")
-                End If
-                If rgbMatrix1.GreenPixel(x, y) <> rgbMatrix2.GreenPixel(x, y) Then
-                    Throw New Exception("rgbMatrix1.GreenPixel(x, y) <> rgbMatrix2.GreenPixel(x, y)")
-                End If
-                If rgbMatrix1.BluePixel(x, y) <> rgbMatrix2.BluePixel(x, y) Then
-                    Throw New Exception("rgbMatrix1.BluePixel(x, y) <> rgbMatrix2.BluePixel(x, y)")
-                End If
+                Assert.AreEqual(rgbMatrix1.RedPixel(x, y), rgbMatrix2.RedPixel(x, y))
+                Assert.AreEqual(rgbMatrix1.GreenPixel(x, y), rgbMatrix2.GreenPixel(x, y))
+                Assert.AreEqual(rgbMatrix1.BluePixel(x, y), rgbMatrix2.BluePixel(x, y))
             Next
         Next
     End Sub

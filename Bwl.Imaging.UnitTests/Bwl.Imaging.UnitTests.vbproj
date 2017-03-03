@@ -98,6 +98,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="UnsafeTests.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
@@ -139,6 +140,18 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\_4x3-gray.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gray24.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\gray25.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rgbw24.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rgbw25.png" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

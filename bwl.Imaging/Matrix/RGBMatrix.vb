@@ -87,7 +87,8 @@
     Public Function ToGrayMatrix() As GrayMatrix
         Dim gray(Width * Height - 1) As Integer
         For i = 0 To Width * Height - 1
-            gray(i) = Red(i) * 0.222 + Green(i) * 0.707 + Blue(i) * 0.071
+            'Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+            gray(i) = Red(i) * 0.299 + Green(i) * 0.587 + Blue(i) * 0.114
         Next
         Return New GrayMatrix(gray, Width, Height)
     End Function

@@ -1,7 +1,12 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports System.Runtime.InteropServices
 Imports System.Threading.Tasks
 
 Public Class BitmapOperations
+    <DllImport("kernel32.dll", EntryPoint:="CopyMemory", SetLastError:=False)>
+    Public Shared Sub CopyMemory(ByVal dest As IntPtr, ByVal src As IntPtr, ByVal count As UInteger)
+    End Sub
+
     Private _rawBytes As Byte()
     Private _width As Integer, _height As Integer
     Private _channels As Integer
@@ -26,28 +31,59 @@ Public Class BitmapOperations
         _channels = If(bitmap.PixelFormat = PixelFormat.Format8bppIndexed, 1, 3)
         _width = bitmap.Width
         _height = bitmap.Height
-        Dim tmpBD As BitmapData
-        Dim tmpRect As Rectangle
-        tmpRect = Rectangle.FromLTRB(0, 0, bitmap.Width, bitmap.Height)
+        Dim srcBD As BitmapData
+        Dim srcStride As Integer
+        Dim srcRect = Rectangle.FromLTRB(0, 0, bitmap.Width, bitmap.Height)
         Dim size As Integer = bitmap.Width * bitmap.Height
         If _rawBytes Is Nothing OrElse _rawBytes.Length <> (size * _channels) Then
             ReDim _rawBytes(size * _channels - 1)
         End If
+        Dim tmpBytes As Byte()
         Dim tmpChannels = If(bitmap.PixelFormat = PixelFormat.Format32bppArgb, 4, _channels)
+
         If tmpChannels = 4 Then
-            tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb)
-            Dim tmpBytes = New Byte(size * tmpChannels - 1) {}
-            Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, tmpBytes, 0, size * tmpChannels)
+            srcBD = bitmap.LockBits(srcRect, ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb)
+            srcStride = srcBD.Stride
+            tmpBytes = New Byte(size * tmpChannels - 1) {}
+        Else
+            srcBD = bitmap.LockBits(srcRect, ImageLockMode.ReadOnly, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
+            srcStride = srcBD.Stride
+            tmpBytes = _rawBytes
+        End If
+
+        'Исходный битмап, некратный по ширине 4, имеет выравнивание, и загружать из него данные, как было реализовано ранее,
+        'то есть одним блоком - нельзя! Требуетя загрузка построчно, с игнорированием выравнивания.
+        If srcStride = bitmap.Width * tmpChannels Then
+            Using ap As New AutoPinner(tmpBytes)
+                Dim srcBytes = srcBD.Scan0
+                Dim rawBytes = ap.GetIntPtr()
+                CopyMemory(rawBytes, srcBytes, tmpBytes.Length) 'fast!
+            End Using
+        Else
+            Using ap As New AutoPinner(tmpBytes)
+                Dim srcBytes = srcBD.Scan0
+                Dim rawBytes = ap.GetIntPtr()
+                Dim rawStride = _width * _channels
+                For row = 0 To _height - 1
+                    CopyMemory(rawBytes, srcBytes, rawStride) 'exact!
+                    srcBytes += srcStride
+                    rawBytes += rawStride
+                Next
+            End Using
+        End If
+
+        'Выбрасываем альфа-канал
+        If tmpChannels = 4 Then
             For i = 0 To tmpBytes.Length \ 4 - 1
                 _rawBytes(i * 3 + 0) = tmpBytes(i * 4 + 0)
                 _rawBytes(i * 3 + 1) = tmpBytes(i * 4 + 1)
                 _rawBytes(i * 3 + 2) = tmpBytes(i * 4 + 2)
             Next
         Else
-            tmpBD = bitmap.LockBits(tmpRect, ImageLockMode.ReadOnly, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
-            Runtime.InteropServices.Marshal.Copy(tmpBD.Scan0, _rawBytes, 0, size * _channels)
+            _rawBytes = tmpBytes
         End If
-        bitmap.UnlockBits(tmpBD)
+
+        bitmap.UnlockBits(srcBD)
     End Sub
 
     Public Function GetGrayMatrix() As GrayMatrix
@@ -63,7 +99,8 @@ Public Class BitmapOperations
                 result = New GrayMatrix(_bytesGray2D, _width, _height)
             Case 3
                 For i = 0 To _width * _height - 1
-                    _bytesGray2D(i) = _rawBytes(i * 3) * 0.222 + _rawBytes(i * 3 + 1) * 0.707 + _rawBytes(i * 3 + 2) * 0.071
+                    'Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                    _bytesGray2D(i) = _rawBytes(i * 3) * 0.114 + _rawBytes(i * 3 + 1) * 0.587 + _rawBytes(i * 3 + 2) * 0.299
                 Next
                 result = New GrayMatrix(_bytesGray2D, _width, _height)
         End Select
@@ -139,18 +176,34 @@ Public Class BitmapOperations
     End Sub
 
     Public Function GetBitmap() As Bitmap
-        If _width Mod 4 <> 0 Then Throw New Exception("GetBitmap() - image width must be multiplicity of 4 to create bitmaps correctly")
-        Dim tmpBitmap As New Bitmap(_width, _height, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
+        Dim result As New Bitmap(_width, _height, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
         If _channels = 1 Then
-            tmpBitmap.Palette = GetGrayScalePalette()
+            result.Palette = GetGrayScalePalette()
         End If
-        Dim tmpBD As BitmapData
-        Dim tmpRect As Rectangle
-        tmpRect = Rectangle.FromLTRB(0, 0, _width, _height)
-        tmpBD = tmpBitmap.LockBits(tmpRect, ImageLockMode.ReadWrite, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
-        System.Runtime.InteropServices.Marshal.Copy(_rawBytes, 0, tmpBD.Scan0, _rawBytes.Length)
-        tmpBitmap.UnlockBits(tmpBD)
-        Return tmpBitmap
+        Dim resRect = Rectangle.FromLTRB(0, 0, _width, _height)
+        Dim resultBD = result.LockBits(resRect, ImageLockMode.ReadWrite, If(_channels = 1, PixelFormat.Format8bppIndexed, PixelFormat.Format24bppRgb))
+        Dim resStride = resultBD.Stride
+        If resStride = result.Width * _channels Then
+            Using ap As New AutoPinner(_rawBytes)
+                Dim rawBytes = ap.GetIntPtr()
+                Dim resBytes = resultBD.Scan0
+                CopyMemory(resBytes, rawBytes, _rawBytes.Length) 'fast!
+            End Using
+        Else
+            Using ap As New AutoPinner(_rawBytes)
+                Dim rawBytes = ap.GetIntPtr()
+                Dim resBytes = resultBD.Scan0
+                Dim rawStride = _width * _channels
+                For row = 0 To _height - 1
+                    CopyMemory(resBytes, rawBytes, rawStride) 'exact!
+                    rawBytes += rawStride
+                    resBytes += resStride
+                Next
+            End Using
+        End If
+
+        result.UnlockBits(resultBD)
+        Return result
     End Function
 
     Public Shared Function GetGrayScalePalette() As ColorPalette

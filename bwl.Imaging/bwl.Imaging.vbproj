@@ -70,6 +70,7 @@
     <Compile Include="Matrix\FloatMatrix\GrayFloatMatrix.vb" />
     <Compile Include="Matrix\FloatMatrix\RGBFloatMatrix.vb" />
     <Compile Include="Matrix\CommonMatrix.vb" />
+    <Compile Include="Matrix\IntPtr\AutoPinner.vb" />
     <Compile Include="Matrix\RGBMatrix.vb" />
     <Compile Include="Geometry\ParametersDictionary.vb" />
     <Compile Include="Geometry\Point\PointC.vb" />
