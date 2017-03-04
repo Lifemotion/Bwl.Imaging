@@ -31,6 +31,7 @@ Public Class BitmapOperations
         _channels = If(bitmap.PixelFormat = PixelFormat.Format8bppIndexed, 1, 3)
         _width = bitmap.Width
         _height = bitmap.Height
+
         Dim srcBD As BitmapData
         Dim srcStride As Integer
         Dim srcRect = Rectangle.FromLTRB(0, 0, bitmap.Width, bitmap.Height)

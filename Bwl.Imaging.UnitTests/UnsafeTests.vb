@@ -11,7 +11,7 @@ Imports Bwl.Imaging.Unsafe
         UnsafeCropGray(My.Resources.gray25)
     End Sub
 
-    <TestMethod()> Private Sub UnsafeCropGray(bmpGray As Bitmap)
+    Private Sub UnsafeCropGray(bmpGray As Bitmap)
         Dim S = bmpGray.Height \ 2
 
         Dim rectRedRow1 = New Rectangle(0, 0, S, S)
@@ -64,7 +64,7 @@ Imports Bwl.Imaging.Unsafe
         UnsafeCropRgb(My.Resources.rgbw25)
     End Sub
 
-    <TestMethod()> Private Sub UnsafeCropRgb(bmpRgb As Bitmap)
+    Private Sub UnsafeCropRgb(bmpRgb As Bitmap)
         Dim S = bmpRgb.Height \ 2
 
         Dim rectRedRow1 = New Rectangle(0, 0, S, S)
