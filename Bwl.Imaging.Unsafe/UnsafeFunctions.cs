@@ -391,11 +391,11 @@ namespace Bwl.Imaging.Unsafe
                         byte* srcBytes = (byte*)srcBmd.Scan0;
                         for (int row = 0; row < srcBmd.Height; row += step)
                         {
-                            byte* rowBytes = srcBytes + row * srcBmd.Stride;
                             for (int col = 0; col < srcBmd.Width; col += step)
                             {
-                                trgtData[t++] = (byte)rowBytes[col];
+                                trgtData[t++] = (byte)srcBytes[col];
                             }
+                            srcBytes += srcBmd.Stride * step;
                         }
                     }
                     srcBmp.UnlockBits(srcBmd);
@@ -428,14 +428,14 @@ namespace Bwl.Imaging.Unsafe
                     {
                         byte* srcBytes = (byte*)srcBmd.Scan0;
                         for (int row = 0; row < srcBmd.Height; row += step)
-                        {
-                            byte* rowBytes = srcBytes + row * srcBmd.Stride;
-                            for (int col = 0; col < srcBmd.Width * pixelSize; col += step * pixelSize)
+                        {                            
+                            for (int col = 0; col < srcBmd.Width; col += step)
                             {
                                 int k = col * 3;
                                 // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
                                 trgtData[t++] = (byte)(0.114 * srcBytes[k] + 0.587 * srcBytes[k + 1] + 0.299 * srcBytes[k + 2]);
                             }
+                            srcBytes += srcBmd.Stride * step;
                         }
                     }
                     srcBmp.UnlockBits(srcBmd);
@@ -448,7 +448,7 @@ namespace Bwl.Imaging.Unsafe
             }
         }
 
-        public static ulong BitmapHash(Bitmap srcBmp, int step)
+        public static ulong BitmapHashGray(Bitmap srcBmp, int step)
         {
             if (srcBmp == null)
             {
@@ -456,24 +456,67 @@ namespace Bwl.Imaging.Unsafe
             }
             lock (srcBmp)
             {
-                BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                int pixelSize = GetPixelSize(srcBmp.PixelFormat);
-                ulong hash = 0;
-                unsafe
+                if (srcBmp.PixelFormat == PixelFormat.Format8bppIndexed)
                 {
-                    byte* srcBytes = (byte*)srcBmd.Scan0;
-                    for (int row = 0; row < srcBmd.Height; row += step)
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    ulong hash = 0;
+                    unsafe
                     {
-                        byte* rowBytes = srcBytes + row * srcBmd.Stride;
-                        for (int col = 0; col < srcBmd.Width; col += step * pixelSize)
+                        byte* srcBytes = (byte*)srcBmd.Scan0;
+                        for (int row = 0; row < srcBmd.Height; row += step)
                         {
-                            int k = col * 3;
-                            hash += (byte)(0.071 * rowBytes[k] + 0.707 * rowBytes[k + 1] + 0.222 * rowBytes[k + 2]);
+                            for (int col = 0; col < srcBmd.Width; col += step)
+                            {
+                                hash += srcBytes[col];
+                            }
+                            srcBytes += srcBmd.Stride * step;
                         }
                     }
+                    srcBmp.UnlockBits(srcBmd);
+                    return (ulong)hash;
                 }
-                srcBmp.UnlockBits(srcBmd);
-                return (ulong)hash;
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
+        public static ulong BitmapHashRgb(Bitmap srcBmp, int step)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            lock (srcBmp)
+            {
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+                {
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    ulong hash = 0;
+                    unsafe
+                    {
+                        byte* srcBytes = (byte*)srcBmd.Scan0;
+                        for (int row = 0; row < srcBmd.Height; row += step)
+                        {
+                            for (int col = 0; col < srcBmd.Width; col += step)
+                            {
+                                int k = col * 3;
+                                // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                                hash += (byte)(0.114 * srcBytes[k] + 0.587 * srcBytes[k + 1] + 0.299 * srcBytes[k + 2]);
+                            }
+                            srcBytes += srcBmd.Stride * step;
+                        }
+                    }
+                    srcBmp.UnlockBits(srcBmd);
+                    return (ulong)hash;
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }                
             }
         }
 

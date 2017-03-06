@@ -3,15 +3,15 @@ Imports Bwl.Imaging.Unsafe
 
 <TestClass()> Public Class UnsafeTests
 
-    <TestMethod()> Public Sub UnsafeCropGray24()
-        UnsafeCropGray(My.Resources.gray24)
+    <TestMethod()> Public Sub UnsafeCropGray24Test()
+        UnsafeCropGrayTest(My.Resources.gray24)
     End Sub
 
-    <TestMethod()> Public Sub UnsafeCropGray25()
-        UnsafeCropGray(My.Resources.gray25)
+    <TestMethod()> Public Sub UnsafeCropGray25Test()
+        UnsafeCropGrayTest(My.Resources.gray25)
     End Sub
 
-    Private Sub UnsafeCropGray(bmpGray As Bitmap)
+    Private Sub UnsafeCropGrayTest(bmpGray As Bitmap)
         Dim S = bmpGray.Height \ 2
 
         Dim rectRedRow1 = New Rectangle(0, 0, S, S)
@@ -56,15 +56,15 @@ Imports Bwl.Imaging.Unsafe
         Next
     End Sub
 
-    <TestMethod()> Public Sub UnsafeCropRgb24()
-        UnsafeCropRgb(My.Resources.rgbw24)
+    <TestMethod()> Public Sub UnsafeCropRgb24Test()
+        UnsafeCropRgbTest(My.Resources.rgbw24)
     End Sub
 
-    <TestMethod()> Public Sub UnsafeCropRgb25()
-        UnsafeCropRgb(My.Resources.rgbw25)
+    <TestMethod()> Public Sub UnsafeCropRgb25Test()
+        UnsafeCropRgbTest(My.Resources.rgbw25)
     End Sub
 
-    Private Sub UnsafeCropRgb(bmpRgb As Bitmap)
+    Private Sub UnsafeCropRgbTest(bmpRgb As Bitmap)
         Dim S = bmpRgb.Height \ 2
 
         Dim rectRedRow1 = New Rectangle(0, 0, S, S)
@@ -126,7 +126,7 @@ Imports Bwl.Imaging.Unsafe
         Next
     End Sub
 
-    <TestMethod()> Public Sub UnsafeRgbToGray24()
+    <TestMethod()> Public Sub UnsafeRgbToGray24Test()
         Dim bmpRgb = My.Resources.rgbw24
         Dim matrixGray = BitmapConverter.BitmapToGrayMatrix(bmpRgb)
         Dim bmpGray2 = UnsafeFunctions.RgbToGray(bmpRgb)
@@ -136,5 +136,33 @@ Imports Bwl.Imaging.Unsafe
         For i = 0 To matrixGray.Gray.Length - 1
             Assert.IsTrue(Math.Abs(matrixGray.Gray(i) - matrixGray2.Gray(i)) <= 1) 'Внешний редактор может рассчитывать переход RGB -> Gray немного иначе
         Next
+    End Sub
+
+    <TestMethod()> Public Sub UnsafeBitmapProbeGrayS4Test()
+        Dim bmpGray = My.Resources.grayProbeS4
+        Dim probe = UnsafeFunctions.BitmapProbeGray(bmpGray, 4)
+        For Each p In probe
+            Assert.AreEqual(CInt(p), 1) 'Графический редактор при конвертировании в grayscale черный цвет преобразовал в "1"
+        Next
+    End Sub
+
+    <TestMethod()> Public Sub UnsafeBitmapProbeRgbS4Test()
+        Dim bmpRgb = My.Resources.rgbProbeS4
+        Dim probe = UnsafeFunctions.BitmapProbeRgb(bmpRgb, 4)
+        For Each p In probe
+            Assert.AreEqual(CInt(p), 0) 'А в оригинале черный цвет нормальный
+        Next
+    End Sub
+
+    <TestMethod()> Public Sub UnsafeBitmapHashGrayS4Test()
+        Dim bmpGray = My.Resources.grayProbeS4
+        Dim hash = UnsafeFunctions.BitmapHashGray(bmpGray, 4)
+        Assert.AreEqual(CInt(hash), 338) 'Графический редактор при конвертировании в grayscale черный цвет преобразовал в "1"
+    End Sub
+
+    <TestMethod()> Public Sub UnsafeBitmapHashRgbS4Test()
+        Dim bmpRgb = My.Resources.rgbProbeS4
+        Dim hash = UnsafeFunctions.BitmapHashRgb(bmpRgb, 4)
+        Assert.AreEqual(CInt(hash), 0) 'А в оригинале черный цвет нормальный
     End Sub
 End Class
