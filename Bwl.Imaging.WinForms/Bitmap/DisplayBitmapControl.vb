@@ -1,46 +1,49 @@
 ﻿Public Class DisplayBitmapControl
-    Private _bitmap As DisplayBitmap
-    Private _graphics As Graphics
+    Private _display As DisplayBitmap
+
+    Public Property Bitmap As Bitmap
+        Set(value As Bitmap)
+            _display = New DisplayBitmap(value)
+        End Set
+        Get
+            Return _display.Bitmap
+        End Get
+    End Property
+
+    Public Property DisplayBitmap As DisplayBitmap
+        Set(value As DisplayBitmap)
+            _display = value
+        End Set
+        Get
+            Return _display
+        End Get
+    End Property
 
     Public Sub New()
         InitializeComponent()
         DisplayBitmap = New DisplayBitmap(Me.Width, Me.Height)
     End Sub
 
-    Private Sub OverlayDisplay_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        If DisplayBitmap Is Nothing Then
-            DisplayBitmap = New DisplayBitmap(Me.Width, Me.Height)
-        End If
-        Me.DoubleBuffered = False
-        '_graphics = Graphics.FromHwnd(_pictureBox.Handle)
-    End Sub
-
-    Public Property DisplayBitmap As DisplayBitmap
-        Set(value As DisplayBitmap)
-            _bitmap = value
-        End Set
-        Get
-            Return _bitmap
-        End Get
-    End Property
-
     Public Overrides Sub Refresh()
-        'MyBase.Refresh()
-        '_graphics.DrawImage(_bitmap.Bitmap, 0, 0)
-        '_graphics.InterpolationMode = Drawing2D.InterpolationMode.NearestNeighbor
-        If Object.Equals(_pictureBox.Image, _bitmap.Bitmap) = False Then _pictureBox.Image = _bitmap.Bitmap
+        If Object.Equals(_pictureBox.Image, _display.Bitmap) = False Then
+            _pictureBox.Image = _display.Bitmap
+        End If
         _pictureBox.Refresh()
     End Sub
 
-    Private Sub _pictureBox_Paint() Handles _pictureBox.Paint
-        '_graphics.DrawImage(_bitmap.Bitmap, 0, 0)
-        '_pictureBox.Refresh()
+    Private Sub OverlayDisplay_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        If _display Is Nothing Then
+            _display = New DisplayBitmap(Me.Width, Me.Height)
+        End If
+        Me.DoubleBuffered = False
     End Sub
 
     Private Sub _pictureBox_Resize(sender As Object, e As EventArgs) Handles _pictureBox.Resize
         Try
-            _bitmap.Resize(Me.Width, Me.Height)
-        Catch ex As Exception
+            If _display IsNot Nothing Then
+                _display.Resize(Me.Width, Me.Height)
+            End If
+        Catch
         End Try
     End Sub
 End Class

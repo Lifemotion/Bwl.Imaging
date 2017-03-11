@@ -1,9 +1,11 @@
 ﻿Public Class DisplayObjectsControl
     Inherits DisplayBitmapControl
     Private _displayObjects As New List(Of DisplayObject)
-    Public Property RedrawObjectsWhenCollectionChanged As Boolean = False
 
-    Event ObjectSelect(sender As Object, selected As DisplayObject, e As MouseEventArgs)
+    Private _bkgX1F As Single = 0
+    Private _bkgY1F As Single = 0
+    Private _bkgX2F As Single = 1.0
+    Private _bkgY2F As Single = 1.0
 
     Public ReadOnly Property DisplayObjects As List(Of DisplayObject)
         Get
@@ -11,7 +13,22 @@
         End Get
     End Property
 
+    Public Property BackgroundBitmap As Bitmap
+    Public Property KeepBackgroundAspectRatio As Boolean = True
+    Public Property RedrawObjectsWhenCollectionChanged As Boolean = False
+    Public Property SelectedObject As DisplayObject
+    Public Property SelectedObjectBorderStyle As New Pen(New SolidBrush(Color.Blue), 1) With {.DashPattern = {2.0F, 2.0F}}
+    Public Property MovingObjectBorderStyle As New Pen(New SolidBrush(Color.Red), 2) With {.DashPattern = {2.0F, 2.0F}}
+    Public Property MoveModePointColor As Color = Color.Red
+    Public Property MoveMode As Boolean
+    Public Property MovePoints As New List(Of PointF)
     Public Property ShowStatusBar As Boolean = True
+
+    Public Event ObjectSelected(sender As Object, selected As DisplayObject, e As MouseEventArgs)
+    Public Event DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject)
+    Public Event DisplayObjectSelected(sender As DisplayObjectsControl, displayObject As DisplayObject)
+    Public Event DisplayRightBtnMouseClick(sender As DisplayObjectsControl, ByRef needClearFeedback As Boolean)
+    Public Event MoveModeChanged(sender As DisplayObjectsControl, moveMode As Boolean)
 
     Public Sub Add(displayObject As DisplayObject)
         SyncLock Me
@@ -42,8 +59,6 @@
         End SyncLock
     End Sub
 
-    Public Property BackgroundBitmap As Bitmap
-
     Public Sub Remove(id As String)
         SyncLock Me
             Dim copy As New List(Of DisplayObject)
@@ -70,14 +85,14 @@
         If BackgroundBitmap Is Nothing Then
             DisplayBitmap.Clear()
         Else
-            Me.DisplayBitmap.DrawBitmap(BackgroundBitmap, 0, 0, 1, 1)
-            ' _pictureBox.BackgroundImage = BackgroundBitmap
-            ' _pictureBox.BackgroundImageLayout = ImageLayout.Stretch
-
-            'Dim bmp = BackgroundBitmap 'New Bitmap(BackgroundBitmap, _pictureBox.Width, _pictureBox.Height)
-            'Me.DisplayBitmap.Graphics.DrawImage(bmp, 0, 0)
+            If KeepBackgroundAspectRatio Then
+                DisplayBitmap.KeepAspectRatio(BackgroundBitmap.Width, BackgroundBitmap.Height)
+                DisplayBitmap.DrawBorders()
+            Else
+                DisplayBitmap.KeepAspectRatio()
+            End If
+            DisplayBitmap.DrawBitmap(BackgroundBitmap, 0, 0, 1, 1)
         End If
-
         For Each obj In _displayObjects
             If obj.IsVisible Then DisplayBitmap.DrawDisplayObject(obj)
             If Object.Equals(obj, SelectedObject) Then
@@ -96,7 +111,6 @@
                 DisplayBitmap.DrawPoint(MoveModePointColor, mp.X, mp.Y)
             Next
         End If
-        '  Me.Refresh()
     End Sub
 
     Public Function Find(idPart As String, groupPart As String) As DisplayObject()
@@ -119,21 +133,7 @@
         End SyncLock
     End Function
 
-    Public Property SelectedObject As DisplayObject
-    Public Property SelectedObjectBorderStyle As New Pen(New SolidBrush(Color.Blue), 1) With {.DashPattern = {2.0F, 2.0F}}
-    Public Property MovingObjectBorderStyle As New Pen(New SolidBrush(Color.Red), 2) With {.DashPattern = {2.0F, 2.0F}}
-
-    Public Property MoveModePointColor As Color = Color.Red
-
-    Public Property MoveMode As Boolean
-    Public Property MovePoints As New List(Of PointF)
-
-    ' Public Event MoveModeChanged(sender As DisplayControl, moveMode As Boolean)
-    Public Event DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject)
-    Public Event DisplayObjectSelected(sender As DisplayObjectsControl, displayObject As DisplayObject)
-    Public Event DisplayRightBtnMouseClick(sender As DisplayObjectsControl, ByRef needClear As Boolean)
-
-    Public Sub ClearSelectedAndPoints()
+    Public Sub ClearSelectedObjectAndPoints()
         MoveMode = Not MoveMode
         If SelectedObject IsNot Nothing AndAlso SelectedObject.IsMoveable = False Then MoveMode = False
         MovePoints.Clear()
@@ -141,107 +141,114 @@
     End Sub
 
     Private Sub _pictureBox_Click(sender As Object, e As MouseEventArgs) Handles _pictureBox.MouseClick
-        If e.Button = Windows.Forms.MouseButtons.Right Then
-            Dim needClear = True
-            RaiseEvent DisplayRightBtnMouseClick(Me, needClear)
-            If needClear Then
-                ClearSelectedAndPoints()
+        Dim eXF = e.X / DisplayBitmap.Width
+        Dim eYF = e.Y / DisplayBitmap.Height
+        If eXF >= _bkgX1F AndAlso eXF <= _bkgX2F AndAlso eYF >= _bkgY1F AndAlso eYF <= _bkgY2F Then
+            If e.Button = Windows.Forms.MouseButtons.Right Then
+                Dim needClearFeedback = True
+                RaiseEvent DisplayRightBtnMouseClick(Me, needClearFeedback)
+                If needClearFeedback Then
+                    ClearSelectedObjectAndPoints()
+                End If
             End If
-        End If
-        If e.Button = Windows.Forms.MouseButtons.Left Then
-            If MoveMode AndAlso SelectedObject IsNot Nothing Then
-                MovePoints.Add(DisplayBitmap.GetObjectPoint(e.Location))
+            If e.Button = Windows.Forms.MouseButtons.Left Then
+                If MoveMode AndAlso SelectedObject IsNot Nothing Then
+                    Dim op = DisplayBitmap.GetObjectPoint(New PointF(e.X, e.Y))
+                    MovePoints.Add(op)
 
-                If GetType(Line).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 1 Then
-                    With DirectCast(SelectedObject.DrawObject, Line)
-                        .Point1 = MovePoints(0)
-                        .Point2 = MovePoints(1)
-                        MoveMode = False
-                    End With
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-
-                If GetType(TextObject).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 0 Then
-                    With DirectCast(SelectedObject.DrawObject, TextObject)
-                        .Point1 = MovePoints(0)
-                        MoveMode = False
-                    End With
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-
-                If GetType(BitmapObject).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 1 Then
-                    With DirectCast(SelectedObject.DrawObject, BitmapObject)
-                        .RectangleF = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y)
-                        MoveMode = False
-                    End With
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-
-                If GetType(Tetragon).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 3 Then
-                    With DirectCast(SelectedObject.DrawObject, Tetragon)
-                        .Point1 = MovePoints(0)
-                        .Point2 = MovePoints(1)
-                        .Point3 = MovePoints(2)
-                        .Point4 = MovePoints(3)
+                    If GetType(Line).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 1 Then
+                        With DirectCast(SelectedObject.DrawObject, Line)
+                            .Point1 = MovePoints(0)
+                            .Point2 = MovePoints(1)
+                        End With
                         MoveMode = False
                         RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                    End With
-                End If
-
-                If GetType(PointC).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 0 Then
-                    With DirectCast(SelectedObject.DrawObject, PointC)
-                        .X = MovePoints(0).X
-                        .Y = MovePoints(0).Y
-                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                    End With
-                End If
-
-                If TypeOf SelectedObject.DrawObject Is PointF AndAlso MovePoints.Count > 0 Then
-                    SelectedObject.DrawObject = MovePoints(0)
-                    MoveMode = False
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-
-                If TypeOf SelectedObject.DrawObject Is Point AndAlso MovePoints.Count > 0 Then
-                    SelectedObject.DrawObject = New Point(MovePoints(0).X, MovePoints(0).Y)
-                    MoveMode = False
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-
-                If TypeOf SelectedObject.DrawObject Is Rectangle AndAlso MovePoints.Count > 1 Then
-                    SelectedObject.DrawObject = Rectangle.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
-                    MoveMode = False
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-                If TypeOf SelectedObject.DrawObject Is RectangleF AndAlso MovePoints.Count > 1 Then
-                    SelectedObject.DrawObject = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
-                    MoveMode = False
-                    RaiseEvent DisplayObjectMoved(Me, SelectedObject)
-                End If
-
-                Me.Refresh()
-            Else
-                Dim list As New List(Of DisplayObject)
-                For Each obj In _displayObjects
-                    If DisplayBitmap.IsBitmapPointInsideBound(obj.DrawObject, e.X, e.Y) Then
-                        list.Add(obj)
                     End If
-                Next
-                Static index As Integer
-                If list.Count > 0 Then
-                    index += 1
-                    If index > list.Count - 1 Then index = 0
-                    SelectedObject = list(index)
-                    RaiseEvent ObjectSelect(sender, SelectedObject, e)
-                    Label1.Text = SelectedObject.ID
-                    If SelectedObject.Caption > "" Then Label1.Text = SelectedObject.Caption
-                    Refresh()
-                    RaiseEvent DisplayObjectSelected(Me, SelectedObject)
+
+                    If GetType(TextObject).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 0 Then
+                        With DirectCast(SelectedObject.DrawObject, TextObject)
+                            .Point1 = MovePoints(0)
+                        End With
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End If
+
+                    If GetType(BitmapObject).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 1 Then
+                        With DirectCast(SelectedObject.DrawObject, BitmapObject)
+                            .RectangleF = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y)
+                        End With
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End If
+
+                    If GetType(Tetragon).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 3 Then
+                        With DirectCast(SelectedObject.DrawObject, Tetragon)
+                            .Point1 = MovePoints(0)
+                            .Point2 = MovePoints(1)
+                            .Point3 = MovePoints(2)
+                            .Point4 = MovePoints(3)
+                        End With
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End If
+
+                    If GetType(PointC).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 0 Then
+                        With DirectCast(SelectedObject.DrawObject, PointC)
+                            .X = MovePoints(0).X
+                            .Y = MovePoints(0).Y
+                        End With
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End If
+
+                    If TypeOf SelectedObject.DrawObject Is PointF AndAlso MovePoints.Count > 0 Then
+                        SelectedObject.DrawObject = MovePoints(0)
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End If
+
+                    If TypeOf SelectedObject.DrawObject Is Point AndAlso MovePoints.Count > 0 Then
+                        SelectedObject.DrawObject = New Point(MovePoints(0).X, MovePoints(0).Y)
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End If
+
+                    If TypeOf SelectedObject.DrawObject Is Rectangle AndAlso MovePoints.Count > 1 Then
+                        SelectedObject.DrawObject = Rectangle.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End If
+
+                    If TypeOf SelectedObject.DrawObject Is RectangleF AndAlso MovePoints.Count > 1 Then
+                        SelectedObject.DrawObject = RectangleF.FromLTRB(MovePoints(0).X, MovePoints(0).Y, MovePoints(1).X, MovePoints(1).Y).ToPositiveSized
+                        MoveMode = False
+                        RaiseEvent DisplayObjectMoved(Me, SelectedObject)
+                    End If
+
+                    Me.Refresh()
                 Else
-                    SelectedObject = Nothing
-                    Label1.Text = "-"
-                    Refresh()
-                    RaiseEvent DisplayObjectSelected(Me, SelectedObject)
+                    Dim list As New List(Of DisplayObject)
+                    For Each obj In _displayObjects
+                        If DisplayBitmap.IsBitmapPointInsideBound(obj.DrawObject, e.X, e.Y) Then
+                            list.Add(obj)
+                        End If
+                    Next
+                    Static index As Integer
+                    If list.Count > 0 Then
+                        index += 1
+                        If index > list.Count - 1 Then index = 0
+                        SelectedObject = list(index)
+                        RaiseEvent ObjectSelected(sender, SelectedObject, e)
+                        _selectedObjectID.Text = SelectedObject.ID
+                        If SelectedObject.Caption > "" Then _selectedObjectID.Text = SelectedObject.Caption
+                        Me.Refresh()
+                        RaiseEvent DisplayObjectSelected(Me, SelectedObject)
+                    Else
+                        SelectedObject = Nothing
+                        _selectedObjectID.Text = "-"
+                        Me.Refresh()
+                        RaiseEvent DisplayObjectSelected(Me, SelectedObject)
+                    End If
                 End If
             End If
         End If
@@ -249,18 +256,14 @@
 
     Private Sub DisplayControl_Resize(sender As Object, e As EventArgs) Handles Me.Resize
         Try
-            Refresh()
+            Me.Refresh()
         Catch ex As Exception
         End Try
     End Sub
 
-    Private Sub Label1_Click(sender As Object, e As EventArgs) Handles Label1.Click
+    Private Sub _selectedObjectID_Click(sender As Object, e As EventArgs) Handles _selectedObjectID.Click
         If SelectedObject IsNot Nothing AndAlso SelectedObject.IsMoveable Then MoveMode = True
         MovePoints.Clear()
         Me.Refresh()
-    End Sub
-
-    Private Sub DisplayControl_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-
     End Sub
 End Class

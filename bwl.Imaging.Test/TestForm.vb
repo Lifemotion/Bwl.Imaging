@@ -66,14 +66,13 @@ Public Class TestForm
         For Each obj In DisplayControl1.DisplayObjects
             obj.IsMoveable = True
         Next
-
     End Sub
 
     Private Sub Button4_Click(sender As Object, e As EventArgs) Handles Button4.Click
         Dim imgs(20) As Bitmap
         For i = 1 To 20
             '     Dim b As New Bitmap(DisplayControl1._pictureBox.Width, DisplayControl1._pictureBox.Height)
-            Dim b As New Bitmap(10, 20)
+            Dim b As New Bitmap(20, 20)
 
             Dim g = Graphics.FromImage(b)
             Dim clr = Color.FromArgb(i * 1, i * 1.5, i * 2)
@@ -86,16 +85,14 @@ Public Class TestForm
             '   DisplayControl1._pictureBox.Refresh()
             DisplayControl1.BackgroundBitmap = imgs(j)
             DisplayControl1.Refresh()
-
         Next
         Dim s = (Now - t).TotalMilliseconds.ToString("0.0")
         MsgBox(s)
     End Sub
 
-    Private Sub DisplayControl1_ObjectSelect(sender As Object, selected As DisplayObject, e As MouseEventArgs) Handles DisplayControl1.ObjectSelect
+    Private Sub DisplayControl1_ObjectSelect(sender As Object, selected As DisplayObject, e As MouseEventArgs) Handles DisplayControl1.ObjectSelected
 
     End Sub
-
 
 
     Private Sub DisplayControl1_DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject) Handles DisplayControl1.DisplayObjectMoved
@@ -152,5 +149,18 @@ Public Class TestForm
     Private Sub DisplayControl1_DisplayRightBtnMouseClick(sender As DisplayObjectsControl, ByRef needClear As Boolean) Handles DisplayControl1.DisplayRightBtnMouseClick
         'needClear = False
         'DisplayControl1.ClearSelectedAndPoints
+    End Sub
+
+    Private Sub Button6_Click(sender As Object, e As EventArgs) Handles Button6.Click
+        Dim b = New Bitmap(64, 64)
+        Dim g = Graphics.FromImage(b)
+        Dim clr = Color.FromArgb(128, 128, 128)
+        g.Clear(clr)
+
+        OverlayDisplay1.BackgroundImage = b.Clone()
+        OverlayDisplay1.Refresh()
+
+        DisplayControl1.BackgroundBitmap = b.Clone()
+        DisplayControl1.Refresh()
     End Sub
 End Class

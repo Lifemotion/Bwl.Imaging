@@ -22,7 +22,8 @@ Partial Class DisplayObjectsControl
     'Не изменяйте ее в редакторе исходного кода.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.Label1 = New System.Windows.Forms.Label()
+        Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(DisplayObjectsControl))
+        Me._selectedObjectID = New System.Windows.Forms.Label()
         CType(Me._pictureBox, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -30,30 +31,31 @@ Partial Class DisplayObjectsControl
         '
         Me._pictureBox.Size = New System.Drawing.Size(348, 293)
         '
-        'Label1
+        '_selectedObjectID
         '
-        Me.Label1.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(1, 296)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(10, 13)
-        Me.Label1.TabIndex = 1
-        Me.Label1.Text = "-"
+        Me._selectedObjectID.Anchor = CType((System.Windows.Forms.AnchorStyles.Bottom Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me._selectedObjectID.AutoSize = True
+        Me._selectedObjectID.Location = New System.Drawing.Point(1, 298)
+        Me._selectedObjectID.Name = "_selectedObjectID"
+        Me._selectedObjectID.Size = New System.Drawing.Size(10, 13)
+        Me._selectedObjectID.TabIndex = 1
+        Me._selectedObjectID.Text = "-"
         '
         'DisplayObjectsControl
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.Controls.Add(Me.Label1)
+        Me.Bitmap = CType(resources.GetObject("$this.Bitmap"), System.Drawing.Bitmap)
+        Me.Controls.Add(Me._selectedObjectID)
         Me.Name = "DisplayObjectsControl"
         Me.Size = New System.Drawing.Size(348, 319)
-        Me.Controls.SetChildIndex(Me.Label1, 0)
+        Me.Controls.SetChildIndex(Me._selectedObjectID, 0)
         Me.Controls.SetChildIndex(Me._pictureBox, 0)
         CType(Me._pictureBox, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
     End Sub
-    Friend WithEvents Label1 As System.Windows.Forms.Label
+    Friend WithEvents _selectedObjectID As System.Windows.Forms.Label
 
 End Class

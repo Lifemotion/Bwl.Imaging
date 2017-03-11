@@ -1,7 +1,12 @@
-﻿
-Public Class DisplayBitmap
+﻿Public Class DisplayBitmap
     Inherits DisplayGraphics
     Protected _bitmap As Bitmap
+
+    Public ReadOnly Property Bitmap As Bitmap
+        Get
+            Return _bitmap
+        End Get
+    End Property
 
     Public Sub New(bitmap As Bitmap)
         MyBase.New(Graphics.FromImage(bitmap), bitmap.Width, bitmap.Height)
@@ -14,14 +19,8 @@ Public Class DisplayBitmap
         If height < 1 Then Throw New ArgumentException("height must be >0")
     End Sub
 
-    Public ReadOnly Property Bitmap As Bitmap
-        Get
-            Return _bitmap
-        End Get
-    End Property
-
     Public Sub Resize(width As Integer, height As Integer)
         _bitmap = New Bitmap(width, height)
-        MyBase.SetGraphics(width, height, Graphics.FromImage(_bitmap))
+        MyBase.SetGraphics(Graphics.FromImage(_bitmap), width, height)
     End Sub
 End Class

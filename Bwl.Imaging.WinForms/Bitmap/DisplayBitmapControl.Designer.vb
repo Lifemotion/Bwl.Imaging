@@ -50,6 +50,6 @@ Partial Class DisplayBitmapControl
         Me.ResumeLayout(False)
 
     End Sub
-    Public WithEvents _pictureBox As System.Windows.Forms.PictureBox
 
+    Protected WithEvents _pictureBox As PictureBox
 End Class
