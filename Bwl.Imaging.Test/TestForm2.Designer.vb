@@ -28,11 +28,12 @@ Partial Class TestForm2
         Me.DisplayControl2 = New bwl.Imaging.DisplayObjectsControl()
         Me.DisplayControl1 = New bwl.Imaging.DisplayObjectsControl()
         Me.OverlayDisplay1 = New bwl.Imaging.DisplayBitmapControl()
+        Me.DisplayControl3 = New bwl.Imaging.DisplayObjectsControl()
         Me.SuspendLayout()
         '
         'Button1
         '
-        Me.Button1.Location = New System.Drawing.Point(12, 443)
+        Me.Button1.Location = New System.Drawing.Point(12, 430)
         Me.Button1.Name = "Button1"
         Me.Button1.Size = New System.Drawing.Size(84, 52)
         Me.Button1.TabIndex = 2
@@ -41,7 +42,7 @@ Partial Class TestForm2
         '
         'Button2
         '
-        Me.Button2.Location = New System.Drawing.Point(102, 443)
+        Me.Button2.Location = New System.Drawing.Point(102, 430)
         Me.Button2.Name = "Button2"
         Me.Button2.Size = New System.Drawing.Size(84, 52)
         Me.Button2.TabIndex = 5
@@ -65,7 +66,7 @@ Partial Class TestForm2
         Me.DisplayControl2.RedrawObjectsWhenCollectionChanged = True
         Me.DisplayControl2.SelectedObject = Nothing
         Me.DisplayControl2.ShowStatusBar = True
-        Me.DisplayControl2.Size = New System.Drawing.Size(147, 425)
+        Me.DisplayControl2.Size = New System.Drawing.Size(148, 412)
         Me.DisplayControl2.TabIndex = 6
         '
         'DisplayControl1
@@ -85,7 +86,7 @@ Partial Class TestForm2
         Me.DisplayControl1.RedrawObjectsWhenCollectionChanged = True
         Me.DisplayControl1.SelectedObject = Nothing
         Me.DisplayControl1.ShowStatusBar = True
-        Me.DisplayControl1.Size = New System.Drawing.Size(721, 114)
+        Me.DisplayControl1.Size = New System.Drawing.Size(722, 101)
         Me.DisplayControl1.TabIndex = 4
         '
         'OverlayDisplay1
@@ -96,14 +97,35 @@ Partial Class TestForm2
         Me.OverlayDisplay1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.OverlayDisplay1.Location = New System.Drawing.Point(12, 12)
         Me.OverlayDisplay1.Name = "OverlayDisplay1"
-        Me.OverlayDisplay1.Size = New System.Drawing.Size(721, 305)
+        Me.OverlayDisplay1.Size = New System.Drawing.Size(722, 305)
         Me.OverlayDisplay1.TabIndex = 1
+        '
+        'DisplayControl3
+        '
+        Me.DisplayControl3.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.DisplayControl3.BackgroundBitmap = Nothing
+        Me.DisplayControl3.Bitmap = CType(resources.GetObject("DisplayControl3.Bitmap"), System.Drawing.Bitmap)
+        Me.DisplayControl3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.DisplayControl3.KeepBackgroundAspectRatio = True
+        Me.DisplayControl3.Location = New System.Drawing.Point(12, 488)
+        Me.DisplayControl3.MoveMode = False
+        Me.DisplayControl3.MoveModePointColor = System.Drawing.Color.Red
+        Me.DisplayControl3.MovePoints = CType(resources.GetObject("DisplayControl3.MovePoints"), System.Collections.Generic.List(Of System.Drawing.PointF))
+        Me.DisplayControl3.Name = "DisplayControl3"
+        Me.DisplayControl3.RedrawObjectsWhenCollectionChanged = True
+        Me.DisplayControl3.SelectedObject = Nothing
+        Me.DisplayControl3.ShowStatusBar = True
+        Me.DisplayControl3.Size = New System.Drawing.Size(722, 114)
+        Me.DisplayControl3.TabIndex = 7
         '
         'TestForm2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1142, 650)
+        Me.ClientSize = New System.Drawing.Size(1143, 637)
+        Me.Controls.Add(Me.DisplayControl3)
         Me.Controls.Add(Me.DisplayControl2)
         Me.Controls.Add(Me.Button2)
         Me.Controls.Add(Me.DisplayControl1)
@@ -121,4 +143,5 @@ Partial Class TestForm2
     Friend WithEvents DisplayControl1 As DisplayObjectsControl
     Friend WithEvents Button2 As Windows.Forms.Button
     Friend WithEvents DisplayControl2 As DisplayObjectsControl
+    Friend WithEvents DisplayControl3 As DisplayObjectsControl
 End Class

@@ -1,5 +1,10 @@
 ﻿
 Public Class DisplayGraphics
+    Public Enum QualityMode
+        Normal
+        Fast
+    End Enum
+
     Private _width As Integer
     Private _height As Integer
     Private _offsetX As Single
@@ -8,7 +13,6 @@ Public Class DisplayGraphics
     Private _mulY As Single
     Private _baseMulX As Single
     Private _baseMulY As Single
-    Private _borders As RectangleF()
     Private _multiplyOnBitmapSize As Boolean = True
 
     Protected _bkgX1F As Single = 0
@@ -24,6 +28,7 @@ Public Class DisplayGraphics
     Public Property BackgroundColor As Color = Color.White
     Public Property DefaultWidth As Single = 1.0
     Public Property DefaultPointSize As Single = 5.0
+    Public Property Quality As QualityMode = QualityMode.Fast
 
     Public Sub New(graphics As Graphics, width As Integer, height As Integer)
         If graphics Is Nothing Then Throw New ArgumentException("graphics is nothing")
@@ -66,7 +71,6 @@ Public Class DisplayGraphics
             _bkgY1F = 0
             _bkgX2F = 0.5 + ardivF * 0.5
             _bkgY2F = 1
-            _borders = {RectangleF.FromLTRB(0, 0, _bkgX1F, 1), RectangleF.FromLTRB(_bkgX2F, 0, 1, 1)}
             Dim bkgWF = _bkgX2F - _bkgX1F
             Dim bkgW = If(MultiplyOnBitmapSize, bkgWF * _width, bkgWF)
             _mulX = bkgW
@@ -78,21 +82,10 @@ Public Class DisplayGraphics
             _bkgY1F = 0.5 - ardivF * 0.5
             _bkgX2F = 1
             _bkgY2F = 0.5 + ardivF * 0.5
-            _borders = {RectangleF.FromLTRB(0, 0, 1, _bkgY1F), RectangleF.FromLTRB(0, _bkgY2F, 1, 1)}
             Dim bkgHF = _bkgY2F - _bkgY1F
             Dim bkgH = If(MultiplyOnBitmapSize, bkgHF * _height, bkgHF)
             _mulY = bkgH
             _offsetY = If(MultiplyOnBitmapSize, _bkgY1F * _height, _bkgY1F)
-        End If
-    End Sub
-
-    Public Sub DrawBorders()
-        DrawBorders(Color.Black)
-    End Sub
-
-    Public Sub DrawBorders(color As Color)
-        If _borders IsNot Nothing AndAlso _borders.Any() Then
-            FillRectanglesBase(color, _borders)
         End If
     End Sub
 
@@ -403,11 +396,4 @@ Public Class DisplayGraphics
         End If
         ComputeMultipliers()
     End Sub
-
-    Public Property Quality As QualityMode = QualityMode.Fast
-
-    Public Enum QualityMode
-        Normal
-        Fast
-    End Enum
 End Class
