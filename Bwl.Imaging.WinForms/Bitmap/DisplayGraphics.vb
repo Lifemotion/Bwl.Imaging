@@ -89,6 +89,10 @@ Public Class DisplayGraphics
         End If
     End Sub
 
+    Public Sub Clear(color As Color)
+        _graphics.Clear(color)
+    End Sub
+
     Public Sub Clear()
         _graphics.Clear(BackgroundColor)
     End Sub

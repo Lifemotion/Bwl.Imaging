@@ -25,10 +25,10 @@ Partial Class TestForm2
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(TestForm2))
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
+        Me.DisplayControl3 = New bwl.Imaging.DisplayObjectsControl()
         Me.DisplayControl2 = New bwl.Imaging.DisplayObjectsControl()
         Me.DisplayControl1 = New bwl.Imaging.DisplayObjectsControl()
         Me.OverlayDisplay1 = New bwl.Imaging.DisplayBitmapControl()
-        Me.DisplayControl3 = New bwl.Imaging.DisplayObjectsControl()
         Me.SuspendLayout()
         '
         'Button1
@@ -49,12 +49,34 @@ Partial Class TestForm2
         Me.Button2.Text = "Button2"
         Me.Button2.UseVisualStyleBackColor = True
         '
+        'DisplayControl3
+        '
+        Me.DisplayControl3.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.DisplayControl3.BackgroundBitmap = Nothing
+        Me.DisplayControl3.BackgroundColor = System.Drawing.Color.White
+        Me.DisplayControl3.Bitmap = CType(resources.GetObject("DisplayControl3.Bitmap"), System.Drawing.Bitmap)
+        Me.DisplayControl3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.DisplayControl3.KeepBackgroundAspectRatio = True
+        Me.DisplayControl3.Location = New System.Drawing.Point(12, 488)
+        Me.DisplayControl3.MoveMode = False
+        Me.DisplayControl3.MoveModePointColor = System.Drawing.Color.Red
+        Me.DisplayControl3.MovePoints = CType(resources.GetObject("DisplayControl3.MovePoints"), System.Collections.Generic.List(Of System.Drawing.PointF))
+        Me.DisplayControl3.Name = "DisplayControl3"
+        Me.DisplayControl3.RedrawObjectsWhenCollectionChanged = True
+        Me.DisplayControl3.SelectedObject = Nothing
+        Me.DisplayControl3.ShowStatusBar = True
+        Me.DisplayControl3.Size = New System.Drawing.Size(722, 114)
+        Me.DisplayControl3.TabIndex = 7
+        '
         'DisplayControl2
         '
         Me.DisplayControl2.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.DisplayControl2.BackgroundBitmap = Nothing
+        Me.DisplayControl2.BackgroundColor = System.Drawing.Color.White
         Me.DisplayControl2.Bitmap = CType(resources.GetObject("DisplayControl2.Bitmap"), System.Drawing.Bitmap)
         Me.DisplayControl2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.DisplayControl2.KeepBackgroundAspectRatio = True
@@ -75,6 +97,7 @@ Partial Class TestForm2
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.DisplayControl1.BackgroundBitmap = Nothing
+        Me.DisplayControl1.BackgroundColor = System.Drawing.Color.LimeGreen
         Me.DisplayControl1.Bitmap = CType(resources.GetObject("DisplayControl1.Bitmap"), System.Drawing.Bitmap)
         Me.DisplayControl1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.DisplayControl1.KeepBackgroundAspectRatio = True
@@ -99,26 +122,6 @@ Partial Class TestForm2
         Me.OverlayDisplay1.Name = "OverlayDisplay1"
         Me.OverlayDisplay1.Size = New System.Drawing.Size(722, 305)
         Me.OverlayDisplay1.TabIndex = 1
-        '
-        'DisplayControl3
-        '
-        Me.DisplayControl3.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.DisplayControl3.BackgroundBitmap = Nothing
-        Me.DisplayControl3.Bitmap = CType(resources.GetObject("DisplayControl3.Bitmap"), System.Drawing.Bitmap)
-        Me.DisplayControl3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.DisplayControl3.KeepBackgroundAspectRatio = True
-        Me.DisplayControl3.Location = New System.Drawing.Point(12, 488)
-        Me.DisplayControl3.MoveMode = False
-        Me.DisplayControl3.MoveModePointColor = System.Drawing.Color.Red
-        Me.DisplayControl3.MovePoints = CType(resources.GetObject("DisplayControl3.MovePoints"), System.Collections.Generic.List(Of System.Drawing.PointF))
-        Me.DisplayControl3.Name = "DisplayControl3"
-        Me.DisplayControl3.RedrawObjectsWhenCollectionChanged = True
-        Me.DisplayControl3.SelectedObject = Nothing
-        Me.DisplayControl3.ShowStatusBar = True
-        Me.DisplayControl3.Size = New System.Drawing.Size(722, 114)
-        Me.DisplayControl3.TabIndex = 7
         '
         'TestForm2
         '

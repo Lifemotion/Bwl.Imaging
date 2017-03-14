@@ -15,13 +15,6 @@
 
     Public Property BackgroundBitmap As Bitmap
     Public Property BackgroundColor As Color
-        Get
-            Return DisplayBitmap.BackgroundColor
-        End Get
-        Set(value As Color)
-            DisplayBitmap.BackgroundColor = value
-        End Set
-    End Property
     Public Property KeepBackgroundAspectRatio As Boolean = True
     Public Property RedrawObjectsWhenCollectionChanged As Boolean = False
     Public Property SelectedObject As DisplayObject
@@ -90,6 +83,7 @@
     End Sub
 
     Public Sub RedrawObjects()
+        DisplayBitmap.BackgroundColor = Me.BackgroundColor
         If BackgroundBitmap Is Nothing OrElse KeepBackgroundAspectRatio Then
             DisplayBitmap.Clear()
         End If

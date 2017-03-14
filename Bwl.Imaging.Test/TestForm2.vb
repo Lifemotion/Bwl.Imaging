@@ -15,7 +15,6 @@
         Dim clr = Color.FromArgb(128, 128, 128)
         g.Clear(clr)
 
-        DisplayControl1.BackgroundColor = Color.LimeGreen
         DisplayControl1.BackgroundBitmap = b
         DisplayControl1.DisplayObjects.Clear()
         DisplayControl1.DisplayObjects.Add(New DisplayObject("vector1", Color.Violet, New Vector(0.1, 0.1, 0.9, 0.9)))
@@ -36,7 +35,7 @@
         Next
         DisplayControl2.Refresh()
 
-        DisplayControl3.BackgroundColor = Color.Maroon
+        DisplayControl3.BackgroundColor = Color.Lavender
         DisplayControl3.DisplayObjects.Clear()
         For Each obj In DisplayControl2.DisplayObjects
             obj.IsMoveable = True
