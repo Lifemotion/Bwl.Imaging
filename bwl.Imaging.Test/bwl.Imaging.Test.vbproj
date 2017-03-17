@@ -139,6 +139,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="rapp-client-gui.exe" />
+    <None Include="Resources\YellowBlock.bmp" />
+    <None Include="Resources\RedBlock.bmp" />
+    <None Include="Resources\GreenBlock.bmp" />
+    <None Include="Resources\BlueBlock.bmp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj">

@@ -7,11 +7,12 @@
     Private _bkgX2F As Single = 1.0
     Private _bkgY2F As Single = 1.0
 
-    Private _clickPoint As PointF
+    Private _clickPointF As PointF
+    Private _showClickPoint As Boolean = False
 
     Public ReadOnly Property ClickPoint
         Get
-            Return _clickPoint
+            Return _clickPointF
         End Get
     End Property
 
@@ -32,6 +33,19 @@
     Public Property MoveMode As Boolean
     Public Property MovePoints As New List(Of PointF)
     Public Property ShowStatusBar As Boolean = True
+    Public Property ShowClickPoint As Boolean
+        Get
+            Return _showClickPoint
+        End Get
+        Set(value As Boolean)
+            If value Then
+                _clickPointFLabel.Visible = True
+            Else
+                _clickPointFLabel.Visible = False
+            End If
+            _showClickPoint = value
+        End Set
+    End Property
 
     Public Event ObjectSelected(sender As Object, selected As DisplayObject, e As MouseEventArgs)
     Public Event DisplayObjectMoved(sender As DisplayObjectsControl, displayObject As DisplayObject)
@@ -154,7 +168,10 @@
 
     Private Sub _pictureBox_Click(sender As Object, e As MouseEventArgs) Handles _pictureBox.MouseClick
         Dim clickPointF = DisplayBitmap.GetObjectPoint(New PointF(e.X, e.Y))
-        _clickPoint = clickPointF
+        If ShowClickPoint Then
+            _clickPointFLabel.Text = String.Format("X:{0}; Y:{1}", clickPointF.X.ToString("F1"), clickPointF.Y.ToString("F1"))
+        End If
+        _clickPointF = clickPointF
         RaiseEvent MouseClickF(sender, e, clickPointF)
         If clickPointF.X >= _bkgX1F AndAlso clickPointF.X <= _bkgX2F AndAlso clickPointF.Y >= _bkgY1F AndAlso clickPointF.Y <= _bkgY2F Then
             RaiseEvent MouseClickOnBackgroundF(sender, e, clickPointF)
