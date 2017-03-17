@@ -7,6 +7,14 @@
     Private _bkgX2F As Single = 1.0
     Private _bkgY2F As Single = 1.0
 
+    Private _clickPoint As PointF
+
+    Public ReadOnly Property ClickPoint
+        Get
+            Return _clickPoint
+        End Get
+    End Property
+
     Public ReadOnly Property DisplayObjects As List(Of DisplayObject)
         Get
             Return _displayObjects
@@ -30,6 +38,8 @@
     Public Event DisplayObjectSelected(sender As DisplayObjectsControl, displayObject As DisplayObject)
     Public Event DisplayRightBtnMouseClick(sender As DisplayObjectsControl, ByRef needClearFeedback As Boolean)
     Public Event MoveModeChanged(sender As DisplayObjectsControl, moveMode As Boolean)
+    Public Event MouseClickF(sender As Object, e As MouseEventArgs, clickPointF As PointF)
+    Public Event MouseClickOnBackgroundF(sender As Object, e As MouseEventArgs, clickPointF As PointF)
 
     Public Sub Add(displayObject As DisplayObject)
         SyncLock Me
@@ -143,9 +153,11 @@
     End Sub
 
     Private Sub _pictureBox_Click(sender As Object, e As MouseEventArgs) Handles _pictureBox.MouseClick
-        Dim eXF = e.X / DisplayBitmap.Width
-        Dim eYF = e.Y / DisplayBitmap.Height
-        If eXF >= _bkgX1F AndAlso eXF <= _bkgX2F AndAlso eYF >= _bkgY1F AndAlso eYF <= _bkgY2F Then
+        Dim clickPointF = DisplayBitmap.GetObjectPoint(New PointF(e.X, e.Y))
+        _clickPoint = clickPointF
+        RaiseEvent MouseClickF(sender, e, clickPointF)
+        If clickPointF.X >= _bkgX1F AndAlso clickPointF.X <= _bkgX2F AndAlso clickPointF.Y >= _bkgY1F AndAlso clickPointF.Y <= _bkgY2F Then
+            RaiseEvent MouseClickOnBackgroundF(sender, e, clickPointF)
             If e.Button = Windows.Forms.MouseButtons.Right Then
                 Dim needClearFeedback = True
                 RaiseEvent DisplayRightBtnMouseClick(Me, needClearFeedback)
@@ -155,8 +167,7 @@
             End If
             If e.Button = Windows.Forms.MouseButtons.Left Then
                 If MoveMode AndAlso SelectedObject IsNot Nothing Then
-                    Dim op = DisplayBitmap.GetObjectPoint(New PointF(e.X, e.Y))
-                    MovePoints.Add(op)
+                    MovePoints.Add(clickPointF)
 
                     If GetType(Line).IsAssignableFrom(SelectedObject.DrawObject.GetType) AndAlso MovePoints.Count > 1 Then
                         With DirectCast(SelectedObject.DrawObject, Line)

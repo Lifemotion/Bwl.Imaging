@@ -25,10 +25,12 @@ Partial Class TestForm2
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(TestForm2))
         Me.Button1 = New System.Windows.Forms.Button()
         Me.Button2 = New System.Windows.Forms.Button()
+        Me._mouseClickFLabel = New System.Windows.Forms.Label()
         Me.DisplayControl3 = New bwl.Imaging.DisplayObjectsControl()
         Me.DisplayControl2 = New bwl.Imaging.DisplayObjectsControl()
         Me.DisplayControl1 = New bwl.Imaging.DisplayObjectsControl()
         Me.OverlayDisplay1 = New bwl.Imaging.DisplayBitmapControl()
+        Me._mouseClickOnBackgroundFLabel = New System.Windows.Forms.Label()
         Me.SuspendLayout()
         '
         'Button1
@@ -48,6 +50,15 @@ Partial Class TestForm2
         Me.Button2.TabIndex = 5
         Me.Button2.Text = "Button2"
         Me.Button2.UseVisualStyleBackColor = True
+        '
+        '_mouseClickFLabel
+        '
+        Me._mouseClickFLabel.AutoSize = True
+        Me._mouseClickFLabel.Location = New System.Drawing.Point(188, 404)
+        Me._mouseClickFLabel.Name = "_mouseClickFLabel"
+        Me._mouseClickFLabel.Size = New System.Drawing.Size(71, 13)
+        Me._mouseClickFLabel.TabIndex = 8
+        Me._mouseClickFLabel.Text = "MouseClickF:"
         '
         'DisplayControl3
         '
@@ -123,11 +134,22 @@ Partial Class TestForm2
         Me.OverlayDisplay1.Size = New System.Drawing.Size(722, 305)
         Me.OverlayDisplay1.TabIndex = 1
         '
+        '_mouseClickOnBackgroundFLabel
+        '
+        Me._mouseClickOnBackgroundFLabel.AutoSize = True
+        Me._mouseClickOnBackgroundFLabel.Location = New System.Drawing.Point(356, 404)
+        Me._mouseClickOnBackgroundFLabel.Name = "_mouseClickOnBackgroundFLabel"
+        Me._mouseClickOnBackgroundFLabel.Size = New System.Drawing.Size(143, 13)
+        Me._mouseClickOnBackgroundFLabel.TabIndex = 9
+        Me._mouseClickOnBackgroundFLabel.Text = "MouseClickOnBackgroundF:"
+        '
         'TestForm2
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1143, 637)
+        Me.Controls.Add(Me._mouseClickOnBackgroundFLabel)
+        Me.Controls.Add(Me._mouseClickFLabel)
         Me.Controls.Add(Me.DisplayControl3)
         Me.Controls.Add(Me.DisplayControl2)
         Me.Controls.Add(Me.Button2)
@@ -138,6 +160,7 @@ Partial Class TestForm2
         Me.Name = "TestForm2"
         Me.Text = "TestForm2"
         Me.ResumeLayout(False)
+        Me.PerformLayout()
 
     End Sub
 
@@ -147,4 +170,6 @@ Partial Class TestForm2
     Friend WithEvents Button2 As Windows.Forms.Button
     Friend WithEvents DisplayControl2 As DisplayObjectsControl
     Friend WithEvents DisplayControl3 As DisplayObjectsControl
+    Friend WithEvents _mouseClickFLabel As Windows.Forms.Label
+    Friend WithEvents _mouseClickOnBackgroundFLabel As Windows.Forms.Label
 End Class

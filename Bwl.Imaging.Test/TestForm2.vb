@@ -17,8 +17,11 @@
 
         DisplayControl1.BackgroundBitmap = b
         DisplayControl1.DisplayObjects.Clear()
-        DisplayControl1.DisplayObjects.Add(New DisplayObject("vector1", Color.Violet, New Vector(0.1, 0.1, 0.9, 0.9)))
-        DisplayControl1.DisplayObjects.Add(New DisplayObject("line1", Color.Violet, New Line(0.5, 0.1, 0.9, 0.9)))
+        DisplayControl1.DisplayObjects.Add(New DisplayObject("vector1", Color.Violet, New Vector(0.1, 0.1, 0.1, 0.1)))
+        DisplayControl1.DisplayObjects.Add(New DisplayObject("rectRed", Color.Red, New RectangleF(0.1, 0.1, 0.1, 0.1)))
+        DisplayControl1.DisplayObjects.Add(New DisplayObject("rectGreen", Color.Green, New RectangleF(0.45, 0.45, 0.1, 0.1)))
+        DisplayControl1.DisplayObjects.Add(New DisplayObject("rectBlue", Color.Blue, New RectangleF(0.8, 0.1, 0.1, 0.1)))
+
         For Each obj In DisplayControl1.DisplayObjects
             obj.IsMoveable = True
         Next
@@ -42,5 +45,13 @@
             DisplayControl3.DisplayObjects.Add(obj)
         Next
         DisplayControl3.Refresh()
+    End Sub
+
+    Private Sub DisplayControl1_MouseClickF(sender As Object, e As Windows.Forms.MouseEventArgs, clickPointF As PointF) Handles DisplayControl1.MouseClickF
+        _mouseClickFLabel.Text = String.Format("MouseClickF: {0}; {1}", clickPointF.X.ToString("F2"), clickPointF.Y.ToString("F2"))
+    End Sub
+
+    Private Sub DisplayControl1_MouseClickOnBackgroundF(sender As Object, e As Windows.Forms.MouseEventArgs, clickPointF As PointF) Handles DisplayControl1.MouseClickOnBackgroundF
+        _mouseClickOnBackgroundFLabel.Text = String.Format("MouseClickOnBackgroundF: {0}; {1}", clickPointF.X.ToString("F2"), clickPointF.Y.ToString("F2"))
     End Sub
 End Class
