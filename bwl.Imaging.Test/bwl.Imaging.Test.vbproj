@@ -105,6 +105,12 @@
     <Compile Include="TestForm2.vb">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="UnsafeTestForm.Designer.vb">
+      <DependentUpon>UnsafeTestForm.vb</DependentUpon>
+    </Compile>
+    <Compile Include="UnsafeTestForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MoveDetectorTest.resx">
@@ -121,6 +127,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="TestForm2.resx">
       <DependentUpon>TestForm2.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UnsafeTestForm.resx">
+      <DependentUpon>UnsafeTestForm.vb</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
@@ -145,6 +154,10 @@
     <None Include="Resources\BlueBlock.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj">
+      <Project>{e10c92bb-489b-481a-b032-6a52a3d9cd8c}</Project>
+      <Name>Bwl.Imaging.Unsafe</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj">
       <Project>{cf1ba304-7402-46b4-9d06-ab226bc72293}</Project>
       <Name>Bwl.Imaging.WinForms</Name>

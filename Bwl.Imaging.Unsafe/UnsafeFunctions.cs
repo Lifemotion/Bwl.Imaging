@@ -140,7 +140,7 @@ namespace Bwl.Imaging.Unsafe
                                     srcBytes += srcBmd.Stride;
                                     trgtBytes += trgtBmd.Stride;
                                 }
-                            }                            
+                            }
                         }
                         srcBmp.UnlockBits(srcBmd);
                         trgtBmp.UnlockBits(trgtBmd);
@@ -210,6 +210,97 @@ namespace Bwl.Imaging.Unsafe
                                 value = value < 0 ? 0 : value;
                                 value = value > 255 ? 255 : value;
                                 t2[2] = (byte)value;
+                            }
+                        });
+                    }
+                    srcBmp.UnlockBits(srcBmd);
+                    trgtBmp.UnlockBits(trgtBmd);
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
+        public static Bitmap Sharpen5RGB(Bitmap srcBmp)
+        {
+            if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+            {
+                Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
+                Sharpen5RGB(srcBmp, trgtBmp);
+                return trgtBmp;
+            }
+            else
+            {
+                throw new Exception("Unsupported pixel format");
+            }
+        }
+
+        public static void Sharpen5RGB(Bitmap srcBmp, Bitmap trgtBmp)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            lock (srcBmp)
+            {
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+                {
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    unsafe
+                    {
+                        //сначала делаем преобразование в цветовую модель YUV, чтобы выделить яркостную компоненту
+                        byte* srcBytesYUV = (byte*)srcBmd.Scan0;
+                        byte* Y = stackalloc byte[srcBmd.Width];
+
+                        for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += pixelSize)
+                        {
+                            // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                            Y[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
+                        }
+
+                        int msize = 5;
+                        byte* srcBytes = (byte*)srcBmd.Scan0;
+                        byte* trgtBytes = (byte*)trgtBmd.Scan0;
+                        Parallel.For(0, (srcBmd.Height - msize), (int row) =>
+                        {
+                            byte* srcScan0 = srcBytes + (row * srcBmd.Stride);
+                            byte* srcScan2 = srcScan0 + (2 * srcBmd.Stride);
+                            byte* srcScan4 = srcScan2 + (2 * srcBmd.Stride);
+
+                            byte* yScan0 = Y + (row * srcBmd.Stride);
+                            byte* yScan2 = yScan0 + (2 * srcBmd.Stride);
+                            byte* yScan4 = yScan2 + (2 * srcBmd.Stride);
+
+                            byte* trgtScan0 = trgtBytes + (row * trgtBmd.Stride);
+                            byte* trgtScan2 = trgtScan0 + (2 * trgtBmd.Stride);
+
+                            for (int col = 0; col < (srcBmd.Stride - msize); col++)
+                            {
+                                var j = col * pixelSize;
+                                var U = (byte)(0.436 * srcScan2[j] - 0.28886 * srcScan2[j + 1] - 0.14713 * srcScan2[j + 2] + 128);
+                                var V = (byte)(-0.10001 * srcScan2[j] - 0.51499 * srcScan2[j + 1] + 0.615 * srcScan2[j + 2] + 128);
+
+                                byte* m0 = srcScan0 + col;
+                                byte* m2 = srcScan2 + col;
+                                byte* m4 = srcScan4 + col;
+                                byte* t2 = trgtScan2 + col;
+                                double valueY = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
+                                               -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
+                                               -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
+                                valueY = valueY < 0 ? 0 : valueY;
+                                valueY = valueY > 255 ? 255 : valueY;
+
+                                var r = valueY + 1.13983 * (V - 128);
+                                var g = valueY - 0.39465 * (U - 128) - 0.58060 * (V - 128);
+                                var b = valueY + 2.03211 * (U - 128);
+
+                                trgtScan2[j] = (byte)b;
+                                trgtScan2[j + 1] = (byte)g;
+                                trgtScan2[j + 3] = (byte)r;
                             }
                         });
                     }
@@ -428,7 +519,7 @@ namespace Bwl.Imaging.Unsafe
                     {
                         byte* srcBytes = (byte*)srcBmd.Scan0;
                         for (int row = 0; row < srcBmd.Height; row += step)
-                        {                            
+                        {
                             for (int col = 0; col < srcBmd.Width; col += step)
                             {
                                 int k = col * 3;
@@ -516,7 +607,7 @@ namespace Bwl.Imaging.Unsafe
                 else
                 {
                     throw new Exception("Unsupported pixel format");
-                }                
+                }
             }
         }
 
