@@ -254,7 +254,12 @@ namespace Bwl.Imaging.Unsafe
                     {
                         // Сначала делаем преобразование в цветовую модель YUV, чтобы выделить яркостную компоненту
                         byte* srcBytesYUV = (byte*)srcBmd.Scan0;
-                        byte* Y = stackalloc byte[srcBmd.Width * srcBmd.Height];
+                        //var Y = new byte[srcBmd.Width * srcBmd.Height];
+
+                        IntPtr hglobal = Marshal.AllocHGlobal(srcBmd.Width * srcBmd.Height);
+                        byte* Y = (byte*)hglobal;
+
+
                         var Yindex = Y;
 
                         bool aligned4 = (srcBmd.Stride == srcBmd.Width * pixelSize);
@@ -276,7 +281,7 @@ namespace Bwl.Imaging.Unsafe
                                     Yindex[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
                                 }
                                 srcBytesYUV += srcBmd.Stride;
-                                Yindex += srcBmd.Width;                                
+                                Yindex += srcBmd.Width;
                             }
                         }
 
@@ -331,6 +336,7 @@ namespace Bwl.Imaging.Unsafe
                                 trgtScan2[j + 2] = (byte)r;
                             }
                         });
+                        Marshal.FreeHGlobal(hglobal);
                     }
                     srcBmp.UnlockBits(srcBmd);
                     trgtBmp.UnlockBits(trgtBmd);
