@@ -223,12 +223,12 @@ namespace Bwl.Imaging.Unsafe
             }
         }
 
-        public static Bitmap Sharpen5RGB(Bitmap srcBmp)
+        public static Bitmap Sharpen5Rgb(Bitmap srcBmp)
         {
-            if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+            if (srcBmp.PixelFormat == PixelFormat.Format24bppRgb)
             {
                 Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
-                Sharpen5RGB(srcBmp, trgtBmp);
+                Sharpen5Rgb(srcBmp, trgtBmp);
                 return trgtBmp;
             }
             else
@@ -237,7 +237,7 @@ namespace Bwl.Imaging.Unsafe
             }
         }
 
-        public static void Sharpen5RGB(Bitmap srcBmp, Bitmap trgtBmp)
+        public static void Sharpen5Rgb(Bitmap srcBmp, Bitmap trgtBmp)
         {
             if (srcBmp == null)
             {
@@ -245,48 +245,67 @@ namespace Bwl.Imaging.Unsafe
             }
             lock (srcBmp)
             {
-                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+                if (srcBmp.PixelFormat == PixelFormat.Format24bppRgb)
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
                     int pixelSize = GetPixelSize(srcBmp.PixelFormat);
                     unsafe
                     {
-                        //сначала делаем преобразование в цветовую модель YUV, чтобы выделить яркостную компоненту
+                        // Сначала делаем преобразование в цветовую модель YUV, чтобы выделить яркостную компоненту
                         byte* srcBytesYUV = (byte*)srcBmd.Scan0;
-                        byte* Y = stackalloc byte[srcBmd.Width];
+                        byte* Y = stackalloc byte[srcBmd.Width * srcBmd.Height];
+                        var Yindex = Y;
 
-                        for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += pixelSize)
+                        bool aligned4 = (srcBmd.Stride == srcBmd.Width * pixelSize);
+                        if (aligned4)
                         {
-                            // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
-                            Y[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
+                            for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += pixelSize)
+                            {
+                                // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                                Yindex[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
+                            }
+                        }
+                        else
+                        {
+                            for (int row = 0; row < srcBmd.Height; row++)
+                            {
+                                for (int i = 0, j = 0; i < srcBmd.Width; i++, j += pixelSize)
+                                {
+                                    // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                                    Yindex[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
+                                }
+                                srcBytesYUV += srcBmd.Stride;
+                                Yindex += srcBmd.Width;                                
+                            }
                         }
 
                         int msize = 5;
                         byte* srcBytes = (byte*)srcBmd.Scan0;
                         byte* trgtBytes = (byte*)trgtBmd.Scan0;
+
                         Parallel.For(0, (srcBmd.Height - msize), (int row) =>
                         {
                             byte* srcScan0 = srcBytes + (row * srcBmd.Stride);
                             byte* srcScan2 = srcScan0 + (2 * srcBmd.Stride);
                             byte* srcScan4 = srcScan2 + (2 * srcBmd.Stride);
 
-                            byte* yScan0 = Y + (row * srcBmd.Stride);
-                            byte* yScan2 = yScan0 + (2 * srcBmd.Stride);
-                            byte* yScan4 = yScan2 + (2 * srcBmd.Stride);
+                            byte* yScan0 = Y + (row * srcBmd.Width);
+                            byte* yScan2 = yScan0 + (2 * srcBmd.Width);
+                            byte* yScan4 = yScan2 + (2 * srcBmd.Width);
 
                             byte* trgtScan0 = trgtBytes + (row * trgtBmd.Stride);
                             byte* trgtScan2 = trgtScan0 + (2 * trgtBmd.Stride);
 
-                            for (int col = 0; col < (srcBmd.Stride - msize); col++)
+                            for (int col = 0; col < (srcBmd.Width - msize); col++)
                             {
                                 var j = col * pixelSize;
                                 var U = (byte)(0.436 * srcScan2[j] - 0.28886 * srcScan2[j + 1] - 0.14713 * srcScan2[j + 2] + 128);
                                 var V = (byte)(-0.10001 * srcScan2[j] - 0.51499 * srcScan2[j + 1] + 0.615 * srcScan2[j + 2] + 128);
 
-                                byte* m0 = srcScan0 + col;
-                                byte* m2 = srcScan2 + col;
-                                byte* m4 = srcScan4 + col;
+                                byte* m0 = yScan0 + col;
+                                byte* m2 = yScan2 + col;
+                                byte* m4 = yScan4 + col;
                                 byte* t2 = trgtScan2 + col;
                                 double valueY = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
                                                -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
@@ -298,9 +317,18 @@ namespace Bwl.Imaging.Unsafe
                                 var g = valueY - 0.39465 * (U - 128) - 0.58060 * (V - 128);
                                 var b = valueY + 2.03211 * (U - 128);
 
+                                r = r < 0 ? 0 : r;
+                                r = r > 255 ? 255 : r;
+
+                                g = g < 0 ? 0 : g;
+                                g = g > 255 ? 255 : g;
+
+                                b = b < 0 ? 0 : b;
+                                b = b > 255 ? 255 : b;
+
                                 trgtScan2[j] = (byte)b;
                                 trgtScan2[j + 1] = (byte)g;
-                                trgtScan2[j + 3] = (byte)r;
+                                trgtScan2[j + 2] = (byte)r;
                             }
                         });
                     }
