@@ -65,6 +65,7 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RawFrames\BlobContainer.vb" />
     <Compile Include="RawFrames\RawIntFrame.vb" />
     <Compile Include="RawFrames\RawIntFrameConverters.vb" />
     <Compile Include="Matrix\BitmapOperations.vb" />

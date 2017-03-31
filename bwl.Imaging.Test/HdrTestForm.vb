@@ -19,7 +19,11 @@ Public Class HdrTestForm
     Private Sub IDS12BitTestForm_DragDrop(sender As Object, e As DragEventArgs) Handles Me.DragDrop
         Dim fname = e.Data.GetData("FileNameW")(0)
         Try
-            _frame = RawIntFrame.FromFile(fname)
+            If IO.Path.GetExtension(fname.tolower) = ".raw" Then
+                _frame = RawIntFrame.FromLegacyFile(fname)
+            Else
+                _frame = RawIntFrame.FromFile(fname)
+            End If
             TbBitOffset_Scroll(Nothing, Nothing)
             _logger.AddMessage("Frame Loaded: " + fname)
         Catch ex As Exception
@@ -57,5 +61,13 @@ Public Class HdrTestForm
         _logger.AddMessage("HDR1 Unsafe: " + (Now - time).TotalMilliseconds.ToString("0.00") + " ms")
         PbFrame.Image = bmp
         PbFrame.Refresh()
+    End Sub
+
+    Private Sub bSave_Click(sender As Object, e As EventArgs) Handles bSave.Click
+        _frame.Save(IO.Path.Combine(AppBase.DataFolder, Now.Ticks.ToString + ".fraw"))
+    End Sub
+
+    Private Sub HdrTestForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+
     End Sub
 End Class

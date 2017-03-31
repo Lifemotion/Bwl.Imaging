@@ -28,6 +28,7 @@ Partial Class HdrTestForm
         Me.BtnNoHdr = New System.Windows.Forms.Button()
         Me.BtnHdrCombine3 = New System.Windows.Forms.Button()
         Me.BtnHdrCombine1Unsafe = New System.Windows.Forms.Button()
+        Me.bSave = New System.Windows.Forms.Button()
         CType(Me.PbFrame, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TbBitOffset, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -105,12 +106,22 @@ Partial Class HdrTestForm
         Me.BtnHdrCombine1Unsafe.Text = "Combine 1 Unsafe"
         Me.BtnHdrCombine1Unsafe.UseVisualStyleBackColor = True
         '
+        'bSave
+        '
+        Me.bSave.Location = New System.Drawing.Point(763, 28)
+        Me.bSave.Name = "bSave"
+        Me.bSave.Size = New System.Drawing.Size(115, 23)
+        Me.bSave.TabIndex = 18
+        Me.bSave.Text = "Save"
+        Me.bSave.UseVisualStyleBackColor = True
+        '
         'HdrTestForm
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1078, 702)
+        Me.Controls.Add(Me.bSave)
         Me.Controls.Add(Me.BtnHdrCombine1Unsafe)
         Me.Controls.Add(Me.BtnHdrCombine3)
         Me.Controls.Add(Me.BtnNoHdr)
@@ -128,6 +139,7 @@ Partial Class HdrTestForm
         Me.Controls.SetChildIndex(Me.BtnNoHdr, 0)
         Me.Controls.SetChildIndex(Me.BtnHdrCombine3, 0)
         Me.Controls.SetChildIndex(Me.BtnHdrCombine1Unsafe, 0)
+        Me.Controls.SetChildIndex(Me.bSave, 0)
         CType(Me.PbFrame, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TbBitOffset, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
@@ -141,4 +153,5 @@ Partial Class HdrTestForm
     Friend WithEvents BtnNoHdr As Button
     Friend WithEvents BtnHdrCombine3 As Button
     Friend WithEvents BtnHdrCombine1Unsafe As Button
+    Friend WithEvents bSave As Button
 End Class
