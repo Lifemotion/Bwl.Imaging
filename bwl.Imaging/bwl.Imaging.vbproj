@@ -65,6 +65,8 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="RawFrames\RawIntFrame.vb" />
+    <Compile Include="RawFrames\RawIntFrameConverters.vb" />
     <Compile Include="Matrix\BitmapOperations.vb" />
     <Compile Include="Matrix\FloatMatrix\CommonFloatMatrix.vb" />
     <Compile Include="Matrix\FloatMatrix\GrayFloatMatrix.vb" />
