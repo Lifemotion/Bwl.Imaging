@@ -14,10 +14,9 @@ namespace Bwl.Imaging.Unsafe
             {
                 fixed (int* srcInts = data)
                 {
-                    //  int[] srcInts = data;
                     byte* trgtBytes = (byte*)trgtBmd.Scan0;
                     int r, g, b;
-                    int koeff = 12;
+                    int koeff = 14;
 
                     {
                         for (int pixelAddr = 0; pixelAddr < width * height * 3; pixelAddr += 3)
