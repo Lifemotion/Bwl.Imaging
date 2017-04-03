@@ -29,6 +29,7 @@ Partial Class HdrTestForm
         Me.BtnHdrCombine3 = New System.Windows.Forms.Button()
         Me.BtnHdrCombine1Unsafe = New System.Windows.Forms.Button()
         Me.bSave = New System.Windows.Forms.Button()
+        Me.bJpegSave = New System.Windows.Forms.Button()
         CType(Me.PbFrame, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TbBitOffset, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -115,12 +116,22 @@ Partial Class HdrTestForm
         Me.bSave.Text = "Save"
         Me.bSave.UseVisualStyleBackColor = True
         '
+        'bJpegSave
+        '
+        Me.bJpegSave.Location = New System.Drawing.Point(642, 28)
+        Me.bJpegSave.Name = "bJpegSave"
+        Me.bJpegSave.Size = New System.Drawing.Size(115, 23)
+        Me.bJpegSave.TabIndex = 19
+        Me.bJpegSave.Text = "JpegSave"
+        Me.bJpegSave.UseVisualStyleBackColor = True
+        '
         'HdrTestForm
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1078, 702)
+        Me.Controls.Add(Me.bJpegSave)
         Me.Controls.Add(Me.bSave)
         Me.Controls.Add(Me.BtnHdrCombine1Unsafe)
         Me.Controls.Add(Me.BtnHdrCombine3)
@@ -140,6 +151,7 @@ Partial Class HdrTestForm
         Me.Controls.SetChildIndex(Me.BtnHdrCombine3, 0)
         Me.Controls.SetChildIndex(Me.BtnHdrCombine1Unsafe, 0)
         Me.Controls.SetChildIndex(Me.bSave, 0)
+        Me.Controls.SetChildIndex(Me.bJpegSave, 0)
         CType(Me.PbFrame, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TbBitOffset, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
@@ -154,4 +166,5 @@ Partial Class HdrTestForm
     Friend WithEvents BtnHdrCombine3 As Button
     Friend WithEvents BtnHdrCombine1Unsafe As Button
     Friend WithEvents bSave As Button
+    Friend WithEvents bJpegSave As Button
 End Class

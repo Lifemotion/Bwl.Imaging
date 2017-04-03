@@ -29,8 +29,80 @@ Public Module RawIntFrameConverters
             Next
         Next
         Return mtr1
-
     End Function
+
+    Public Function ConvertTo8BitPair(frame As RawIntFrame, Optional totalBits As Integer = 12) As RGBMatrix()
+        Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
+        Dim mtr2 As New RGBMatrix(frame.Width, frame.Height)
+
+        For y = 0 To frame.Height - 1
+            For x = 0 To frame.Width - 1
+                Dim b = frame.Data((x + y * frame.Width) * 3 + 0)
+                Dim g = frame.Data((x + y * frame.Width) * 3 + 1)
+                Dim r = frame.Data((x + y * frame.Width) * 3 + 2)
+
+                If totalBits = 12 Then
+                    Dim rh = (r >> 4)
+                    Dim rl = (r)
+
+                    Dim bh = (b >> 4)
+                    Dim bl = (b)
+
+                    Dim gh = (g >> 4)
+                    Dim gl = (g)
+
+                    If rl > 63 Then rl = 63
+                    If gl > 63 Then gl = 63
+                    If bl > 63 Then bl = 63
+
+                    'If rl > 31 Then rl = rl And 15 Or 16
+                    'If gl > 31 Then gl = gl And 15 Or 16
+                    'If bl > 31 Then bl = bl And 15 Or 16
+
+                    mtr1.RedPixel(x, y) = rh
+                    mtr1.GreenPixel(x, y) = gh
+                    mtr1.BluePixel(x, y) = bh
+
+                    mtr2.RedPixel(x, y) = rl
+                    mtr2.GreenPixel(x, y) = gl
+                    mtr2.BluePixel(x, y) = bl
+                End If
+            Next
+        Next
+        Return {mtr1, mtr2}
+    End Function
+
+    Public Function ConvertFrom8BitPair(pair As RGBMatrix(), Optional totalBits As Integer = 12) As RawIntFrame
+        Dim mtr1 = pair(0)
+        Dim mtr2 = pair(1)
+        Dim arr(mtr1.Width * mtr1.Height * 3 - 1) As Integer
+        Dim frame As New RawIntFrame(mtr1.Width, mtr2.Height, arr)
+
+        For y = 0 To mtr1.Height - 1
+            For x = 0 To mtr1.Width - 1
+
+                Dim rh = mtr1.RedPixel(x, y)
+                Dim gh = mtr1.GreenPixel(x, y)
+                Dim bh = mtr1.BluePixel(x, y)
+
+                Dim rl = mtr2.RedPixel(x, y)
+                Dim gl = mtr2.GreenPixel(x, y)
+                Dim bl = mtr2.BluePixel(x, y)
+
+                If totalBits = 12 Then
+                    Dim r = ((rh And &HFF) << 4) Or ((rl And &HF))
+                    Dim g = ((gh And &HFF) << 4) Or ((gl And &HF))
+                    Dim b = ((bh And &HFF) << 4) Or ((bl And &HF))
+
+                    frame.Data((x + y * frame.Width) * 3 + 0) = b
+                    frame.Data((x + y * frame.Width) * 3 + 1) = g
+                    frame.Data((x + y * frame.Width) * 3 + 2) = r
+                End If
+            Next
+        Next
+        Return frame
+    End Function
+
     <Extension()>
     Public Function ConvertHDR3(frame As RawIntFrame, baseGain As Integer) As RGBMatrix
         Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)

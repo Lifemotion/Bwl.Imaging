@@ -70,4 +70,11 @@ Public Class HdrTestForm
     Private Sub HdrTestForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
 
     End Sub
+
+    Private Sub bJpegSave_Click(sender As Object, e As EventArgs) Handles bJpegSave.Click
+        Dim fname = IO.Path.Combine(AppBase.DataFolder, Now.Ticks.ToString)
+        _frame.SaveToJpegPair(fname)
+        _frame = RawIntFrame.FromJpegPair(fname)
+        TbBitOffset_Scroll(Nothing, Nothing)
+    End Sub
 End Class

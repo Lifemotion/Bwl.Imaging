@@ -42,4 +42,38 @@ Public Class RawIntFrame
         Dim file As New RawIntFrame(BlobContainer.FromFile(filename))
         Return file
     End Function
+
+    Private Function GetCodecInfo(ByVal format As ImageFormat) As ImageCodecInfo
+        Dim codecs As ImageCodecInfo() = ImageCodecInfo.GetImageDecoders()
+        Dim codec As ImageCodecInfo
+        For Each codec In codecs
+            If codec.FormatID = format.Guid Then
+                Return codec
+            End If
+        Next codec
+        Return Nothing
+    End Function
+
+    Public Sub SaveToJpegPair(filenameWithoutExthension As String, Optional quality As Integer = 95)
+        Dim _encoderParameters As New EncoderParameters(1)
+        Dim _codecInfo As ImageCodecInfo = GetCodecInfo(ImageFormat.Jpeg)
+        _encoderParameters.Param(0) = New EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality)
+        Dim mtrs = ConvertTo8BitPair(Me)
+        Dim bmph = mtrs(0).ToBitmap
+        Dim bmpl = mtrs(1).ToBitmap
+        Dim fnameh = filenameWithoutExthension + "_h.jpeg"
+        Dim fnamel = filenameWithoutExthension + "_l.jpeg"
+        bmph.Save(fnameh, _codecInfo, _encoderParameters)
+        bmpl.Save(fnamel, _codecInfo, _encoderParameters)
+    End Sub
+
+    Public Shared Function FromJpegPair(filenameWithoutExthension As String) As RawIntFrame
+        Dim fnameh = filenameWithoutExthension + "_h.jpeg"
+        Dim fnamel = filenameWithoutExthension + "_l.jpeg"
+        Dim bmph = New Bitmap(fnameh)
+        Dim bmpl = New Bitmap(fnamel)
+        Dim mtrs = {bmph.BitmapToRgbMatrix, bmpl.BitmapToRgbMatrix}
+        Dim frame = ConvertFrom8BitPair(mtrs)
+        Return frame
+    End Function
 End Class
