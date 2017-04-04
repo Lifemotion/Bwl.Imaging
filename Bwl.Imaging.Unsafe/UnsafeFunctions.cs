@@ -251,15 +251,10 @@ namespace Bwl.Imaging.Unsafe
                     BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
                     int pixelSize = GetPixelSize(srcBmp.PixelFormat);
                     unsafe
-                    {
-                        // Сначала делаем преобразование в цветовую модель YUV, чтобы выделить яркостную компоненту
+                    {                        
                         byte* srcBytesYUV = (byte*)srcBmd.Scan0;
-                        //var Y = new byte[srcBmd.Width * srcBmd.Height];
-
                         IntPtr hglobal = Marshal.AllocHGlobal(srcBmd.Width * srcBmd.Height);
                         byte* Y = (byte*)hglobal;
-
-
                         var Yindex = Y;
 
                         bool aligned4 = (srcBmd.Stride == srcBmd.Width * pixelSize);
@@ -313,8 +308,8 @@ namespace Bwl.Imaging.Unsafe
                                 byte* m4 = yScan4 + col;
                                 byte* t2 = trgtScan2 + col;
                                 double valueY = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
-                                               -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
-                                               -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
+                                                -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
+                                                -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
                                 valueY = valueY < 0 ? 0 : valueY;
                                 valueY = valueY > 255 ? 255 : valueY;
 
