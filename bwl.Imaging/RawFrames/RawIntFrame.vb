@@ -55,6 +55,7 @@ Public Class RawIntFrame
     End Function
 
     Public Sub SaveToJpegPair(filenameWithoutExthension As String, Optional quality As Integer = 95)
+        Dim col = HSV.FromRgb(1, 1, 1)
         Dim _encoderParameters As New EncoderParameters(1)
         Dim _codecInfo As ImageCodecInfo = GetCodecInfo(ImageFormat.Jpeg)
         _encoderParameters.Param(0) = New EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality)

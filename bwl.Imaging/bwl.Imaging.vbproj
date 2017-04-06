@@ -65,6 +65,8 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Color\HSV.vb" />
+    <Compile Include="Color\RGB.vb" />
     <Compile Include="RawFrames\BlobContainer.vb" />
     <Compile Include="RawFrames\RawIntFrame.vb" />
     <Compile Include="RawFrames\RawIntFrameConverters.vb" />
