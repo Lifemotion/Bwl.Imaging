@@ -155,7 +155,7 @@
         For y = 0 To _height \ 2 - 1
             Dim lineOffset1 = y * 2 * _width
             Dim lineOffset2 = (y * 2 + 1) * _width
-            Dim resOffset = y * _width \ 2
+            Dim resOffset = y * (_width \ 2)
             For x = 0 To _width \ 2 - 1
                 Dim point As Integer = 0
                 point += matrix(x * 2 + lineOffset1)
