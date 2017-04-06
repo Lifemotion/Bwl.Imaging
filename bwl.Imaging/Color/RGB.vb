@@ -1,5 +1,5 @@
 ﻿Public Structure RGB
-    'Новых конструкторов и ToHSV добавлять не надо!
+    'Новых конструкторов добавлять не надо!
 
     Public A As Integer
     Public R As Integer
@@ -27,14 +27,19 @@
         A = rgb.A
     End Sub
 
+    Public Shared Function FromHsv(hsv As HSV) As RGB
+        Return FromHsv(hsv.H, hsv.S, hsv.V, 255)
+    End Function
+
     Public Shared Function FromHsv(h As Integer, s As Integer, v As Integer) As RGB
         Return FromHsv(h, s, v, 255)
     End Function
 
     Public Shared Function FromHsv(h As Integer, s As Integer, v As Integer, alpha As Integer) As RGB
+        Dim valuemax = 255
         Dim rgb As RGB
         Dim hi = Math.Floor(h / 60.0) Mod 6
-        Dim vmin = (1 - s) * v
+        Dim vmin = (valuemax - s) * v / valuemax
         Dim a = (v - vmin) * ((h Mod 60) / 60.0)
         Dim vinc = vmin + a
         Dim vdec = v - a
@@ -48,6 +53,10 @@
         End Select
         rgb.A = alpha
         Return rgb
+    End Function
+
+    Public Function ToHSV() As HSV
+        Return HSV.FromRgb(Me)
     End Function
 
     Public Function ToColor() As Color

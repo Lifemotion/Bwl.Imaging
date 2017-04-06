@@ -9,7 +9,7 @@
     <RootNamespace>bwl.Imaging.Test</RootNamespace>
     <AssemblyName>bwl.Imaging.Test</AssemblyName>
     <FileAlignment>512</FileAlignment>
-    <MyType>WindowsForms</MyType>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -44,7 +44,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>bwl.Imaging.Test.My.MyApplication</StartupObject>
+    <StartupObject>Sub Main</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bwl.Framework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -76,6 +76,7 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColorTest.vb" />
     <Compile Include="HdrTestForm.designer.vb">
       <DependentUpon>HdrTestForm.vb</DependentUpon>
     </Compile>

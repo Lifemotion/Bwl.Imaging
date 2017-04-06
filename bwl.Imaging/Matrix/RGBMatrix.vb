@@ -21,6 +21,36 @@
         MyBase.New({red, green, blue}, width, height, multiplier)
     End Sub
 
+    Public Property RGBPixel(x As Integer, y As Integer) As RGB
+        Get
+            Dim r = _matrices(0)(x + y * Width)
+            Dim g = _matrices(1)(x + y * Width)
+            Dim b = _matrices(2)(x + y * Width)
+            Return New RGB(r, g, b)
+        End Get
+        Set(value As RGB)
+            _matrices(0)(x + y * Width) = value.R
+            _matrices(1)(x + y * Width) = value.G
+            _matrices(2)(x + y * Width) = value.B
+        End Set
+    End Property
+
+    'high cpu overhead!
+    Public Property HSVPixel(x As Integer, y As Integer) As HSV
+        Get
+            Dim r = _matrices(0)(x + y * Width)
+            Dim g = _matrices(1)(x + y * Width)
+            Dim b = _matrices(2)(x + y * Width)
+            Return (New RGB(r, g, b)).ToHSV
+        End Get
+        Set(value As HSV)
+            Dim rgb = value.ToRgb
+            _matrices(0)(x + y * Width) = rgb.R
+            _matrices(1)(x + y * Width) = rgb.G
+            _matrices(2)(x + y * Width) = rgb.B
+        End Set
+    End Property
+
     Public Property ColorPixel(x As Integer, y As Integer) As Color
         Get
             Dim r = _matrices(0)(x + y * Width)

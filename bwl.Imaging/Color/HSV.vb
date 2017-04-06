@@ -1,5 +1,5 @@
 ﻿Public Structure HSV
-    'Новых конструкторов и ToRgb, ToColor добавлять не надо!
+    'Новых конструкторов добавлять не надо!
 
     Public A As Integer
     Public H As Integer
@@ -21,46 +21,51 @@
     End Sub
 
     Public Shared Function FromRgb(rgb As RGB) As HSV
-        Return FromRgb(rgb.R, rgb.G, rgb.B, rgb.A)
+        Return FromRgb(rgb.A, rgb.R, rgb.G, rgb.B)
     End Function
 
     Public Shared Function FromRgb(rgb As Color) As HSV
-        Return FromRgb(rgb.R, rgb.G, rgb.B, rgb.A)
+        Return FromRgb(rgb.A, rgb.R, rgb.G, rgb.B)
     End Function
 
     Public Shared Function FromRgb(R As Integer, G As Integer, B As Integer) As HSV
-        Return FromRgb(R, G, B, 255)
+        Return FromRgb(255, R, G, B)
     End Function
 
     Public Shared Function FromRgb(A As Integer, R As Integer, G As Integer, B As Integer) As HSV
         Dim result As HSV
-        Dim rf = R / 255.0
-        Dim gf = G / 255.0
-        Dim bf = B / 255.0
-        Dim cmax = Math.Max(Math.Max(rf, gf), bf)
-        Dim cmin = Math.Min(Math.Min(rf, gf), bf)
+        Dim cmax = Math.Max(Math.Max(R, G), B)
+        Dim cmin = Math.Min(Math.Min(R, G), B)
         'H
         If cmax = cmin Then
             result.H = 0
-        ElseIf cmax = rf And gf >= bf Then
-            result.H = (60 * (gf - bf) / (cmax - cmin)) / 360
-        ElseIf cmax = rf And gf < bf Then
-            result.H = (60 * (gf - bf) / (cmax - cmin) + 360) / 360
-        ElseIf cmax = gf Then
-            result.H = (60 * (bf - rf) / (cmax - cmin) + 120) / 360
-        ElseIf cmax = bf Then
-            result.H = (60 * (rf - gf) / (cmax - cmin) + 240) / 360
+        ElseIf cmax = r And g >= b Then
+            result.H = (60 * (G - B) / (cmax - cmin))
+        ElseIf cmax = r And g < b Then
+            result.H = (60 * (G - B) / (cmax - cmin) + 360)
+        ElseIf cmax = g Then
+            result.H = (60 * (B - R) / (cmax - cmin) + 120)
+        ElseIf cmax = b Then
+            result.H = (60 * (R - G) / (cmax - cmin) + 240)
         End If
         'S
         If cmax = 0 Then
             result.S = 0
         Else
-            result.S = 1 - (cmin / cmax)
+            result.S = (1 - (cmin / cmax)) * 255
         End If
         'V
         result.V = cmax
         result.A = A
         Return result
+    End Function
+
+    Public Function ToRgb() As RGB
+        Return RGB.FromHsv(Me)
+    End Function
+
+    Public Function ToColor() As Color
+        Return RGB.FromHsv(Me).ToColor
     End Function
 
     ''' <summary>
