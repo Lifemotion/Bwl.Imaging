@@ -14,6 +14,11 @@
         Dim rgb = New ColorMatrixRGB(src.BitmapToRgbMatrix)
         rgb.ToRGBMatrix.ToBitmap.Save("2.bmp")
         Dim hsv = New ColorMatrixHSV(src.BitmapToRgbMatrix)
+        For i = 0 To hsv.Matrix.Length - 1
+            Dim pix = hsv.Matrix(i)
+            ' pix.H += 180
+            hsv.Matrix(i) = pix
+        Next
         hsv.ToRGBMatrix.ToBitmap.Save("3.bmp")
         'mOABkQ1wC1Q.jpg
     End Sub
