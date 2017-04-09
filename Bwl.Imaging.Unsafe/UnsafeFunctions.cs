@@ -187,6 +187,7 @@ namespace Bwl.Imaging.Unsafe
                     unsafe
                     {
                         int msize = 5;
+                        int msize2 = 2; // 5 \ 2
                         byte* srcBytes = (byte*)srcBmd.Scan0;
                         byte* trgtBytes = (byte*)trgtBmd.Scan0;
                         Parallel.For(0, (srcBmd.Height - msize), (int row) =>
@@ -198,7 +199,7 @@ namespace Bwl.Imaging.Unsafe
                             byte* trgtScan0 = trgtBytes + (row * trgtBmd.Stride);
                             byte* trgtScan2 = trgtScan0 + (2 * trgtBmd.Stride);
 
-                            for (int col = 0; col < (srcBmd.Stride - msize); col++)
+                            for (int col = 0; col < (srcBmd.Width - msize); col++)
                             {
                                 byte* m0 = srcScan0 + col;
                                 byte* m2 = srcScan2 + col;
@@ -209,7 +210,7 @@ namespace Bwl.Imaging.Unsafe
                                                -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
                                 value = value < 0 ? 0 : value;
                                 value = value > 255 ? 255 : value;
-                                t2[2] = (byte)value;
+                                t2[msize2] = (byte)value;
                             }
                         });
                     }
@@ -225,7 +226,7 @@ namespace Bwl.Imaging.Unsafe
 
         public static Bitmap Sharpen5Rgb(Bitmap srcBmp)
         {
-            if (srcBmp.PixelFormat == PixelFormat.Format24bppRgb)
+            if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
             {
                 Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
                 Sharpen5Rgb(srcBmp, trgtBmp);
@@ -245,22 +246,24 @@ namespace Bwl.Imaging.Unsafe
             }
             lock (srcBmp)
             {
-                if (srcBmp.PixelFormat == PixelFormat.Format24bppRgb)
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
-                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    int trgtPixelSize = GetPixelSize(trgtBmp.PixelFormat);
+                    bool aligned4 = (srcBmd.Stride == srcBmd.Width * srcPixelSize);
+                    bool aligned4Y = (srcBmd.Width % 4) == 0;
                     unsafe
                     {                        
                         byte* srcBytesYUV = (byte*)srcBmd.Scan0;
                         IntPtr hglobal = Marshal.AllocHGlobal(srcBmd.Width * srcBmd.Height);
                         byte* Y = (byte*)hglobal;
                         var Yindex = Y;
-
-                        bool aligned4 = (srcBmd.Stride == srcBmd.Width * pixelSize);
-                        if (aligned4)
+                                                
+                        if (aligned4 && aligned4Y)
                         {
-                            for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += pixelSize)
+                            for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += srcPixelSize)
                             {
                                 // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
                                 Yindex[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
@@ -270,7 +273,7 @@ namespace Bwl.Imaging.Unsafe
                         {
                             for (int row = 0; row < srcBmd.Height; row++)
                             {
-                                for (int i = 0, j = 0; i < srcBmd.Width; i++, j += pixelSize)
+                                for (int i = 0, j = 0; i < srcBmd.Width; i++, j += srcPixelSize)
                                 {
                                     // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
                                     Yindex[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
@@ -281,6 +284,7 @@ namespace Bwl.Imaging.Unsafe
                         }
 
                         int msize = 5;
+                        int msize2 = 2; // 5 \ 2
                         byte* srcBytes = (byte*)srcBmd.Scan0;
                         byte* trgtBytes = (byte*)trgtBmd.Scan0;
 
@@ -293,20 +297,22 @@ namespace Bwl.Imaging.Unsafe
                             byte* yScan0 = Y + (row * srcBmd.Width);
                             byte* yScan2 = yScan0 + (2 * srcBmd.Width);
                             byte* yScan4 = yScan2 + (2 * srcBmd.Width);
+                            yScan0 -= msize2;
+                            yScan2 -= msize2;
+                            yScan4 -= msize2;
 
                             byte* trgtScan0 = trgtBytes + (row * trgtBmd.Stride);
                             byte* trgtScan2 = trgtScan0 + (2 * trgtBmd.Stride);
 
                             for (int col = 0; col < (srcBmd.Width - msize); col++)
                             {
-                                var j = col * pixelSize;
+                                var j = col * trgtPixelSize;
                                 var U = (byte)(0.436 * srcScan2[j] - 0.28886 * srcScan2[j + 1] - 0.14713 * srcScan2[j + 2] + 128);
                                 var V = (byte)(-0.10001 * srcScan2[j] - 0.51499 * srcScan2[j + 1] + 0.615 * srcScan2[j + 2] + 128);
 
                                 byte* m0 = yScan0 + col;
                                 byte* m2 = yScan2 + col;
-                                byte* m4 = yScan4 + col;
-                                byte* t2 = trgtScan2 + col;
+                                byte* m4 = yScan4 + col;                                
                                 double valueY = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
                                                 -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
                                                 -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
@@ -329,6 +335,10 @@ namespace Bwl.Imaging.Unsafe
                                 trgtScan2[j] = (byte)b;
                                 trgtScan2[j + 1] = (byte)g;
                                 trgtScan2[j + 2] = (byte)r;
+                                if (trgtPixelSize == 4)
+                                {
+                                    trgtScan2[j + 3] = (byte)255;
+                                }
                             }
                         });
                         Marshal.FreeHGlobal(hglobal);
@@ -425,15 +435,21 @@ namespace Bwl.Imaging.Unsafe
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     trgtBmp.Palette = GetGrayScalePalette();
                     BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
-                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
-                    bool aligned4 = (srcBmd.Stride == srcBmd.Width * pixelSize);
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    int trgtPixelSize = GetPixelSize(trgtBmp.PixelFormat);
+                    if (trgtPixelSize != 1)
+                    {
+                        throw new Exception("Unsupported target pixel format");
+                    }
+                    bool srcAligned4 = (srcBmd.Stride == srcBmd.Width * srcPixelSize);
+                    bool trgtAligned4 = (trgtBmd.Stride == trgtBmd.Width * trgtPixelSize);
                     unsafe
                     {
                         byte* srcBytes = (byte*)srcBmd.Scan0;
                         byte* trgtBytes = (byte*)trgtBmd.Scan0;
-                        if (aligned4)
+                        if (srcAligned4 && trgtAligned4)
                         {
-                            for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += pixelSize)
+                            for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += srcPixelSize)
                             {
                                 // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
                                 trgtBytes[i] = (byte)(0.114 * srcBytes[j] + 0.587 * srcBytes[j + 1] + 0.299 * srcBytes[j + 2]);
@@ -443,7 +459,7 @@ namespace Bwl.Imaging.Unsafe
                         {
                             for (int row = 0; row < srcBmd.Height; row++)
                             {
-                                for (int i = 0, j = 0; i < srcBmd.Width; i++, j += pixelSize)
+                                for (int i = 0, j = 0; i < srcBmd.Width; i++, j += srcPixelSize)
                                 {
                                     // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
                                     trgtBytes[i] = (byte)(0.114 * srcBytes[j] + 0.587 * srcBytes[j + 1] + 0.299 * srcBytes[j + 2]);
@@ -542,7 +558,6 @@ namespace Bwl.Imaging.Unsafe
                     int targetW = 1 + ((srcBmd.Width - 1) / step);
                     int targetH = 1 + ((srcBmd.Height - 1) / step);
                     byte[] trgtData = new byte[targetW * targetH];
-                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
                     int t = 0;
                     unsafe
                     {
@@ -579,7 +594,6 @@ namespace Bwl.Imaging.Unsafe
                 if (srcBmp.PixelFormat == PixelFormat.Format8bppIndexed)
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
                     ulong hash = 0;
                     unsafe
                     {
@@ -614,7 +628,6 @@ namespace Bwl.Imaging.Unsafe
                 if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                    int pixelSize = GetPixelSize(srcBmp.PixelFormat);
                     ulong hash = 0;
                     unsafe
                     {
