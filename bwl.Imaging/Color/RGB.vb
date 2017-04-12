@@ -1,5 +1,6 @@
 ﻿Public Structure RGB
     'Новых конструкторов добавлять не надо!
+    Implements IRGBConvertable
 
     Public A As Integer
     Public R As Integer
@@ -67,5 +68,9 @@
         If data < 0 Then data = 0
         If data > 255 Then data = 255
         Return data
+    End Function
+
+    Public Function ToRGB() As RGB Implements IRGBConvertable.ToRGB
+        Return Me
     End Function
 End Structure

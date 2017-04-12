@@ -65,9 +65,10 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Color\ColorMatrix.vb" />
-    <Compile Include="Color\ColorMatrixHSV.vb" />
-    <Compile Include="Color\ColorMatrixRGB.vb" />
+    <Compile Include="Color\IRGBConvertable.vb" />
+    <Compile Include="StructureMatrix\StructureMatrix.vb" />
+    <Compile Include="StructureMatrix\StructureMatrixHSV.vb" />
+    <Compile Include="StructureMatrix\StructureMatrixRGB.vb" />
     <Compile Include="Color\HSV.vb" />
     <Compile Include="Color\RGB.vb" />
     <Compile Include="RawFrames\BlobContainer.vb" />

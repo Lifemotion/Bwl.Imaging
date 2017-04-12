@@ -1,4 +1,4 @@
-﻿Public Class ColorMatrix(Of T As Structure)
+﻿Public Class StructureMatrix(Of T As {Structure, IRGBConvertable})
     Protected _matrix() As T
     Protected _width As Integer
     Protected _height As Integer
@@ -9,7 +9,7 @@
         _width = width
         _height = height
         Dim matrix(width * height - 1) As T
-        _matrix = Matrix
+        _matrix = matrix
     End Sub
 
     Public Sub New(matrix As T(), width As Integer, height As Integer)
@@ -21,7 +21,7 @@
         _matrix = matrix
     End Sub
 
-    Public Property Pixel(x As Integer, y As Integer) As T
+    Default Public Property Pixel(x As Integer, y As Integer) As T
         Get
             Return _matrix(x + y * Width)
         End Get
@@ -112,11 +112,22 @@
         Return result
     End Function
 
-    Public Overridable Function Clone() As ColorMatrix(Of T)
-        Return New ColorMatrix(Of T)(CloneMatrix(_matrix), Width, Height)
+    Public Function ToRGBMatrix() As RGBMatrix
+        Dim rgbm As New RGBMatrix(Me.Width, Me.Height)
+        For i = 0 To _matrix.Length - 1
+            Dim pixel = _matrix(i).ToRGB
+            rgbm.Red(i) = pixel.R
+            rgbm.Green(i) = pixel.G
+            rgbm.Blue(i) = pixel.B
+        Next
+        Return rgbm
     End Function
 
-    Public Overridable Function ResizeTwo() As ColorMatrix(Of T)
+    Public Overridable Function Clone() As StructureMatrix(Of T)
+        Return New StructureMatrix(Of T)(CloneMatrix(_matrix), Width, Height)
+    End Function
+
+    Public Overridable Function ResizeTwo() As StructureMatrix(Of T)
         Throw New NotImplementedException
         '  Dim list As New List(Of Integer())
         ' For Each mtr In _matrices
@@ -125,7 +136,7 @@
         ' Return New CommonMatrix(list, Width * 2, Height * 2)
     End Function
 
-    Public Overridable Function ResizeHalf() As ColorMatrix(Of T)
+    Public Overridable Function ResizeHalf() As StructureMatrix(Of T)
         Throw New NotImplementedException
         '  Dim list As New List(Of Integer())
         '  For Each mtr In _matrices

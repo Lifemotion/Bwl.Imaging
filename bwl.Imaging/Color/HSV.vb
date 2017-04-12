@@ -1,6 +1,6 @@
 ﻿Public Structure HSV
     'Новых конструкторов добавлять не надо!
-
+    Implements IRGBConvertable
     Public A As Integer
     Public H As Integer
     Public S As Integer
@@ -60,7 +60,7 @@
         Return result
     End Function
 
-    Public Function ToRgb() As RGB
+    Public Function ToRgb() As RGB Implements IRGBConvertable.ToRGB
         Return RGB.FromHsv(Me)
     End Function
 
@@ -78,5 +78,4 @@
         Dim dist = Math.Abs(hue1 - hue2)
         Return If(dist > 0.5, 1 - dist, dist)
     End Function
-
 End Structure

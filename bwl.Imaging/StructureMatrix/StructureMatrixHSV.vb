@@ -1,5 +1,5 @@
-﻿Public Class ColorMatrixHSV
-    Inherits ColorMatrix(Of HSV)
+﻿Public Class StructureMatrixHSV
+    Inherits StructureMatrix(Of HSV)
 
     Public Sub New(width As Integer, height As Integer)
         MyBase.New(width, height)
@@ -16,14 +16,4 @@
         Next
     End Sub
 
-    Public Function ToRGBMatrix() As RGBMatrix
-        Dim rgbm As New RGBMatrix(Me.Width, Me.Height)
-        For i = 0 To _matrix.Length - 1
-            Dim pixel = _matrix(i).ToRgb
-            rgbm.Red(i) = pixel.R
-            rgbm.Green(i) = pixel.G
-            rgbm.Blue(i) = pixel.B
-        Next
-        Return rgbm
-    End Function
 End Class
