@@ -65,6 +65,7 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapInfo\BitmapInfo.vb" />
     <Compile Include="Color\IRGBConvertable.vb" />
     <Compile Include="StructureMatrix\StructureMatrix.vb" />
     <Compile Include="StructureMatrix\StructureMatrixHSV.vb" />
@@ -135,7 +136,12 @@
   <ItemGroup>
     <Service Include="{94E38DFF-614B-4CBD-B67C-F211BB35CE8B}" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj">
+      <Project>{e10c92bb-489b-481a-b032-6a52a3d9cd8c}</Project>
+      <Name>Bwl.Imaging.Unsafe</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

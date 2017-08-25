@@ -23,6 +23,28 @@
         Assert.AreEqual(0, rgb.RedPixel(3, 2)) : Assert.AreEqual(0, rgb.GreenPixel(3, 2)) : Assert.AreEqual(0, rgb.BluePixel(3, 2))
     End Sub
 
+    <TestMethod()> Public Sub LoadAndAccessRgbMatrixTest2()
+        Dim bmp = My.Resources._4x3_rgb
+        Dim bmpArgb = RgbToArgb(bmp)
+        Dim rgb = BitmapConverter.BitmapToRGBMatrix(bmpArgb)
+        Assert.AreEqual(4, rgb.Width)
+        Assert.AreEqual(3, rgb.Height)
+        Assert.AreEqual(0, rgb.RedPixel(0, 0)) : Assert.AreEqual(0, rgb.GreenPixel(0, 0)) : Assert.AreEqual(0, rgb.BluePixel(0, 0))
+        Assert.AreEqual(255, rgb.RedPixel(1, 0)) : Assert.AreEqual(0, rgb.GreenPixel(1, 0)) : Assert.AreEqual(0, rgb.BluePixel(1, 0))
+        Assert.AreEqual(0, rgb.RedPixel(2, 0)) : Assert.AreEqual(255, rgb.GreenPixel(2, 0)) : Assert.AreEqual(0, rgb.BluePixel(2, 0))
+        Assert.AreEqual(0, rgb.RedPixel(3, 0)) : Assert.AreEqual(0, rgb.GreenPixel(3, 0)) : Assert.AreEqual(255, rgb.BluePixel(3, 0))
+
+        Assert.AreEqual(255, rgb.RedPixel(0, 1)) : Assert.AreEqual(255, rgb.GreenPixel(0, 1)) : Assert.AreEqual(255, rgb.BluePixel(0, 1))
+        Assert.AreEqual(255, rgb.RedPixel(1, 1)) : Assert.AreEqual(255, rgb.GreenPixel(1, 1)) : Assert.AreEqual(255, rgb.BluePixel(1, 1))
+        Assert.AreEqual(255, rgb.RedPixel(2, 1)) : Assert.AreEqual(255, rgb.GreenPixel(2, 1)) : Assert.AreEqual(255, rgb.BluePixel(2, 1))
+        Assert.AreEqual(255, rgb.RedPixel(3, 1)) : Assert.AreEqual(255, rgb.GreenPixel(3, 1)) : Assert.AreEqual(255, rgb.BluePixel(3, 1))
+
+        Assert.AreEqual(0, rgb.RedPixel(0, 2)) : Assert.AreEqual(0, rgb.GreenPixel(0, 2)) : Assert.AreEqual(255, rgb.BluePixel(0, 2))
+        Assert.AreEqual(0, rgb.RedPixel(1, 2)) : Assert.AreEqual(255, rgb.GreenPixel(1, 2)) : Assert.AreEqual(0, rgb.BluePixel(1, 2))
+        Assert.AreEqual(255, rgb.RedPixel(2, 2)) : Assert.AreEqual(0, rgb.GreenPixel(2, 2)) : Assert.AreEqual(0, rgb.BluePixel(2, 2))
+        Assert.AreEqual(0, rgb.RedPixel(3, 2)) : Assert.AreEqual(0, rgb.GreenPixel(3, 2)) : Assert.AreEqual(0, rgb.BluePixel(3, 2))
+    End Sub
+
     <TestMethod()> Public Sub SaveRgbMatrixTest()
         Dim bmp = My.Resources._4x3_rgb
         Dim rgb = BitmapConverter.BitmapToRGBMatrix(bmp)
@@ -470,4 +492,16 @@
             Next
         Next
     End Sub
+
+    Private Function RgbToArgb(bmp As Bitmap, Optional alpha As Byte = 0) As Bitmap
+        Dim bmpArgb = New Bitmap(bmp.Width, bmp.Height, Drawing.Imaging.PixelFormat.Format32bppArgb)
+        For x = 0 To bmp.Width - 1
+            For y = 0 To bmp.Height - 1
+                Dim px = bmp.GetPixel(x, y)
+                Dim pxArgb = Color.FromArgb(alpha, px.R, px.G, px.B)
+                bmpArgb.SetPixel(x, y, pxArgb)
+            Next
+        Next
+        Return bmpArgb
+    End Function
 End Class
