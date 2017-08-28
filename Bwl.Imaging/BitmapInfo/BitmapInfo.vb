@@ -5,35 +5,12 @@ Public Class BitmapInfo
     Implements IDisposable
 
     Private _bmp As Bitmap
+    Private _bmpIsNothing As Boolean
+    Private _bmpSize As Nullable(Of Size)
     Private _grayMatrix As GrayMatrix
     Private _rgbMatrix As RGBMatrix
+
     Private ReadOnly _bmpSemaphore As New Semaphore(1, 1)
-
-    Public ReadOnly Property BmpIsNothing As Boolean 'TODO: Свойство оставлено "быстрым". Если будут ошибки - можно сделать как показано ниже
-        Get
-            Return _bmp Is Nothing
-        End Get
-    End Property
-
-    Public ReadOnly Property BmpSize As Size 'TODO: Свойство оставлено "быстрым". Если будут ошибки - можно сделать как показано ниже
-        Get
-            Return _bmp.Size
-        End Get
-    End Property
-
-    Public Sub New(bmp As Bitmap)
-        _bmp = bmp
-    End Sub
-
-    Public Sub BmpLock()
-        If Not _bmpSemaphore.WaitOne(TimeSpan.FromSeconds(10)) Then
-            Throw New Exception("BitmapInfo.BmpLock(): Timeout")
-        End If
-    End Sub
-
-    Public Sub BmpUnlock()
-        _bmpSemaphore.Release()
-    End Sub
 
     '''<remarks>
     ''' При обращении к Bmp обязательно использовать BmpLock()/BmpUnlock()
@@ -49,9 +26,41 @@ Public Class BitmapInfo
         End Get
     End Property
 
+    Public ReadOnly Property BmpIsNothing As Boolean
+        Get
+            Return _bmpIsNothing
+        End Get
+    End Property
+
+    Public ReadOnly Property BmpSize As Size
+        Get
+            If _bmpSize IsNot Nothing Then
+                Return _bmpSize.Value
+            Else
+                Throw New Exception("BitmapInfo.BmpSize: Bitmap is Nothing")
+            End If
+        End Get
+    End Property
+
+    Public Sub New(bmp As Bitmap)
+        SetBmp(bmp)
+    End Sub
+
+    Public Sub BmpLock()
+        If Not _bmpSemaphore.WaitOne(TimeSpan.FromSeconds(10)) Then
+            Throw New Exception("BitmapInfo.BmpLock(): Timeout")
+        End If
+    End Sub
+
+    Public Sub BmpUnlock()
+        _bmpSemaphore.Release()
+    End Sub
+
     Public Sub SetBmp(bmp As Bitmap)
         BmpLock()
         _bmp = bmp
+        _bmpIsNothing = bmp Is Nothing
+        _bmpSize = If(bmp IsNot Nothing, bmp.Size, Nothing)
         BmpUnlock()
     End Sub
 
