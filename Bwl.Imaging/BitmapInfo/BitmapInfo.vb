@@ -57,18 +57,23 @@ Public Class BitmapInfo
     End Sub
 
     Public Sub SetBmp(bmp As Bitmap)
-        BmpLock()
-        _bmp = bmp
-        _bmpIsNothing = bmp Is Nothing
-        _bmpSize = If(bmp IsNot Nothing, bmp.Size, Nothing)
-        BmpUnlock()
+        Try
+            BmpLock()
+            _bmp = bmp
+            _bmpIsNothing = bmp Is Nothing
+            _bmpSize = If(bmp IsNot Nothing, bmp.Size, Nothing)
+        Catch ex As Exception
+            Throw ex
+        Finally
+            BmpUnlock()
+        End Try
     End Sub
 
     Public Function GetClonedBmp() As Bitmap
         Dim result As Bitmap = Nothing
         Try
             BmpLock()
-            result = UnsafeFunctions.BitmapClone(_bmp)
+            result = BmpClone2(_bmp)
         Catch ex As Exception
             Throw ex
         Finally
@@ -82,7 +87,7 @@ Public Class BitmapInfo
         Try
             BmpLock()
             If _bmp.PixelFormat = Drawing.Imaging.PixelFormat.Format8bppIndexed Then
-                result = UnsafeFunctions.BitmapClone(_bmp)
+                result = BmpClone2(_bmp)
             Else
                 result = UnsafeFunctions.RgbToGray(_bmp)
             End If
@@ -122,6 +127,20 @@ Public Class BitmapInfo
             Throw ex
         Finally
             BmpUnlock()
+        End Try
+        Return result
+    End Function
+
+    Private Function BmpClone2(bmp As Bitmap) As Bitmap
+        Dim result As Bitmap = Nothing
+        Try
+            result = UnsafeFunctions.BitmapClone(bmp)
+        Catch ex As Exception
+            Try
+                result = New Bitmap(bmp)
+            Catch
+                Throw New Exception("BitmapInfo:BmpClone2() failed")
+            End Try
         End Try
         Return result
     End Function
