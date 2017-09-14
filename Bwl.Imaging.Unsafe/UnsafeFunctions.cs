@@ -307,8 +307,9 @@ namespace Bwl.Imaging.Unsafe
                             for (int col = 0; col < (srcBmd.Width - msize); col++)
                             {
                                 var j = col * trgtPixelSize;
-                                var U = (byte)(0.436 * srcScan2[j] - 0.28886 * srcScan2[j + 1] - 0.14713 * srcScan2[j + 2] + 128);
-                                var V = (byte)(-0.10001 * srcScan2[j] - 0.51499 * srcScan2[j + 1] + 0.615 * srcScan2[j + 2] + 128);
+                                // https://ru.wikipedia.org/wiki/YUV
+                                var U = 0.436 * srcScan2[j] - 0.28886 * srcScan2[j + 1] - 0.14713 * srcScan2[j + 2] + 128; // BGR
+                                var V = -0.10001 * srcScan2[j] - 0.51499 * srcScan2[j + 1] + 0.615 * srcScan2[j + 2] + 128; // BGR
 
                                 byte* m0 = yScan0 + col;
                                 byte* m2 = yScan2 + col;
