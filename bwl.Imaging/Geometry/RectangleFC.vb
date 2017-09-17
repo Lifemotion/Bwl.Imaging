@@ -1,12 +1,12 @@
 ﻿Imports System.Runtime.Serialization
 
-Public Class RectangleC
+Public Class RectangleFC
     Implements ICloneable
 
     Public Property RectangleF As RectangleF
 
     Public Function Clone() As Object Implements ICloneable.Clone
-        Return New RectangleC(RectangleF)
+        Return New RectangleFC(RectangleF)
     End Function
 
     Public Sub New(rect As RectangleF)

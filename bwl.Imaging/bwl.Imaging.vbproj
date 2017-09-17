@@ -88,7 +88,7 @@
     <Compile Include="Matrix\BitmapConverter.vb" />
     <Compile Include="Matrix\GrayMatrix.vb" />
     <Compile Include="Geometry\Polygon\Polygon.vb" />
-    <Compile Include="Geometry\Point\RectangleC.vb" />
+    <Compile Include="Geometry\RectangleFC.vb" />
     <Compile Include="Geometry\Polygon\Tetragon.vb" />
     <Compile Include="Geometry\Polygon\Vector.vb" />
     <Compile Include="MatrixProcessing\Extensions.vb" />

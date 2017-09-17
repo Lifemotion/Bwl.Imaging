@@ -301,7 +301,7 @@ Public Class DisplayGraphics
             DrawPoligon(color, obj, lineWidth)
         ElseIf GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType) Then
             DrawPoint(color, obj.x, obj.y, pointSize)
-        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType) Or GetType(RectangleC).IsAssignableFrom(obj.GetType) Or GetType(Rectangle).IsAssignableFrom(obj.GetType) Then
+        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType) Or GetType(RectangleFC).IsAssignableFrom(obj.GetType) Or GetType(Rectangle).IsAssignableFrom(obj.GetType) Then
             DrawRectangle(color, obj, lineWidth)
         ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType) Then
             DrawBitmap(obj)
