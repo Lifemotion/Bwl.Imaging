@@ -67,6 +67,7 @@
   <ItemGroup>
     <Compile Include="BitmapInfo\BitmapInfo.vb" />
     <Compile Include="Color\IRGBConvertable.vb" />
+    <Compile Include="MatrixProcessing\Segmentation.vb" />
     <Compile Include="StructureMatrix\StructureMatrix.vb" />
     <Compile Include="StructureMatrix\StructureMatrixHSV.vb" />
     <Compile Include="StructureMatrix\StructureMatrixRGB.vb" />
