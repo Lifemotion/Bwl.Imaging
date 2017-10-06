@@ -114,6 +114,7 @@
     <Compile Include="MatrixProcessing\ImagingMath.vb" />
     <Compile Include="MatrixProcessing\MatrixTools.vb" />
     <Compile Include="GeometryProcessing\VectorTools.vb" />
+    <Compile Include="Tools\ImageTools.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="My Project\Resources.resx">
