@@ -14,7 +14,7 @@ Public Class DisplayGraphics
     Private _baseMulX As Single
     Private _baseMulY As Single
     Private _multiplyOnBitmapSize As Boolean = True
-    Private _syncRoot As New Object
+    Protected _syncRoot As New Object
 
     Protected _bkgX1F As Single = 0
     Protected _bkgY1F As Single = 0

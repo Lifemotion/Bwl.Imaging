@@ -20,7 +20,9 @@
     End Sub
 
     Public Sub Resize(width As Integer, height As Integer)
-        _bitmap = New Bitmap(width, height)
-        MyBase.SetGraphics(Graphics.FromImage(_bitmap), width, height)
+        SyncLock _syncRoot
+            _bitmap = New Bitmap(width, height)
+            MyBase.SetGraphics(Graphics.FromImage(_bitmap), width, height)
+        End SyncLock
     End Sub
 End Class
