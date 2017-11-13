@@ -14,6 +14,7 @@ Public Class DisplayGraphics
     Private _baseMulX As Single
     Private _baseMulY As Single
     Private _multiplyOnBitmapSize As Boolean = True
+    Private _syncRoot As New Object
 
     Protected _bkgX1F As Single = 0
     Protected _bkgY1F As Single = 0
@@ -59,42 +60,48 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub KeepAspectRatio(bkgWidth As Integer, bkgHeight As Integer)
-        _mulX = _baseMulX
-        _mulY = _baseMulY
-        _offsetX = 0
-        _offsetY = 0
-        Dim aspectRatioControl = _baseMulX / _baseMulY
-        Dim aspectRatioBitmap = bkgWidth / bkgHeight
-        If aspectRatioControl > aspectRatioBitmap Then
-            Dim ardivF = aspectRatioBitmap / aspectRatioControl
-            _bkgX1F = 0.5 - ardivF * 0.5
-            _bkgY1F = 0
-            _bkgX2F = 0.5 + ardivF * 0.5
-            _bkgY2F = 1
-            Dim bkgWF = _bkgX2F - _bkgX1F
-            Dim bkgW = If(MultiplyOnBitmapSize, bkgWF * _width, bkgWF)
-            _mulX = bkgW
-            _offsetX = If(MultiplyOnBitmapSize, _bkgX1F * _width, _bkgX1F)
-        End If
-        If aspectRatioControl < aspectRatioBitmap Then
-            Dim ardivF = aspectRatioControl / aspectRatioBitmap
-            _bkgX1F = 0
-            _bkgY1F = 0.5 - ardivF * 0.5
-            _bkgX2F = 1
-            _bkgY2F = 0.5 + ardivF * 0.5
-            Dim bkgHF = _bkgY2F - _bkgY1F
-            Dim bkgH = If(MultiplyOnBitmapSize, bkgHF * _height, bkgHF)
-            _mulY = bkgH
-            _offsetY = If(MultiplyOnBitmapSize, _bkgY1F * _height, _bkgY1F)
-        End If
+        SyncLock _syncRoot
+            _mulX = _baseMulX
+            _mulY = _baseMulY
+            _offsetX = 0
+            _offsetY = 0
+            Dim aspectRatioControl = _baseMulX / _baseMulY
+            Dim aspectRatioBitmap = bkgWidth / bkgHeight
+            If aspectRatioControl > aspectRatioBitmap Then
+                Dim ardivF = aspectRatioBitmap / aspectRatioControl
+                _bkgX1F = 0.5 - ardivF * 0.5
+                _bkgY1F = 0
+                _bkgX2F = 0.5 + ardivF * 0.5
+                _bkgY2F = 1
+                Dim bkgWF = _bkgX2F - _bkgX1F
+                Dim bkgW = If(MultiplyOnBitmapSize, bkgWF * _width, bkgWF)
+                _mulX = bkgW
+                _offsetX = If(MultiplyOnBitmapSize, _bkgX1F * _width, _bkgX1F)
+            End If
+            If aspectRatioControl < aspectRatioBitmap Then
+                Dim ardivF = aspectRatioControl / aspectRatioBitmap
+                _bkgX1F = 0
+                _bkgY1F = 0.5 - ardivF * 0.5
+                _bkgX2F = 1
+                _bkgY2F = 0.5 + ardivF * 0.5
+                Dim bkgHF = _bkgY2F - _bkgY1F
+                Dim bkgH = If(MultiplyOnBitmapSize, bkgHF * _height, bkgHF)
+                _mulY = bkgH
+                _offsetY = If(MultiplyOnBitmapSize, _bkgY1F * _height, _bkgY1F)
+            End If
+        End SyncLock
     End Sub
 
     Public Sub Clear(color As Color)
-        _graphics.Clear(color)
+        SyncLock _syncRoot
+            _graphics.Clear(color)
+        End SyncLock
     End Sub
 
     Public Sub Clear()
-        _graphics.Clear(BackgroundColor)
+        SyncLock _syncRoot
+            _graphics.Clear(BackgroundColor)
+        End SyncLock
     End Sub
 
     Public Sub DrawBitmap(bo As BitmapObject)
@@ -106,39 +113,49 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawBitmap(bitmap As Bitmap, x1 As Single, y1 As Single, x2 As Single, y2 As Single)
-        _graphics.DrawImage(bitmap,
-                            x1 * _mulX + _offsetX,
-                            y1 * _mulY + _offsetY,
-                            (x2 - x1) * _mulX,
-                            (y2 - y1) * _mulY)
+        SyncLock _syncRoot
+            _graphics.DrawImage(bitmap,
+                                x1 * _mulX + _offsetX,
+                                y1 * _mulY + _offsetY,
+                                (x2 - x1) * _mulX,
+                                (y2 - y1) * _mulY)
+        End SyncLock
     End Sub
 
     Public Sub DrawBitmap(bitmap As Bitmap, x1 As Single, y1 As Single)
-        _graphics.DrawImage(bitmap,
-                            x1 * _mulX + _offsetX,
-                            y1 * _mulY + _offsetY)
+        SyncLock _syncRoot
+            _graphics.DrawImage(bitmap,
+                                x1 * _mulX + _offsetX,
+                                y1 * _mulY + _offsetY)
+        End SyncLock
     End Sub
 
     Public Sub DrawBitmap(bitmap As Bitmap)
-        _graphics.DrawImage(bitmap, 0, 0)
+        SyncLock _syncRoot
+            _graphics.DrawImage(bitmap, 0, 0)
+        End SyncLock
     End Sub
 
     Public Sub FillRectanglesBase(color As Color, rects As RectangleF())
-        _graphics.FillRectangles(New SolidBrush(color), rects.Select(Function(item)
-                                                                         Return New RectangleF(item.X * _baseMulX,
-                                                                                               item.Y * _baseMulY,
-                                                                                               item.Width * _baseMulX,
-                                                                                               item.Height * _baseMulY)
-                                                                     End Function).ToArray())
+        SyncLock _syncRoot
+            _graphics.FillRectangles(New SolidBrush(color), rects.Select(Function(item)
+                                                                             Return New RectangleF(item.X * _baseMulX,
+                                                                                                   item.Y * _baseMulY,
+                                                                                                   item.Width * _baseMulX,
+                                                                                                   item.Height * _baseMulY)
+                                                                         End Function).ToArray())
+        End SyncLock
     End Sub
 
     Public Sub FillRectangles(color As Color, rects As RectangleF())
-        _graphics.FillRectangles(New SolidBrush(color), rects.Select(Function(item)
-                                                                         Return New RectangleF(item.X * _mulX + _offsetX,
-                                                                                               item.Y * _mulY + _offsetY,
-                                                                                               item.Width * _mulX,
-                                                                                               item.Height * _mulY)
-                                                                     End Function).ToArray())
+        SyncLock _syncRoot
+            _graphics.FillRectangles(New SolidBrush(color), rects.Select(Function(item)
+                                                                             Return New RectangleF(item.X * _mulX + _offsetX,
+                                                                                                   item.Y * _mulY + _offsetY,
+                                                                                                   item.Width * _mulX,
+                                                                                                   item.Height * _mulY)
+                                                                         End Function).ToArray())
+        End SyncLock
     End Sub
 
     Public Property MultiplyOnBitmapSize As Boolean
@@ -152,18 +169,20 @@ Public Class DisplayGraphics
     End Property
 
     Private Sub ComputeMultipliers()
-        _baseMulX = 1.0
-        _baseMulY = 1.0
-        If MultiplyOnBitmapSize Then
-            _baseMulX *= _width
-            _baseMulY *= _height
-        End If
-        _mulX = _baseMulX
-        _mulY = _baseMulY
+        SyncLock _syncRoot
+            _baseMulX = 1.0
+            _baseMulY = 1.0
+            If MultiplyOnBitmapSize Then
+                _baseMulX *= _width
+                _baseMulY *= _height
+            End If
+            _mulX = _baseMulX
+            _mulY = _baseMulY
+        End SyncLock
     End Sub
 
     Public Sub DrawLine(color As Color, x1 As Single, y1 As Single, x2 As Single, y2 As Single, Optional width As Single = 0)
-        SyncLock Me
+        SyncLock _syncRoot
             If width <= 0 Then width = DefaultWidth
             If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
             _graphics.DrawLine(_pen,
@@ -175,7 +194,7 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawVector(color As Color, x1 As Single, y1 As Single, x2 As Single, y2 As Single, Optional width As Single = 0)
-        SyncLock Me
+        SyncLock _syncRoot
             If width <= 0 Then width = DefaultWidth
             If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
             Dim dx = x2 - x1
@@ -213,7 +232,7 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawRectangle(color As Color, x1 As Single, y1 As Single, x2 As Single, y2 As Single, Optional width As Single = 0)
-        SyncLock Me
+        SyncLock _syncRoot
             If width <= 0 Then width = DefaultWidth
             If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
             Dim tmp As Single
@@ -228,7 +247,7 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawPoint(color As Color, x1 As Single, y1 As Single, Optional size As Single = 0)
-        SyncLock Me
+        SyncLock _syncRoot
             If size <= 0 Then size = DefaultPointSize
             If _brush.Color <> color Then _brush = New SolidBrush(color)
             _graphics.FillEllipse(_brush,
@@ -240,7 +259,7 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawCircle(color As Color, x1 As Single, y1 As Single, radius As Single, Optional width As Single = 0)
-        SyncLock Me
+        SyncLock _syncRoot
             If width <= 0 Then width = DefaultWidth
             If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
             _graphics.DrawEllipse(_pen,
@@ -252,7 +271,7 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawText(color As Color, x1 As Single, y1 As Single, size As Single, text As String)
-        SyncLock Me
+        SyncLock _syncRoot
             If _brush.Color <> color Then _brush = New SolidBrush(color)
             If _font.Size <> size * _mulX Then _font = New Font(FontFamily.GenericSansSerif, size * _mulX)
             _graphics.DrawString(text, _font, _brush,
@@ -262,7 +281,7 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawText(color As Color, textObj As TextObject)
-        SyncLock Me
+        SyncLock _syncRoot
             If _brush.Color <> color Then _brush = New SolidBrush(color)
             If _font.Size <> textObj.Size * _mulX Then _font = New Font(FontFamily.GenericSansSerif, textObj.Size * _mulX)
             _graphics.DrawString(textObj.Text, _font, _brush,
@@ -272,7 +291,7 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub DrawPoligon(color As Color, poligon As Polygon, Optional width As Single = 0)
-        SyncLock Me
+        SyncLock _syncRoot
             If width <= 0 Then width = DefaultWidth
             If _pen.Color <> color Or _pen.Width <> width Then _pen = New Pen(color, width)
             For i = 0 To poligon.Points.Count - 2
@@ -388,16 +407,18 @@ Public Class DisplayGraphics
     End Sub
 
     Public Sub SetGraphics(graphics As Graphics, width As Integer, height As Integer)
-        If width < 1 Then Throw New ArgumentException("width must be >0")
-        If height < 1 Then Throw New ArgumentException("height must be >0")
-        _graphics = graphics
-        _width = width
-        _height = height
-        If Quality = QualityMode.Fast Then
-            _graphics.SmoothingMode = Drawing2D.SmoothingMode.None
-            _graphics.InterpolationMode = Drawing2D.InterpolationMode.NearestNeighbor
-            _graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half
-        End If
-        ComputeMultipliers()
+        SyncLock _syncRoot
+            If width < 1 Then Throw New ArgumentException("width must be >0")
+            If height < 1 Then Throw New ArgumentException("height must be >0")
+            _graphics = graphics
+            _width = width
+            _height = height
+            If Quality = QualityMode.Fast Then
+                _graphics.SmoothingMode = Drawing2D.SmoothingMode.None
+                _graphics.InterpolationMode = Drawing2D.InterpolationMode.NearestNeighbor
+                _graphics.PixelOffsetMode = System.Drawing.Drawing2D.PixelOffsetMode.Half
+            End If
+            ComputeMultipliers()
+        End SyncLock
     End Sub
 End Class
