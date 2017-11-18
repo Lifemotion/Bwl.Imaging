@@ -156,6 +156,8 @@ Public Class BitmapInfo
                         _bmp.Dispose()
                         _bmp = Nothing
                     End If
+                    _bmpIsNothing = True
+                    _bmpSize = Nothing
                     _grayMatrix = Nothing
                     _rgbMatrix = Nothing
                 Catch
