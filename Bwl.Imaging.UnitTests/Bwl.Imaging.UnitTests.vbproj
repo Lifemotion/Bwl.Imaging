@@ -160,6 +160,9 @@
   <ItemGroup>
     <None Include="Resources\rgbProbeS4.bmp" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\636080817147998076.jpg" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

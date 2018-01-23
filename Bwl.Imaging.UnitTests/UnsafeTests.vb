@@ -60,6 +60,16 @@ Imports Bwl.Imaging.Unsafe
         UnsafeCropRgbTest(My.Resources.rgbw24)
     End Sub
 
+    <TestMethod()>
+    Public Sub UnsafeNormalizeRGBTest()
+        Dim bmpRgb = My.Resources.rgb
+        Dim bmp2 = New Bitmap(bmpRgb.Width, bmpRgb.Height, bmpRgb.PixelFormat)
+        UnsafeFunctions.NormalizeRgb(bmpRgb, bmp2, 0)
+
+        bmpRgb.Save("D:\1.bmp")
+        bmp2.Save("D:\2.bmp")
+    End Sub
+
     <TestMethod()> Public Sub UnsafeCropRgb25Test()
         UnsafeCropRgbTest(My.Resources.rgbw25)
     End Sub

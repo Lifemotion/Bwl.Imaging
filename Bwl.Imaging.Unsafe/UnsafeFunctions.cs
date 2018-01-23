@@ -255,12 +255,12 @@ namespace Bwl.Imaging.Unsafe
                     bool aligned4 = (srcBmd.Stride == srcBmd.Width * srcPixelSize);
                     bool aligned4Y = (srcBmd.Width % 4) == 0;
                     unsafe
-                    {                        
+                    {
                         byte* srcBytesYUV = (byte*)srcBmd.Scan0;
                         IntPtr hglobal = Marshal.AllocHGlobal(srcBmd.Width * srcBmd.Height);
                         byte* Y = (byte*)hglobal;
                         var Yindex = Y;
-                                                
+
                         if (aligned4 && aligned4Y)
                         {
                             for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += srcPixelSize)
@@ -313,7 +313,7 @@ namespace Bwl.Imaging.Unsafe
 
                                 byte* m0 = yScan0 + col;
                                 byte* m2 = yScan2 + col;
-                                byte* m4 = yScan4 + col;                                
+                                byte* m4 = yScan4 + col;
                                 double valueY = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
                                                 -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
                                                 -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
@@ -339,6 +339,137 @@ namespace Bwl.Imaging.Unsafe
                                 if (trgtPixelSize == 4)
                                 {
                                     trgtScan2[j + 3] = (byte)255;
+                                }
+                            }
+                        });
+                        Marshal.FreeHGlobal(hglobal);
+                    }
+                    srcBmp.UnlockBits(srcBmd);
+                    trgtBmp.UnlockBits(trgtBmd);
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
+        public static void NormalizeRgb(Bitmap srcBmp, Bitmap trgtBmp, double borderPercent = 0.1)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            lock (srcBmp)
+            {
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+                {
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    int trgtPixelSize = GetPixelSize(trgtBmp.PixelFormat);
+                    bool aligned4 = (srcBmd.Stride == srcBmd.Width * srcPixelSize);
+                    bool aligned4Y = (srcBmd.Width % 4) == 0;
+                    unsafe
+                    {
+                        byte* srcBytesYUV = (byte*)srcBmd.Scan0;
+                        var pixelsCount = srcBmd.Width * srcBmd.Height;
+                        IntPtr hglobal = Marshal.AllocHGlobal(pixelsCount);
+                        byte* Y = (byte*)hglobal;
+                        var Yindex = Y;
+                        var hist = new int[256];
+
+                        if (aligned4 && aligned4Y)
+                        {
+                            for (int i = 0, j = 0; i < pixelsCount; i++, j += srcPixelSize)
+                            {
+                                // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                                Yindex[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
+                                hist[Yindex[i]] += 1;
+                            }
+                        }
+                        else
+                        {
+                            for (int row = 0; row < srcBmd.Height; row++)
+                            {
+                                for (int i = 0, j = 0; i < srcBmd.Width; i++, j += srcPixelSize)
+                                {
+                                    // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
+                                    Yindex[i] = (byte)(0.114 * srcBytesYUV[j] + 0.587 * srcBytesYUV[j + 1] + 0.299 * srcBytesYUV[j + 2]);
+                                    hist[Yindex[i]] += 1;
+                                }
+                                srcBytesYUV += srcBmd.Stride;
+                                Yindex += srcBmd.Width;
+                            }
+                        }
+
+                        var min = 255;
+                        var count = 0;
+                        var th = pixelsCount * borderPercent;
+                        for (int i = 0; i < hist.Length - 1; i++)
+                        {
+                            count += hist[i];
+                            if (count > th)
+                            {
+                                min = i;
+                                break;
+                            }
+                        }
+
+                        var max = 0;
+                        count = 0;
+                        for (int i = hist.Length - 1; i > 0; i--)
+                        {
+                            count += hist[i];
+                            if (count > th)
+                            {
+                                max = i;
+                                break;
+                            }
+                        }
+
+                        byte* srcBytes = (byte*)srcBmd.Scan0;
+                        byte* trgtBytes = (byte*)trgtBmd.Scan0;
+
+                        Parallel.For(0, (srcBmd.Height), (int row) =>
+                        {
+                            byte* srcScan0 = srcBytes + (row * srcBmd.Stride);
+                            byte* yScan0 = Y + (row * srcBmd.Width);
+
+                            byte* trgtScan0 = trgtBytes + (row * trgtBmd.Stride);
+
+                            for (int col = 0; col < srcBmd.Width; col++)
+                            {
+                                var j = col * trgtPixelSize;
+                                // https://ru.wikipedia.org/wiki/YUV
+                                var U = 0.436 * srcScan0[j] - 0.28886 * srcScan0[j + 1] - 0.14713 * srcScan0[j + 2] + 128; // BGR
+                                var V = -0.10001 * srcScan0[j] - 0.51499 * srcScan0[j + 1] + 0.615 * srcScan0[j + 2] + 128; // BGR
+
+                                double valueY = yScan0[col];
+                                valueY = (valueY - min) * 255 / (max - min);
+
+                                valueY = valueY < 0 ? 0 : valueY;
+                                valueY = valueY > 255 ? 255 : valueY;
+
+                                var r = valueY + 1.13983 * (V - 128);
+                                var g = valueY - 0.39465 * (U - 128) - 0.58060 * (V - 128);
+                                var b = valueY + 2.03211 * (U - 128);
+
+                                r = r < 0 ? 0 : r;
+                                r = r > 255 ? 255 : r;
+
+                                g = g < 0 ? 0 : g;
+                                g = g > 255 ? 255 : g;
+
+                                b = b < 0 ? 0 : b;
+                                b = b > 255 ? 255 : b;
+
+                                trgtScan0[j] = (byte)b;
+                                trgtScan0[j + 1] = (byte)g;
+                                trgtScan0[j + 2] = (byte)r;
+                                if (trgtPixelSize == 4)
+                                {
+                                    trgtScan0[j + 3] = (byte)255;
                                 }
                             }
                         });

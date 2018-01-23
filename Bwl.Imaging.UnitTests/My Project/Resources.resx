@@ -142,4 +142,7 @@
   <data name="_4x3_rgb" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\_4x3-rgb.bmp;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="rgb" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\636080817147998076.jpg;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>
