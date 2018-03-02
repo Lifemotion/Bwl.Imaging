@@ -687,6 +687,7 @@ namespace Bwl.Imaging.Unsafe
                 if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
                     int targetW = 1 + ((srcBmd.Width - 1) / step);
                     int targetH = 1 + ((srcBmd.Height - 1) / step);
                     byte[] trgtData = new byte[targetW * targetH];
@@ -698,9 +699,52 @@ namespace Bwl.Imaging.Unsafe
                         {
                             for (int col = 0; col < srcBmd.Width; col += step)
                             {
-                                int k = col * 3;
+                                int k = col * srcPixelSize;
                                 // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
                                 trgtData[t++] = (byte)(0.114 * srcBytes[k] + 0.587 * srcBytes[k + 1] + 0.299 * srcBytes[k + 2]);
+                            }
+                            srcBytes += srcBmd.Stride * step;
+                        }
+                    }
+                    srcBmp.UnlockBits(srcBmd);
+                    return trgtData;
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
+        public static byte[] BitmapProbeRgb2(Bitmap srcBmp, int step)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            lock (srcBmp)
+            {
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+                {
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    int targetW = 1 + ((srcBmd.Width - 1) / step);
+                    int targetH = 1 + ((srcBmd.Height - 1) / step);
+                    byte[] trgtData = new byte[targetW * targetH * 3]; // Всегда RGB
+                    int t = 0;
+                    unsafe
+                    {
+                        byte* srcBytes = (byte*)srcBmd.Scan0;
+                        for (int row = 0; row < srcBmd.Height; row += step)
+                        {
+                            for (int col = 0; col < srcBmd.Width; col += step)
+                            {
+                                int k = col * srcPixelSize;
+                                // Порядок байт в trgtData -> R,G,B
+                                trgtData[t + 2] = (byte)srcBytes[k];
+                                trgtData[t + 1] = (byte)srcBytes[k + 1];
+                                trgtData[t] = (byte)srcBytes[k + 2];
+                                t += 3; // Всегда RGB
                             }
                             srcBytes += srcBmd.Stride * step;
                         }
@@ -760,6 +804,7 @@ namespace Bwl.Imaging.Unsafe
                 if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
                 {
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
                     ulong hash = 0;
                     unsafe
                     {
@@ -768,7 +813,7 @@ namespace Bwl.Imaging.Unsafe
                         {
                             for (int col = 0; col < srcBmd.Width; col += step)
                             {
-                                int k = col * 3;
+                                int k = col * srcPixelSize;
                                 // Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
                                 hash += (byte)(0.114 * srcBytes[k] + 0.587 * srcBytes[k + 1] + 0.299 * srcBytes[k + 2]);
                             }
