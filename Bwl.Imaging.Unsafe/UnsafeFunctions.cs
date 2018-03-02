@@ -354,6 +354,20 @@ namespace Bwl.Imaging.Unsafe
             }
         }
 
+        public static Bitmap NormalizeRgb(Bitmap srcBmp, double borderPercent = 0.1)
+        {
+            if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+            {
+                Bitmap trgtBmp = new Bitmap(srcBmp.Width, srcBmp.Height, srcBmp.PixelFormat);
+                NormalizeRgb(srcBmp, trgtBmp, borderPercent);
+                return trgtBmp;
+            }
+            else
+            {
+                throw new Exception("Unsupported pixel format");
+            }
+        }
+
         public static void NormalizeRgb(Bitmap srcBmp, Bitmap trgtBmp, double borderPercent = 0.1)
         {
             if (srcBmp == null)
