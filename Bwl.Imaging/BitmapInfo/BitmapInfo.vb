@@ -1,4 +1,5 @@
 ﻿Imports System.Threading
+Imports System.Drawing.Imaging
 Imports Bwl.Imaging.Unsafe
 
 Public Class BitmapInfo
@@ -7,6 +8,7 @@ Public Class BitmapInfo
     Private _bmp As Bitmap
     Private _bmpIsNothing As Boolean
     Private _bmpSize As Nullable(Of Size)
+    Private _bmpPixelFormat As Nullable(Of PixelFormat)
     Private _grayMatrix As GrayMatrix
     Private _rgbMatrix As RGBMatrix
 
@@ -42,6 +44,16 @@ Public Class BitmapInfo
         End Get
     End Property
 
+    Public ReadOnly Property BmpPixelFormat As PixelFormat
+        Get
+            If _bmpPixelFormat IsNot Nothing Then
+                Return _bmpPixelFormat.Value
+            Else
+                Throw New Exception("BitmapInfo.PixelFormat: Bitmap is Nothing")
+            End If
+        End Get
+    End Property
+
     Public Sub New(bmp As Bitmap)
         SetBmp(bmp)
     End Sub
@@ -62,6 +74,7 @@ Public Class BitmapInfo
             _bmp = bmp
             _bmpIsNothing = bmp Is Nothing
             _bmpSize = If(bmp IsNot Nothing, bmp.Size, Nothing)
+            _bmpPixelFormat = If(bmp IsNot Nothing, bmp.PixelFormat, Nothing)
         Catch ex As Exception
             Throw ex
         Finally
