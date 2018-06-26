@@ -66,6 +66,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BitmapInfo\BitmapInfo.vb" />
+    <Compile Include="Bitmap\BitmapObject.vb" />
+    <Compile Include="Bitmap\DisplayBitmap.vb" />
+    <Compile Include="Bitmap\DisplayGraphics.vb" />
+    <Compile Include="Bitmap\DisplayObject.vb" />
+    <Compile Include="Bitmap\TextObject.vb" />
     <Compile Include="Color\IRGBConvertable.vb" />
     <Compile Include="MatrixProcessing\Segmentation.vb" />
     <Compile Include="StructureMatrix\StructureMatrix.vb" />

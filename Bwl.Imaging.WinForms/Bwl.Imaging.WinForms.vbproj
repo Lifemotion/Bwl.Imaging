@@ -64,23 +64,18 @@
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Bitmap\DisplayBitmap.vb" />
     <Compile Include="Bitmap\DisplayBitmapControl.Designer.vb">
       <DependentUpon>DisplayBitmapControl.vb</DependentUpon>
     </Compile>
     <Compile Include="Bitmap\DisplayBitmapControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Bitmap\DisplayGraphics.vb" />
-    <Compile Include="Objects\BitmapObject.vb" />
-    <Compile Include="Objects\DisplayObject.vb" />
     <Compile Include="Objects\DisplayObjectsControl.Designer.vb">
       <DependentUpon>DisplayObjectsControl.vb</DependentUpon>
     </Compile>
     <Compile Include="Objects\DisplayObjectsControl.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Objects\TextObject.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
