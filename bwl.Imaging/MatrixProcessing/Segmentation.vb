@@ -1,63 +1,77 @@
 ﻿Imports Bwl.Imaging
 
-Public Class Segment
-    Public Property Left As Integer
-    Public Property Top As Integer
-    Public Property Width As Integer
-    Public Property Height As Integer
-    Public Property ID As Integer
-    Public Property Tag As Integer
-    Public Property Debug As String
-
-    Public Property Right As Integer
-        Get
-            Return Left + Width
-        End Get
-        Set(value As Integer)
-            Width = value - Left
-        End Set
-    End Property
-    Public Property Bottom As Integer
-        Get
-            Return Top + Height
-        End Get
-        Set(value As Integer)
-            Height = value - Top
-        End Set
-    End Property
-    Public Overrides Function ToString() As String
-        Return "L:" + Left.ToString + " :T" + Top.ToString + " :W" + Width.ToString + " :H" + Height.ToString
-    End Function
-
-    Public ReadOnly Property CenterX As Integer
-        Get
-            Return Left + Width / 2
-        End Get
-    End Property
-
-    Public ReadOnly Property WHRatio As Single
-        Get
-            If Height = 0 Then Return 0
-            Return Width / Height
-        End Get
-    End Property
-
-    Public ReadOnly Property CenterY As Integer
-        Get
-            Return Top + Height / 2
-        End Get
-    End Property
-
-    Public Function IsPointInside(x As Integer, y As Integer) As Boolean
-        Return x >= Left And x <= Left + Width And y >= Top And y <= Top + Height
-    End Function
-
-
-End Class
-
 Public Class Segmentation
+    Public Shared Function CreateSegmentsMap(matrix As GrayMatrix, Optional threshold As Integer = 10) As GrayMatrix
+        threshold = 30
+        Dim segments As New GrayMatrix(matrix.Width, matrix.Height)
+        Dim segmentsValues As New GrayMatrix(matrix.Width, matrix.Height)
+        Dim segmIndex As Integer = 1
+        Dim segmValue As Integer = matrix.Gray(0)
 
-    Public Shared Function CreateSegmentsMap(matrix As GrayMatrix, Optional binarizeThreshold As Integer = 120, Optional invert As Boolean = False) As GrayMatrix
+        Dim height = matrix.Height
+        Dim width = matrix.Width
+        Dim k = 0.8
+        For y = 0 To matrix.Height - 1
+            Dim rowstart = y * matrix.Width
+            Dim last As Boolean = 0
+            For x = 0 To matrix.Width - 1
+                Dim pix = matrix.Gray(x + rowstart)
+                If Math.Abs(pix - segmValue) > threshold Then
+                    segmIndex += 1
+                    segmValue = pix
+                Else
+                    segmValue = segmValue * k + pix * (1 - k)
+                End If
+                segments.Gray(x + rowstart) = segmIndex
+                segmentsValues.Gray(x + rowstart) = segmValue
+            Next
+        Next
+
+        For pass = 1 To 4
+            If pass Mod 2 = 1 Then
+                For y = 0 To height - 2
+                    Dim rowstart = y * width
+                    Dim nextRowstart = rowstart + width
+                    Filll(segments, segmentsValues, rowstart, nextRowstart, width, threshold)
+                Next
+            Else
+                For y = height - 1 To 1 Step -1
+                    Dim rowstart = y * width
+                    Dim nextRowstart = rowstart - width
+                    Filll(segments, segmentsValues, rowstart, nextRowstart, width, threshold)
+                Next
+            End If
+        Next
+
+        'FillSegments(segments.Gray, matrix.Width, matrix.Height)
+        ' FillSegmentsRev(segments.Gray, matrix.Width, matrix.Height)
+        Return segments
+    End Function
+
+    Private Shared Sub Filll(segments As GrayMatrix, segmentsValues As GrayMatrix, rowstart As Integer, nextRowstart As Integer, width As Integer, threshold As Integer)
+        For x = 0 To width - 1
+            Dim segm = segments.Gray(rowstart + x)
+            Dim segmVal = segmentsValues.Gray(rowstart + x)
+            Dim downSegm = segments.Gray(nextRowstart + x)
+            Dim downSegmVal = segmentsValues.Gray(nextRowstart + x)
+
+            If Math.Abs(segmVal - downSegmVal) < threshold And downSegm > segm Then
+                segmVal = segmVal * 0.5 + downSegmVal * 0.5
+                For i = x To width - 1
+                    If segments.Gray(nextRowstart + i) <> downSegm Then Exit For
+                    segments.Gray(nextRowstart + i) = segm
+                    segmentsValues.Gray(nextRowstart + i) = segmVal
+                Next
+                For i = x To 0 Step -1
+                    If segments.Gray(nextRowstart + i) <> downSegm Then Exit For
+                    segments.Gray(nextRowstart + i) = segm
+                    segmentsValues.Gray(nextRowstart + i) = segmVal
+                Next
+            End If
+        Next
+    End Sub
+
+    Public Shared Function CreateSegmentsMapWithBinarize(matrix As GrayMatrix, Optional binarizeThreshold As Integer = 120, Optional invert As Boolean = False) As GrayMatrix
         Dim segments As GrayMatrix
         If invert Then
             segments = FirstSegmentationInvert(matrix, binarizeThreshold)
@@ -107,6 +121,20 @@ Public Class Segmentation
             Next
         Next
         Return segments
+    End Function
+
+    Public Shared Function ColorizeSegments(segmentsMap As GrayMatrix) As RGBMatrix
+        Dim result As New RGBMatrix(segmentsMap.Width, segmentsMap.Height)
+        For i = 0 To segmentsMap.Gray.Length - 1
+            Dim pix = segmentsMap.Gray(i)
+            If pix > 0 Then
+                Dim rnd As New Random(pix)
+                result.Red(i) = rnd.Next(0, 255)
+                result.Green(i) = rnd.Next(0, 255)
+                result.Blue(i) = rnd.Next(0, 255)
+            End If
+        Next
+        Return result
     End Function
 
     Public Shared Function CreateSegmentsList(segmentsMap As GrayMatrix) As Segment()
