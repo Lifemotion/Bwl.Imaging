@@ -18,4 +18,36 @@ Public Module ImageTools
         End Using
         Return resized
     End Function
+
+    Public Function RectangleToRectangleF(rect As Rectangle, size As Size) As RectangleF
+        Dim X = rect.X / CSng(size.Width)
+        Dim Y = rect.Y / CSng(size.Height)
+        Dim W = rect.Width / CSng(size.Width)
+        Dim H = rect.Height / CSng(size.Height)
+        Return New RectangleF(X, Y, W, H)
+    End Function
+
+    Public Function RectangleFToRectangle(rectF As RectangleF, size As Size) As Rectangle
+        Dim X = CInt(Math.Floor(rectF.X * size.Width))
+        Dim Y = CInt(Math.Floor(rectF.Y * size.Height))
+        Dim W = CInt(Math.Floor(rectF.Width * size.Width))
+        Dim H = CInt(Math.Floor(rectF.Height * size.Height))
+        Return New Rectangle(X, Y, W, H)
+    End Function
+
+    Public Function PointsToRectangleF(points As PointF()) As RectangleF
+        Dim left = points.Min(Function(item) item.X)
+        Dim right = points.Max(Function(item) item.X)
+        Dim top = points.Min(Function(item) item.Y)
+        Dim bottom = points.Max(Function(item) item.Y)
+        Return RectangleF.FromLTRB(left, top, right, bottom)
+    End Function
+
+    Public Function PointsToRectangle(points As Point()) As Rectangle
+        Dim left = points.Min(Function(item) item.X)
+        Dim right = points.Max(Function(item) item.X)
+        Dim top = points.Min(Function(item) item.Y)
+        Dim bottom = points.Max(Function(item) item.Y)
+        Return Rectangle.FromLTRB(left, top, right, bottom)
+    End Function
 End Module
