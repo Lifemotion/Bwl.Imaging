@@ -31,22 +31,27 @@ Partial Class OCRTest
         Me.tbRecogSymb = New System.Windows.Forms.TextBox()
         Me.tbRecogSegment = New System.Windows.Forms.NumericUpDown()
         Me.lbSymbResults = New System.Windows.Forms.ListBox()
+        Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
+        Me.pbResult = New System.Windows.Forms.PictureBox()
         CType(Me.pbMain, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbAux1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbAux2, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.tbRecogSegment, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.SplitContainer1.Panel1.SuspendLayout()
+        Me.SplitContainer1.Panel2.SuspendLayout()
+        Me.SplitContainer1.SuspendLayout()
+        CType(Me.pbResult, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'pbMain
         '
-        Me.pbMain.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
-            Or System.Windows.Forms.AnchorStyles.Left) _
-            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.pbMain.BackColor = System.Drawing.Color.White
         Me.pbMain.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.pbMain.Location = New System.Drawing.Point(235, 12)
+        Me.pbMain.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.pbMain.Location = New System.Drawing.Point(0, 0)
         Me.pbMain.Name = "pbMain"
-        Me.pbMain.Size = New System.Drawing.Size(761, 738)
+        Me.pbMain.Size = New System.Drawing.Size(555, 772)
         Me.pbMain.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.pbMain.TabIndex = 0
         Me.pbMain.TabStop = False
@@ -122,12 +127,44 @@ Partial Class OCRTest
         Me.lbSymbResults.Size = New System.Drawing.Size(217, 95)
         Me.lbSymbResults.TabIndex = 8
         '
+        'SplitContainer1
+        '
+        Me.SplitContainer1.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.SplitContainer1.Location = New System.Drawing.Point(235, 12)
+        Me.SplitContainer1.Name = "SplitContainer1"
+        '
+        'SplitContainer1.Panel1
+        '
+        Me.SplitContainer1.Panel1.Controls.Add(Me.pbMain)
+        '
+        'SplitContainer1.Panel2
+        '
+        Me.SplitContainer1.Panel2.Controls.Add(Me.pbResult)
+        Me.SplitContainer1.Size = New System.Drawing.Size(1103, 772)
+        Me.SplitContainer1.SplitterDistance = 555
+        Me.SplitContainer1.TabIndex = 9
+        '
+        'pbResult
+        '
+        Me.pbResult.BackColor = System.Drawing.Color.White
+        Me.pbResult.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
+        Me.pbResult.Dock = System.Windows.Forms.DockStyle.Fill
+        Me.pbResult.Location = New System.Drawing.Point(0, 0)
+        Me.pbResult.Name = "pbResult"
+        Me.pbResult.Size = New System.Drawing.Size(544, 772)
+        Me.pbResult.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
+        Me.pbResult.TabIndex = 1
+        Me.pbResult.TabStop = False
+        '
         'OCRTest
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(1008, 762)
+        Me.ClientSize = New System.Drawing.Size(1340, 782)
+        Me.Controls.Add(Me.SplitContainer1)
         Me.Controls.Add(Me.lbSymbResults)
         Me.Controls.Add(Me.tbRecogSegment)
         Me.Controls.Add(Me.tbRecogSymb)
@@ -136,13 +173,17 @@ Partial Class OCRTest
         Me.Controls.Add(Me.tbFile)
         Me.Controls.Add(Me.bRecog)
         Me.Controls.Add(Me.pbAux1)
-        Me.Controls.Add(Me.pbMain)
         Me.Name = "OCRTest"
         Me.Text = "OCR Test"
         CType(Me.pbMain, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.pbAux1, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.pbAux2, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.tbRecogSegment, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer1.Panel1.ResumeLayout(False)
+        Me.SplitContainer1.Panel2.ResumeLayout(False)
+        CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.SplitContainer1.ResumeLayout(False)
+        CType(Me.pbResult, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -157,4 +198,6 @@ Partial Class OCRTest
     Friend WithEvents tbRecogSymb As TextBox
     Friend WithEvents tbRecogSegment As NumericUpDown
     Friend WithEvents lbSymbResults As ListBox
+    Friend WithEvents SplitContainer1 As SplitContainer
+    Friend WithEvents pbResult As PictureBox
 End Class

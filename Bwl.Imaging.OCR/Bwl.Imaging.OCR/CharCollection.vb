@@ -73,7 +73,7 @@ Public Class CharCollection
     End Function
 
     Public Shared Function Create(font As Font) As CharCollection
-        Dim str = GetCharsString(CharTypeEnum.RussianLower Or CharTypeEnum.Digit)
+        Dim str = GetCharsString(CharTypeEnum.RussianLower Or CharTypeEnum.RussianUpper Or CharTypeEnum.Digit)
         Dim testBmp As New Bitmap(100, 100)
         Dim testGraphics = Graphics.FromImage(testBmp)
         Dim x = 5
