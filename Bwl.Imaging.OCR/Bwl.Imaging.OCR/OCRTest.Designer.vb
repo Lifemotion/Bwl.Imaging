@@ -53,7 +53,7 @@ Partial Class OCRTest
         '
         'pbAux1
         '
-        Me.pbAux1.BackColor = System.Drawing.Color.White
+        Me.pbAux1.BackColor = System.Drawing.Color.Gray
         Me.pbAux1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pbAux1.Location = New System.Drawing.Point(12, 67)
         Me.pbAux1.Name = "pbAux1"
@@ -81,7 +81,7 @@ Partial Class OCRTest
         '
         'pbAux2
         '
-        Me.pbAux2.BackColor = System.Drawing.Color.White
+        Me.pbAux2.BackColor = System.Drawing.Color.Gray
         Me.pbAux2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
         Me.pbAux2.Location = New System.Drawing.Point(12, 283)
         Me.pbAux2.Name = "pbAux2"

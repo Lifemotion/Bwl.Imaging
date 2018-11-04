@@ -8,7 +8,7 @@ Public Class OCRTest
     Private _charsT As CharCollection
 
     Private Sub OCRTest_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        _charsA = CharCollection.Create("Arial", 40, FontStyle.Bold)
+        _charsA = CharCollection.Create("Arial", 40, FontStyle.Regular)
         _charsT = CharCollection.Create("TimesNewRoman", 40)
         Try
             Recog()

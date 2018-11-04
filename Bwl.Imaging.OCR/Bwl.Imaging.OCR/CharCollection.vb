@@ -36,6 +36,15 @@ Public Class CharInfo
 
 End Class
 
+Public Class SegmentAttributes
+    Public Property SymmetryLR As Double
+    Public Property SymmetryTB As Double
+
+    Public Sub Compute(matrix As GrayMatrix, rect As Rectangle, binarize As Integer)
+
+    End Sub
+End Class
+
 Public Class CharCollection
     Public ReadOnly Property Font As Font
     Public ReadOnly Property Chars As CharInfo()
@@ -118,7 +127,7 @@ Public Class CharCollection
                 If mtr.GrayPixel(x, y) < val Then cleanLine = False
             Next
             If Not cleanLine Then
-                ci.Top = y - 1
+                ci.Top = y
                 Exit For
             End If
         Next
@@ -129,7 +138,7 @@ Public Class CharCollection
                 If mtr.GrayPixel(x, y) < val Then cleanLine = False
             Next
             If Not cleanLine Then
-                ci.Bottom = y + 1
+                ci.Bottom = y
                 Exit For
             End If
         Next
@@ -140,7 +149,7 @@ Public Class CharCollection
                 If mtr.GrayPixel(x, y) < val Then cleanLine = False
             Next
             If Not cleanLine Then
-                ci.Left = x - 1
+                ci.Left = x
                 Exit For
             End If
         Next
@@ -151,7 +160,7 @@ Public Class CharCollection
                 If mtr.GrayPixel(x, y) < val Then cleanLine = False
             Next
             If Not cleanLine Then
-                ci.Right = x + 1
+                ci.Right = x
                 Exit For
             End If
         Next
