@@ -72,7 +72,7 @@
     <Compile Include="Bitmap\DisplayObject.vb" />
     <Compile Include="Bitmap\TextObject.vb" />
     <Compile Include="Color\IRGBConvertable.vb" />
-    <Compile Include="MatrixProcessing\Segment.vb" />
+    <Compile Include="Geometry\Segment.vb" />
     <Compile Include="MatrixProcessing\Segmentation.vb" />
     <Compile Include="StructureMatrix\StructureMatrix.vb" />
     <Compile Include="StructureMatrix\StructureMatrixHSV.vb" />

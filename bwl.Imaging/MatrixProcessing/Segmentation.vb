@@ -71,15 +71,18 @@ Public Class Segmentation
         Next
     End Sub
 
-    Public Shared Function CreateSegmentsMapWithBinarize(matrix As GrayMatrix, Optional binarizeThreshold As Integer = 120, Optional invert As Boolean = False) As GrayMatrix
+    Public Shared Function CreateSegmentsMapWithBinarize(matrix As GrayMatrix, Optional binarizeThreshold As Integer = 120, Optional invert As Boolean = False, Optional passes As Integer = 1) As GrayMatrix
         Dim segments As GrayMatrix
         If invert Then
             segments = FirstSegmentationInvert(matrix, binarizeThreshold)
         Else
             segments = FirstSegmentation(matrix, binarizeThreshold)
         End If
-        FillSegments(segments.Gray, matrix.Width, matrix.Height)
-        FillSegmentsRev(segments.Gray, matrix.Width, matrix.Height)
+        For p = 1 To passes
+            FillSegments(segments.Gray, matrix.Width, matrix.Height)
+            FillSegmentsRev(segments.Gray, matrix.Width, matrix.Height)
+        Next
+
         Return segments
     End Function
 

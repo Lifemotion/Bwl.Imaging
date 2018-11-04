@@ -47,4 +47,8 @@ Public Module BitmapConverterExtensions
     Public Function ToBitmap(matrix As RGBMatrix) As Bitmap
         Return BitmapConverter.RGBMatrixToBitmap(matrix)
     End Function
+
+
 End Module
+
+

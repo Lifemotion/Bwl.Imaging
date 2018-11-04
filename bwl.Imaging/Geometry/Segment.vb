@@ -50,5 +50,23 @@
         Return x >= Left And x <= Left + Width And y >= Top And y <= Top + Height
     End Function
 
+    Public Function ToRectangle() As Rectangle
+        Return New Rectangle(Left, Top, Width, Height)
+    End Function
+
+    Public Function ToRectangleF() As RectangleF
+        Return New RectangleF(Left, Top, Width, Height)
+    End Function
+
+    Public Sub New()
+
+    End Sub
+
+    Public Sub New(x As Integer, y As Integer, width As Integer, height As Integer)
+        Me.Left = x
+        Me.Top = y
+        Me.Width = width
+        Me.Height = height
+    End Sub
 
 End Class
