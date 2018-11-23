@@ -4,16 +4,18 @@ Imports System.Text
 Public Class OCRTest
     Private _storage As New RegistryStorage()
     Private _path As RegistryStorage.Setting = _storage.CreateSetting("Path1", ".")
-    Private _charsA As CharCollection
-    Private _charsT As CharCollection
+    Private _charsArial As CharCollection
+    Private _charsTNR As CharCollection
+    Private _charsCN As CharCollection
 
     Private _list As Segment()
     Private _gray As GrayMatrix
     Private _dbg As Boolean
 
     Private Sub OCRTest_Load(sender As Object, e As EventArgs) Handles MyBase.Load
-        _charsA = CharCollection.Create("Arial", 40, FontStyle.Regular)
-        _charsT = CharCollection.Create("TimesNewRoman", 40)
+        _charsArial = CharCollection.Create("Arial", 40, FontStyle.Regular)
+        _charsTNR = CharCollection.Create("Times New Roman", 40, FontStyle.Regular)
+        _charsCN = CharCollection.Create("Courier New", 40, FontStyle.Regular)
         Try
             Recog()
         Catch ex As Exception
@@ -36,14 +38,23 @@ Public Class OCRTest
     Public Class RecognizedLine
         Public Property Words As New List(Of RecognizedWord)
     End Class
+    Private _charset As CharCollection
 
     Private Sub Recog()
+
         Dim bmp = Bitmap.FromFile(tbFile.Text)
         Dim gray = BitmapConverter.BitmapToGrayMatrix(bmp)
         bmp.Dispose()
         Dim rgb = gray.ToRGBMatrix
+        Dim threshold = NumericUpDown1.Value
+        Select Case ComboBox1.Text
+            Case "Arial" : _charset = _charsArial
+            Case "Times New Roman" : _charset = _charsTNR
+            Case "Courier New" : _charset = _charsCN
+            Case Else : Throw New Exception
+        End Select
 
-        Dim map = Segmentation.CreateSegmentsMapWithBinarize(gray, 200, True, 2)
+        Dim map = Segmentation.CreateSegmentsMapWithBinarize(gray, threshold, True, 2)
         Dim mapc = Segmentation.ColorizeSegments(map)
 
         Dim list = Segmentation.CreateSegmentsList(map)
@@ -55,13 +66,14 @@ Public Class OCRTest
         Dim gr = Graphics.FromImage(debug0)
 
         Dim rmap(gray.Width, gray.Height) As RecognizedSegment
-
         For Each segm In list
             Dim rsegm As New RecognizedSegment
             rsegm.segment = segm
-            rsegm.recogDict = RecogSymbol(_charsA, gray, segm)
+            rsegm.recogDict = RecogSymbol(_charset, gray, segm, threshold)
             Dim best = rsegm.recogDict.First
-            If best.Value > 0.6 Then rsegm.recogChar = best.Key.Value
+            If best.Value > 0.5 Then rsegm.recogChar = best.Key.Value
+
+            segm.Top = Math.Round(segm.Top / 10) * 10
 
             For y = segm.Top To segm.Bottom
                 rmap(segm.Left, y) = rsegm
@@ -110,14 +122,22 @@ Public Class OCRTest
             Dim words As New List(Of RecognizedWord)
 
             For x = 0 To gray.Width - 1
-                Dim psegm = rmap(x, yCorr)
-                If psegm IsNot Nothing AndAlso psegm.used = False Then
-                    If first Is Nothing Then
+
+                If first Is Nothing Then
+                    Dim psegm = rmap(x, yCorr)
+                    If psegm IsNot Nothing AndAlso psegm.used = False Then
                         'first found
                         first = psegm
                         wordStartSegm = psegm
                         yCorr = psegm.segment.CenterY
-                    Else
+
+                        word += psegm.recogChar
+                        psegm.used = True
+                        prev = psegm
+                    End If
+                Else
+                    Dim psegm = rmap(x, yCorr)
+                    If psegm IsNot Nothing AndAlso psegm.used = False Then
                         If (psegm.segment.Left - prev.segment.Right) > Math.Max(psegm.segment.Width, prev.segment.Width) * 0.5 Then
                             Dim wordObj As New RecognizedWord
                             wordObj.Word = word
@@ -129,11 +149,13 @@ Public Class OCRTest
                             line += word + " "
                             word = ""
                         End If
+                        yCorr = psegm.segment.CenterY
+
+                        word += psegm.recogChar
+                        psegm.used = True
+                        prev = psegm
                     End If
-                    word += psegm.recogChar
-                    psegm.used = True
-                    prev = psegm
-                End If
+                                    End If
             Next
             If word > "" Then
                 Dim wordObj As New RecognizedWord
@@ -161,10 +183,10 @@ Public Class OCRTest
         Public used = False
     End Class
 
-    Protected Function RecogSymbol(charset As CharCollection, source As GrayMatrix, segment As Segment) As Dictionary(Of CharInfo, Double)
+    Protected Function RecogSymbol(charset As CharCollection, source As GrayMatrix, segment As Segment, threshold As Integer) As Dictionary(Of CharInfo, Double)
         Dim dict As New Dictionary(Of CharInfo, Double)
         For Each template In charset.Chars
-            dict.Add(template, TestSymbol(template, charset.Matrix, source, segment))
+            dict.Add(template, TestSymbol(template, charset.Matrix, source, segment, threshold))
         Next
         Dim sorted = From pair In dict
                      Order By pair.Value Descending
@@ -173,7 +195,7 @@ Public Class OCRTest
         Return sortedDictionary
     End Function
 
-    Protected Function TestSymbol(template As CharInfo, templateMatrix As GrayMatrix, source As GrayMatrix, segment As Segment) As Double
+    Protected Function TestSymbol(template As CharInfo, templateMatrix As GrayMatrix, source As GrayMatrix, segment As Segment, threshold As Integer) As Double
         Dim correct As Integer = 0
         Dim miss As Integer = 0
         For x = segment.Left To segment.Right
@@ -182,7 +204,7 @@ Public Class OCRTest
                 Dim yi = CInt((y - segment.Top) / segment.Height * template.Height) + template.Top
                 Dim ps = source.GrayPixel(x, y)
                 Dim pt = templateMatrix.GrayPixel(xi, yi)
-                If (pt < 200 And ps < 200) Or (pt > 200 And ps > 200) Then correct += 1 Else miss += 1
+                If (pt < threshold And ps < threshold) Or (pt > threshold And ps > threshold) Then correct += 1 Else miss += 1
                 ' If (pt > 200 And ps < 200) Then miss += 1 Else correct += 1
             Next
         Next
@@ -219,14 +241,14 @@ Public Class OCRTest
         Next
         pbAux1.ShowMatrix(mtr)
         If tbRecogSymb.Text > "" Then
-            Dim ci = _charsA.FindCharInfo(tbRecogSymb.Text)
+            Dim ci = _charset.FindCharInfo(tbRecogSymb.Text)
             If ci IsNot Nothing Then
-                Dim tmp = MatrixTools.GrayMatrixSubRect(_charsA.Matrix, ci.ToRectangle)
+                Dim tmp = MatrixTools.GrayMatrixSubRect(_charset.Matrix, ci.ToRectangle)
                 pbAux2.ShowMatrix(tmp)
             End If
         End If
 
-        Dim results = RecogSymbol(_charsA, _gray, segm)
+        Dim results = RecogSymbol(_charset, _gray, segm, 200)
         lbSymbResults.Items.Clear()
         For Each res In results
             lbSymbResults.Items.Add(res.Value.ToString("0.00") + " " + res.Key.Value.ToString)

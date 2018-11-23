@@ -33,6 +33,8 @@ Partial Class OCRTest
         Me.lbSymbResults = New System.Windows.Forms.ListBox()
         Me.SplitContainer1 = New System.Windows.Forms.SplitContainer()
         Me.pbResult = New System.Windows.Forms.PictureBox()
+        Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
+        Me.ComboBox1 = New System.Windows.Forms.ComboBox()
         CType(Me.pbMain, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbAux1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbAux2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -42,6 +44,7 @@ Partial Class OCRTest
         Me.SplitContainer1.Panel2.SuspendLayout()
         Me.SplitContainer1.SuspendLayout()
         CType(Me.pbResult, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'pbMain
@@ -60,7 +63,7 @@ Partial Class OCRTest
         '
         Me.pbAux1.BackColor = System.Drawing.Color.Gray
         Me.pbAux1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.pbAux1.Location = New System.Drawing.Point(12, 67)
+        Me.pbAux1.Location = New System.Drawing.Point(12, 106)
         Me.pbAux1.Name = "pbAux1"
         Me.pbAux1.Size = New System.Drawing.Size(217, 210)
         Me.pbAux1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
@@ -78,7 +81,7 @@ Partial Class OCRTest
         '
         'tbFile
         '
-        Me.tbFile.Location = New System.Drawing.Point(12, 41)
+        Me.tbFile.Location = New System.Drawing.Point(12, 80)
         Me.tbFile.Name = "tbFile"
         Me.tbFile.Size = New System.Drawing.Size(217, 20)
         Me.tbFile.TabIndex = 3
@@ -88,7 +91,7 @@ Partial Class OCRTest
         '
         Me.pbAux2.BackColor = System.Drawing.Color.Gray
         Me.pbAux2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.pbAux2.Location = New System.Drawing.Point(12, 283)
+        Me.pbAux2.Location = New System.Drawing.Point(12, 322)
         Me.pbAux2.Name = "pbAux2"
         Me.pbAux2.Size = New System.Drawing.Size(217, 210)
         Me.pbAux2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
@@ -97,7 +100,7 @@ Partial Class OCRTest
         '
         'bRecogSymb
         '
-        Me.bRecogSymb.Location = New System.Drawing.Point(143, 502)
+        Me.bRecogSymb.Location = New System.Drawing.Point(143, 541)
         Me.bRecogSymb.Name = "bRecogSymb"
         Me.bRecogSymb.Size = New System.Drawing.Size(86, 20)
         Me.bRecogSymb.TabIndex = 5
@@ -106,7 +109,7 @@ Partial Class OCRTest
         '
         'tbRecogSymb
         '
-        Me.tbRecogSymb.Location = New System.Drawing.Point(12, 502)
+        Me.tbRecogSymb.Location = New System.Drawing.Point(12, 541)
         Me.tbRecogSymb.Name = "tbRecogSymb"
         Me.tbRecogSymb.Size = New System.Drawing.Size(35, 20)
         Me.tbRecogSymb.TabIndex = 6
@@ -114,7 +117,7 @@ Partial Class OCRTest
         '
         'tbRecogSegment
         '
-        Me.tbRecogSegment.Location = New System.Drawing.Point(53, 503)
+        Me.tbRecogSegment.Location = New System.Drawing.Point(53, 542)
         Me.tbRecogSegment.Name = "tbRecogSegment"
         Me.tbRecogSegment.Size = New System.Drawing.Size(84, 20)
         Me.tbRecogSegment.TabIndex = 7
@@ -122,7 +125,7 @@ Partial Class OCRTest
         'lbSymbResults
         '
         Me.lbSymbResults.FormattingEnabled = True
-        Me.lbSymbResults.Location = New System.Drawing.Point(12, 529)
+        Me.lbSymbResults.Location = New System.Drawing.Point(12, 568)
         Me.lbSymbResults.Name = "lbSymbResults"
         Me.lbSymbResults.Size = New System.Drawing.Size(217, 95)
         Me.lbSymbResults.TabIndex = 8
@@ -158,12 +161,35 @@ Partial Class OCRTest
         Me.pbResult.TabIndex = 1
         Me.pbResult.TabStop = False
         '
+        'NumericUpDown1
+        '
+        Me.NumericUpDown1.Increment = New Decimal(New Integer() {10, 0, 0, 0})
+        Me.NumericUpDown1.Location = New System.Drawing.Point(12, 54)
+        Me.NumericUpDown1.Maximum = New Decimal(New Integer() {250, 0, 0, 0})
+        Me.NumericUpDown1.Minimum = New Decimal(New Integer() {10, 0, 0, 0})
+        Me.NumericUpDown1.Name = "NumericUpDown1"
+        Me.NumericUpDown1.Size = New System.Drawing.Size(84, 20)
+        Me.NumericUpDown1.TabIndex = 10
+        Me.NumericUpDown1.Value = New Decimal(New Integer() {200, 0, 0, 0})
+        '
+        'ComboBox1
+        '
+        Me.ComboBox1.FormattingEnabled = True
+        Me.ComboBox1.Items.AddRange(New Object() {"Arial", "Times New Roman"})
+        Me.ComboBox1.Location = New System.Drawing.Point(102, 53)
+        Me.ComboBox1.Name = "ComboBox1"
+        Me.ComboBox1.Size = New System.Drawing.Size(121, 21)
+        Me.ComboBox1.TabIndex = 11
+        Me.ComboBox1.Text = "Arial"
+        '
         'OCRTest
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1340, 782)
+        Me.Controls.Add(Me.ComboBox1)
+        Me.Controls.Add(Me.NumericUpDown1)
         Me.Controls.Add(Me.SplitContainer1)
         Me.Controls.Add(Me.lbSymbResults)
         Me.Controls.Add(Me.tbRecogSegment)
@@ -184,6 +210,7 @@ Partial Class OCRTest
         CType(Me.SplitContainer1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.SplitContainer1.ResumeLayout(False)
         CType(Me.pbResult, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.NumericUpDown1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -200,4 +227,6 @@ Partial Class OCRTest
     Friend WithEvents lbSymbResults As ListBox
     Friend WithEvents SplitContainer1 As SplitContainer
     Friend WithEvents pbResult As PictureBox
+    Friend WithEvents NumericUpDown1 As NumericUpDown
+    Friend WithEvents ComboBox1 As ComboBox
 End Class
