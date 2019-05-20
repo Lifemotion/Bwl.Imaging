@@ -33,3 +33,4 @@ Imports System.Runtime.InteropServices
 
 <Assembly: AssemblyVersion("1.0.15173.225")> 
 <Assembly: AssemblyFileVersion("1.0.15173.225")> 
+<Assembly: AssemblyInformationalVersion("{c:ymd.} {c:hms:} {chash:6}")>
