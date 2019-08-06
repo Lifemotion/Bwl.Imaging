@@ -41,8 +41,11 @@ Public Class OCRTest
     Private _charset As CharCollection
 
     Private Sub Recog()
-
         Dim bmp = Bitmap.FromFile(tbFile.Text)
+        Recog(bmp)
+    End Sub
+
+    Private Sub Recog(bmp As Bitmap)
         Dim gray = BitmapConverter.BitmapToGrayMatrix(bmp)
         bmp.Dispose()
         Dim rgb = gray.ToRGBMatrix
@@ -255,5 +258,7 @@ Public Class OCRTest
         Next
     End Sub
 
-
+    Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button1.Click
+        Recog(My.Computer.Clipboard.GetImage)
+    End Sub
 End Class

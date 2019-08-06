@@ -35,6 +35,7 @@ Partial Class OCRTest
         Me.pbResult = New System.Windows.Forms.PictureBox()
         Me.NumericUpDown1 = New System.Windows.Forms.NumericUpDown()
         Me.ComboBox1 = New System.Windows.Forms.ComboBox()
+        Me.Button1 = New System.Windows.Forms.Button()
         CType(Me.pbMain, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbAux1, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.pbAux2, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -182,12 +183,22 @@ Partial Class OCRTest
         Me.ComboBox1.TabIndex = 11
         Me.ComboBox1.Text = "Arial"
         '
+        'Button1
+        '
+        Me.Button1.Location = New System.Drawing.Point(93, 12)
+        Me.Button1.Name = "Button1"
+        Me.Button1.Size = New System.Drawing.Size(75, 23)
+        Me.Button1.TabIndex = 12
+        Me.Button1.Text = "Clipboard"
+        Me.Button1.UseVisualStyleBackColor = True
+        '
         'OCRTest
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1340, 782)
+        Me.Controls.Add(Me.Button1)
         Me.Controls.Add(Me.ComboBox1)
         Me.Controls.Add(Me.NumericUpDown1)
         Me.Controls.Add(Me.SplitContainer1)
@@ -229,4 +240,5 @@ Partial Class OCRTest
     Friend WithEvents pbResult As PictureBox
     Friend WithEvents NumericUpDown1 As NumericUpDown
     Friend WithEvents ComboBox1 As ComboBox
+    Friend WithEvents Button1 As Button
 End Class
