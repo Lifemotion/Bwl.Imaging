@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Bwl.Imaging.OCR", "Bwl.Imaging.OCR\Bwl.Imaging.OCR.vbproj", "{D884E221-DC2F-4C9D-BF17-F8ABF5FF10AF}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "bwl.Imaging", "..\bwl.Imaging\bwl.Imaging.vbproj", "{33E5778D-CAA3-42B6-B144-9AE1DA4A00B3}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "bwl.Imaging", "bwl.Imaging\bwl.Imaging.vbproj", "{33E5778D-CAA3-42B6-B144-9AE1DA4A00B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwl.Imaging.Unsafe", "..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj", "{E10C92BB-489B-481A-B032-6A52A3D9CD8C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bwl.Imaging.Unsafe", "Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj", "{E10C92BB-489B-481A-B032-6A52A3D9CD8C}"
 EndProject
-Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Bwl.Imaging.WinForms", "..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj", "{CF1BA304-7402-46B4-9D06-AB226BC72293}"
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "Bwl.Imaging.WinForms", "Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj", "{CF1BA304-7402-46B4-9D06-AB226BC72293}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

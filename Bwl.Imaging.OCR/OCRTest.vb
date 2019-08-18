@@ -61,7 +61,7 @@ Public Class OCRTest
         Dim mapc = Segmentation.ColorizeSegments(map)
 
         Dim list = Segmentation.CreateSegmentsList(map)
-        list = Segmentation.FilterSegmentsList(list, 3, 9, gray.Width / 2, gray.Height / 2)
+        list = Segmentation.FilterSegmentsList(list, 2, 6, gray.Width / 2, gray.Height / 2)
         _gray = gray
         _list = list
 
@@ -76,7 +76,7 @@ Public Class OCRTest
             Dim best = rsegm.recogDict.First
             If best.Value > 0.5 Then rsegm.recogChar = best.Key.Value
 
-            segm.Top = Math.Round(segm.Top / 10) * 10
+            ' segm.Top = Math.Round(segm.Top / 10) * 10
 
             For y = segm.Top To segm.Bottom
                 rmap(segm.Left, y) = rsegm

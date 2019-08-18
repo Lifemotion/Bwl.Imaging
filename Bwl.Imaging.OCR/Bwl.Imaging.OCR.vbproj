@@ -119,21 +119,21 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj">
+    <Content Include="test.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj">
       <Project>{e10c92bb-489b-481a-b032-6a52a3d9cd8c}</Project>
       <Name>Bwl.Imaging.Unsafe</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj">
+    <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj">
       <Project>{cf1ba304-7402-46b4-9d06-ab226bc72293}</Project>
       <Name>Bwl.Imaging.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\bwl.Imaging\bwl.Imaging.vbproj">
+    <ProjectReference Include="..\bwl.Imaging\bwl.Imaging.vbproj">
       <Project>{33e5778d-caa3-42b6-b144-9ae1da4a00b3}</Project>
       <Name>bwl.Imaging</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="test.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>
