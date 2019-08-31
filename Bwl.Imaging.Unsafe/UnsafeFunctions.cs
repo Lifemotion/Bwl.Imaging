@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -619,6 +618,55 @@ namespace Bwl.Imaging.Unsafe
                     trgtBmp.UnlockBits(trgtBmd);
 
                     return trgtBmp;
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
+        public static void RgbReverse(Bitmap srcBmp)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            lock (srcBmp)
+            {
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+                {
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    bool srcAligned4 = (srcBmd.Stride == srcBmd.Width * srcPixelSize);
+                    
+                    unsafe
+                    {
+                        byte* srcBytes = (byte*)srcBmd.Scan0;
+                        if (srcAligned4)
+                        {
+                            for (int i = 0, j = 0; i < srcBmd.Width * srcBmd.Height; i++, j += srcPixelSize)
+                            {
+                                byte tmp = srcBytes[j];
+                                srcBytes[j] = srcBytes[j + 2];
+                                srcBytes[j + 2] = tmp;
+                            }
+                        }
+                        else
+                        {
+                            for (int row = 0; row < srcBmd.Height; row++)
+                            {
+                                for (int i = 0, j = 0; i < srcBmd.Width; i++, j += srcPixelSize)
+                                {
+                                    byte tmp = srcBytes[j];
+                                    srcBytes[j] = srcBytes[j + 2];
+                                    srcBytes[j + 2] = tmp;
+                                }
+                                srcBytes += srcBmd.Stride;
+                            }
+                        }
+                    }
+                    srcBmp.UnlockBits(srcBmd);
                 }
                 else
                 {
