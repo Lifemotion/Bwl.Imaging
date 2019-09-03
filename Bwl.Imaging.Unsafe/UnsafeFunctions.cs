@@ -639,7 +639,7 @@ namespace Bwl.Imaging.Unsafe
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                     int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
                     bool srcAligned4 = (srcBmd.Stride == srcBmd.Width * srcPixelSize);
-                    
+
                     unsafe
                     {
                         byte* srcBytes = (byte*)srcBmd.Scan0;
@@ -699,6 +699,19 @@ namespace Bwl.Imaging.Unsafe
                 trgtBmp.UnlockBits(trgtBmd);
                 return trgtBmp;
             }
+        }
+
+        public static Bitmap BitmapFromIntPtr(IntPtr src, Size size, PixelFormat pixelFormat)
+        {
+            Bitmap trgtBmp = new Bitmap(size.Width, size.Height, pixelFormat);
+            int pixelSize = GetPixelSize(pixelFormat);
+            BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+            unsafe
+            {
+                memcpy((byte*)trgtBmd.Scan0, (byte*)src.ToPointer(), (ulong)(trgtBmd.Stride * trgtBmd.Height));
+            }
+            trgtBmp.UnlockBits(trgtBmd);
+            return trgtBmp;
         }
 
         public static byte[] BitmapProbeGray(Bitmap srcBmp, int step)
