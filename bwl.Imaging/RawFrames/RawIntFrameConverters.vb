@@ -1,4 +1,5 @@
 ﻿Imports System.Runtime.CompilerServices
+Imports System.Threading.Tasks
 Imports Bwl.Imaging
 
 Public Module RawIntFrameConverters
@@ -20,14 +21,35 @@ Public Module RawIntFrameConverters
                     g = g << (gainByBitOffset - 4)
                     b = b << (gainByBitOffset - 4)
                 End If
-                If r > 255 Then r = 255
-                If g > 255 Then g = 255
-                If b > 255 Then b = 255
                 mtr1.RedPixel(x, y) = Math.Min(r, 255)
                 mtr1.GreenPixel(x, y) = Math.Min(g, 255)
                 mtr1.BluePixel(x, y) = Math.Min(b, 255)
             Next
         Next
+        Return mtr1
+    End Function
+
+    <Extension()>
+    Public Function ConvertTo8BitFast(frame As RawIntFrame, gainByBitOffset As Integer) As RGBMatrix
+        Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
+        Dim frameData = frame.Data
+        If gainByBitOffset <= 4 Then
+            Parallel.For(0, 3, Sub(channel As Integer)
+                                   Dim matrix = mtr1.Matrix(2 - channel)
+                                   For i = 0 To matrix.Length - 1
+                                       Dim px = frameData(i * 3 + channel) >> (4 - gainByBitOffset)
+                                       matrix(i) = Math.Min(px, 255)
+                                   Next
+                               End Sub)
+        Else
+            Parallel.For(0, 3, Sub(channel As Integer)
+                                   Dim matrix = mtr1.Matrix(2 - channel)
+                                   For i = 0 To matrix.Length - 1
+                                       Dim px = frameData(i * 3 + channel) << (gainByBitOffset - 4)
+                                       matrix(i) = Math.Min(px, 255)
+                                   Next
+                               End Sub)
+        End If
         Return mtr1
     End Function
 
@@ -104,38 +126,9 @@ Public Module RawIntFrameConverters
     End Function
 
     <Extension()>
-    Public Function ConvertHDR3(frame As RawIntFrame, baseGain As Integer) As RGBMatrix
-        Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
-        For y = 0 To frame.Height - 1
-            For x = 0 To frame.Width - 1
-                Dim b = frame.Data((x + y * frame.Width) * 3 + 0)
-                Dim g = frame.Data((x + y * frame.Width) * 3 + 1)
-                Dim r = frame.Data((x + y * frame.Width) * 3 + 2)
-
-                Dim v = 0.4
-                Dim k = 12
-                Dim m = 0
-                If r < m Then r = m
-                If g < m Then g = m
-                If b < m Then b = m
-                b = Math.Pow((b - m), v) * k
-                g = Math.Pow((g - m), v) * k
-                r = Math.Pow((r - m), v) * k
-
-                mtr1.RedPixel(x, y) = Math.Min(r, 255)
-                mtr1.GreenPixel(x, y) = Math.Min(g, 255)
-                mtr1.BluePixel(x, y) = Math.Min(b, 255)
-            Next
-        Next
-        Return mtr1
-    End Function
-
-    <Extension()>
     Public Function ConvertHDR1(frame As RawIntFrame, baseGain As Integer) As RGBMatrix
         Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
         For i = 0 To frame.Width * frame.Height - 1
-            ' For y = 0 To frame.Height - 1
-            '  For x = 0 To frame.Width - 1
             Dim b = frame.Data(i * 3 + 0)
             Dim g = frame.Data(i * 3 + 1)
             Dim r = frame.Data(i * 3 + 2)
@@ -163,6 +156,46 @@ Public Module RawIntFrameConverters
             mtr1.Green(i) = Math.Min(g, 255)
             mtr1.Blue(i) = Math.Min(b, 255)
         Next
+        Return mtr1
+    End Function
+
+    <Extension()>
+    Public Function ConvertHDR1Fast(frame As RawIntFrame, baseGain As Integer) As RGBMatrix
+        Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
+        Dim frameData = frame.Data
+        Dim p = 255
+        Dim k = 14
+        If baseGain <= 4 Then
+            Dim bitShift = 4 - baseGain
+            Parallel.For(0, frame.Width * frame.Height, Sub(i As Integer)
+                                                            Dim b = frameData(i * 3 + 0) >> bitShift
+                                                            Dim g = frameData(i * 3 + 1) >> bitShift
+                                                            Dim r = frameData(i * 3 + 2) >> bitShift
+                                                            While (r > p Or g > p Or b > p)
+                                                                r = (r * k) >> 4
+                                                                g = (g * k) >> 4
+                                                                b = (b * k) >> 4
+                                                            End While
+                                                            mtr1.Red(i) = r
+                                                            mtr1.Green(i) = g
+                                                            mtr1.Blue(i) = b
+                                                        End Sub)
+        Else
+            Dim bitShift = baseGain - 4
+            Parallel.For(0, frame.Width * frame.Height, Sub(i As Integer)
+                                                            Dim b = frameData(i * 3 + 0) << bitShift
+                                                            Dim g = frameData(i * 3 + 1) << bitShift
+                                                            Dim r = frameData(i * 3 + 2) << bitShift
+                                                            While (r > p Or g > p Or b > p)
+                                                                r = (r * k) >> 4
+                                                                g = (g * k) >> 4
+                                                                b = (b * k) >> 4
+                                                            End While
+                                                            mtr1.Red(i) = r
+                                                            mtr1.Green(i) = g
+                                                            mtr1.Blue(i) = b
+                                                        End Sub)
+        End If
         Return mtr1
     End Function
 
@@ -218,6 +251,56 @@ Public Module RawIntFrameConverters
                 mtr1.BluePixel(x, y) = Math.Min(b, 255)
             Next
         Next
+        Return mtr1
+    End Function
+
+    <Extension()>
+    Public Function ConvertHDR3(frame As RawIntFrame) As RGBMatrix
+        Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
+        For y = 0 To frame.Height - 1
+            For x = 0 To frame.Width - 1
+                Dim b = frame.Data((x + y * frame.Width) * 3 + 0)
+                Dim g = frame.Data((x + y * frame.Width) * 3 + 1)
+                Dim r = frame.Data((x + y * frame.Width) * 3 + 2)
+
+                Dim v = 0.4
+                Dim k = 12
+                Dim m = 0
+                If r < m Then r = m
+                If g < m Then g = m
+                If b < m Then b = m
+                b = Math.Pow((b - m), v) * k
+                g = Math.Pow((g - m), v) * k
+                r = Math.Pow((r - m), v) * k
+
+                mtr1.RedPixel(x, y) = Math.Min(r, 255)
+                mtr1.GreenPixel(x, y) = Math.Min(g, 255)
+                mtr1.BluePixel(x, y) = Math.Min(b, 255)
+            Next
+        Next
+        Return mtr1
+    End Function
+
+    <Extension()>
+    Public Function ConvertHDR3Fast(frame As RawIntFrame) As RGBMatrix
+        Static powTable As Integer()
+        If powTable Is Nothing Then
+            powTable = New Integer((1 << 12) - 1) {}
+            Dim v = 0.4
+            Dim k = 12
+            For powArg = 0 To powTable.Length - 1
+                powTable(powArg) = Math.Min(Math.Pow(powArg, v) * k, 255)
+            Next
+        End If
+        Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
+        Dim frameData = frame.Data
+        Parallel.For(0, 3, Sub(channel As Integer)
+                               Dim matrix = mtr1.Matrix(2 - channel)
+                               For i = 0 To matrix.Length - 1
+                                   Dim px = frameData(i * 3 + channel)
+                                   matrix(i) = powTable(px)
+                               Next
+                           End Sub)
         Return mtr1
     End Function
 End Module

@@ -44,7 +44,7 @@
     <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Sub Main</StartupObject>
+    <StartupObject>bwl.Imaging.Test.HdrTestForm</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Bwl.Framework, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">

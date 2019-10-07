@@ -1,5 +1,4 @@
 ﻿Imports System.Runtime.CompilerServices
-Imports System.Threading.Tasks
 
 Public Class BitmapConverter
     Public Shared Function BitmapToGrayMatrix(bitmap As Bitmap) As GrayMatrix
@@ -47,8 +46,4 @@ Public Module BitmapConverterExtensions
     Public Function ToBitmap(matrix As RGBMatrix) As Bitmap
         Return BitmapConverter.RGBMatrixToBitmap(matrix)
     End Function
-
-
 End Module
-
-

@@ -16,11 +16,30 @@ Public Class RawIntFrame
         Blobs.Add(New IntegerBlob With {.ID = "Scan0", .Data = data})
     End Sub
 
+    Public Sub New(width As Integer, height As Integer)
+        Me.New(width, height, {})
+    End Sub
+
     Public Sub New(bc As BlobContainer)
         MyBase.New(bc)
         Width = CInt(Attributes("Width"))
         Height = CInt(Attributes("Height"))
         Data = Blobs(0).Data
+    End Sub
+
+    Public Sub SetDataToScan0Blob(data As Integer())
+        Dim scan0Blob = Blobs.First(Function(item) item.ID = "Scan0")
+        scan0Blob.Data = data
+    End Sub
+
+    Public Sub SetDataToScan0Blob()
+        Dim scan0Blob = Blobs.First(Function(item) item.ID = "Scan0")
+        scan0Blob.Data = Data
+    End Sub
+
+    Public Sub GetDataFromScan0Blob()
+        Dim scan0Blob = Blobs.First(Function(item) item.ID = "Scan0")
+        Data = scan0Blob.Data
     End Sub
 
     Public Shared Function FromLegacyFile(filename As String) As RawIntFrame
@@ -59,7 +78,7 @@ Public Class RawIntFrame
         Dim _encoderParameters As New EncoderParameters(1)
         Dim _codecInfo As ImageCodecInfo = GetCodecInfo(ImageFormat.Jpeg)
         _encoderParameters.Param(0) = New EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality)
-        Dim mtrs = ConvertTo8BitPair(Me)
+        Dim mtrs = RawIntFrameConverters.ConvertTo8BitPair(Me)
         Dim bmph = mtrs(0).ToBitmap
         Dim bmpl = mtrs(1).ToBitmap
         Dim fnameh = filenameWithoutExthension + "_h.jpeg"
@@ -74,7 +93,7 @@ Public Class RawIntFrame
         Dim bmph = New Bitmap(fnameh)
         Dim bmpl = New Bitmap(fnamel)
         Dim mtrs = {bmph.BitmapToRgbMatrix, bmpl.BitmapToRgbMatrix}
-        Dim frame = ConvertFrom8BitPair(mtrs)
+        Dim frame = RawIntFrameConverters.ConvertFrom8BitPair(mtrs)
         Return frame
     End Function
 End Class

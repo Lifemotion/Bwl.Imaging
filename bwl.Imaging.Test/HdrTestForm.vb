@@ -6,10 +6,29 @@ Public Class HdrTestForm
     Inherits FormAppBase
     Private _frame As RawIntFrame
 
-    Private Sub TbBitOffset_Scroll(sender As Object, e As EventArgs) Handles TbBitOffset.Scroll
-        Dim mtr = _frame.ConvertTo8Bit(TbBitOffset.Value)
-        PbFrame.Image = mtr.ToBitmap
-        PbFrame.Refresh()
+    Private Sub ComparePerfomance(slowAction As Action, fastAction As Action, title As String)
+        Dim sw1 = New System.Diagnostics.Stopwatch()
+        Dim sw2 = New System.Diagnostics.Stopwatch()
+        sw1.Start() : slowAction() : sw1.Stop()
+        sw2.Start() : fastAction() : sw2.Stop()
+        Dim fasterX = sw1.ElapsedTicks / sw2.ElapsedTicks
+        _logger.AddMessage(String.Format("{0}: {1} ms, {2} ms, {3} X",
+                                         title,
+                                         sw1.ElapsedMilliseconds.ToString("F2"),
+                                         sw2.ElapsedMilliseconds.ToString("F2"),
+                                         fasterX.ToString("F2")))
+    End Sub
+
+    Private Sub CompareResults(m1 As RGBMatrix, m2 As RGBMatrix)
+        Parallel.For(0, 3, Sub(channel As Integer)
+                               Dim matrix1 = m1.Matrix(channel)
+                               Dim matrix2 = m2.Matrix(channel)
+                               For i = 0 To matrix1.Length - 1
+                                   If matrix1(i) <> matrix2(i) Then
+                                       Throw New Exception("m1 <> m2")
+                                   End If
+                               Next
+                           End Sub)
     End Sub
 
     Private Sub IDS12BitTestForm_DragOver(sender As Object, e As DragEventArgs) Handles Me.DragOver
@@ -18,29 +37,52 @@ Public Class HdrTestForm
 
     Private Sub IDS12BitTestForm_DragDrop(sender As Object, e As DragEventArgs) Handles Me.DragDrop
         Dim fname = e.Data.GetData("FileNameW")(0)
+        Dim loaded = False
+
         Try
-            If IO.Path.GetExtension(fname.tolower) = ".raw" Then
-                _frame = RawIntFrame.FromLegacyFile(fname)
-            Else
-                _frame = RawIntFrame.FromFile(fname)
-            End If
+            _frame = RawIntFrame.FromLegacyFile(fname)
+            loaded = True
+        Catch
+        End Try
+
+        Try
+            _frame = RawIntFrame.FromFile(fname)
+            loaded = True
+        Catch
+        End Try
+
+        If loaded Then
             TbBitOffset_Scroll(Nothing, Nothing)
             _logger.AddMessage("Frame Loaded: " + fname)
-        Catch ex As Exception
-        End Try
+        Else
+            _logger.AddMessage("Frame was not loaded: " + fname)
+        End If
     End Sub
 
-    Private Sub bCombine1_Click(sender As Object, e As EventArgs) Handles BtnHdrCombine1.Click
-        Dim time = Now
-        Dim mtr = _frame.ConvertHDR1(TbBitOffset.Value)
-        Dim bmp = mtr.ToBitmap
-        _logger.AddMessage("HDR1: " + (Now - time).TotalMilliseconds.ToString("0.00") + " ms")
-        PbFrame.Image = bmp
+    Private Sub TbBitOffset_Scroll(sender As Object, e As EventArgs) Handles TbBitOffset.Scroll
+        Dim mtr1 As RGBMatrix = Nothing
+        Dim mtr2 As RGBMatrix = Nothing
+        ComparePerfomance(Sub() mtr1 = _frame.ConvertTo8Bit(TbBitOffset.Value),
+                          Sub() mtr2 = _frame.ConvertTo8BitFast(TbBitOffset.Value),
+                "ConvertTo8Bit")
+        CompareResults(mtr1, mtr2)
+        PbFrame.Image = mtr2.ToBitmap()
         PbFrame.Refresh()
     End Sub
 
     Private Sub BtnNoHdr_Click(sender As Object, e As EventArgs) Handles BtnNoHdr.Click
         TbBitOffset_Scroll(Nothing, Nothing)
+    End Sub
+
+    Private Sub bCombine1_Click(sender As Object, e As EventArgs) Handles BtnHdrCombine1.Click
+        Dim mtr1 As RGBMatrix = Nothing
+        Dim mtr2 As RGBMatrix = Nothing
+        ComparePerfomance(Sub() mtr1 = _frame.ConvertHDR1(TbBitOffset.Value),
+                          Sub() mtr2 = _frame.ConvertHDR1Fast(TbBitOffset.Value),
+                "HDR1")
+        'CompareResults(mtr1, mtr2)
+        PbFrame.Image = mtr2.ToBitmap()
+        PbFrame.Refresh()
     End Sub
 
     Private Sub BtnHdrCombine2_Click(sender As Object, e As EventArgs) Handles BtnHdrCombine2.Click
@@ -50,16 +92,23 @@ Public Class HdrTestForm
     End Sub
 
     Private Sub BtnHdrCombine3_Click(sender As Object, e As EventArgs) Handles BtnHdrCombine3.Click
-        Dim mtr = _frame.ConvertHDR3(TbBitOffset.Value)
-        PbFrame.Image = mtr.ToBitmap
+        Dim mtr1 As RGBMatrix = Nothing
+        Dim mtr2 As RGBMatrix = Nothing
+        ComparePerfomance(Sub() mtr1 = _frame.ConvertHDR3(),
+                          Sub() mtr2 = _frame.ConvertHDR3Fast(),
+                "HDR3")
+        CompareResults(mtr1, mtr2)
+        PbFrame.Image = mtr2.ToBitmap()
         PbFrame.Refresh()
     End Sub
 
     Private Sub BtnHdrCombine1Unsafe_Click(sender As Object, e As EventArgs) Handles BtnHdrCombine1Unsafe.Click
-        Dim time = Now
-        Dim bmp = RawFrameFunctions.ConvertRawToHDRBitmap1(_frame.Data, _frame.Width, _frame.Height, TbBitOffset.Value)
-        _logger.AddMessage("HDR1 Unsafe: " + (Now - time).TotalMilliseconds.ToString("0.00") + " ms")
-        PbFrame.Image = bmp
+        Dim bmp1 As Bitmap = Nothing
+        Dim bmp2 As Bitmap = Nothing
+        ComparePerfomance(Sub() bmp1 = RawFrameFunctions.ConvertRawToHDRBitmap1(_frame.Data, _frame.Width, _frame.Height, TbBitOffset.Value),
+                          Sub() bmp2 = RawFrameFunctions.ConvertRawToHDRBitmap1Fast(_frame.Data, _frame.Width, _frame.Height, TbBitOffset.Value),
+                "HDR1 Unsafe")
+        PbFrame.Image = bmp2
         PbFrame.Refresh()
     End Sub
 
