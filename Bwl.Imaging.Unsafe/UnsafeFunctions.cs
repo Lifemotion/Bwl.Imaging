@@ -714,6 +714,16 @@ namespace Bwl.Imaging.Unsafe
             return trgtBmp;
         }
 
+        public static void FillBitmapFromIntPtr(IntPtr src, Bitmap trgtBmp, PixelFormat pixelFormat)
+        {
+            BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+            unsafe
+            {
+                memcpy((byte*)trgtBmd.Scan0, (byte*)src.ToPointer(), (ulong)(trgtBmd.Stride * trgtBmd.Height));
+            }
+            trgtBmp.UnlockBits(trgtBmd);
+        }
+
         public static byte[] BitmapProbeGray(Bitmap srcBmp, int step)
         {
             if (srcBmp == null)
