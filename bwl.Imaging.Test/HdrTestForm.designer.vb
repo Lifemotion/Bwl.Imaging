@@ -30,6 +30,7 @@ Partial Class HdrTestForm
         Me.BtnHdrCombine1Unsafe = New System.Windows.Forms.Button()
         Me.bSave = New System.Windows.Forms.Button()
         Me.bJpegSave = New System.Windows.Forms.Button()
+        Me._chbUnsafeCombine3 = New System.Windows.Forms.CheckBox()
         CType(Me.PbFrame, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.TbBitOffset, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
@@ -45,9 +46,9 @@ Partial Class HdrTestForm
             Or System.Windows.Forms.AnchorStyles.Left) _
             Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.PbFrame.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle
-        Me.PbFrame.Location = New System.Drawing.Point(12, 68)
+        Me.PbFrame.Location = New System.Drawing.Point(12, 79)
         Me.PbFrame.Name = "PbFrame"
-        Me.PbFrame.Size = New System.Drawing.Size(1054, 455)
+        Me.PbFrame.Size = New System.Drawing.Size(1054, 444)
         Me.PbFrame.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom
         Me.PbFrame.TabIndex = 4
         Me.PbFrame.TabStop = False
@@ -64,7 +65,7 @@ Partial Class HdrTestForm
         '
         'BtnHdrCombine1
         '
-        Me.BtnHdrCombine1.Location = New System.Drawing.Point(133, 26)
+        Me.BtnHdrCombine1.Location = New System.Drawing.Point(133, 28)
         Me.BtnHdrCombine1.Name = "BtnHdrCombine1"
         Me.BtnHdrCombine1.Size = New System.Drawing.Size(115, 23)
         Me.BtnHdrCombine1.TabIndex = 13
@@ -73,7 +74,7 @@ Partial Class HdrTestForm
         '
         'BtnHdrCombine2
         '
-        Me.BtnHdrCombine2.Location = New System.Drawing.Point(254, 26)
+        Me.BtnHdrCombine2.Location = New System.Drawing.Point(254, 28)
         Me.BtnHdrCombine2.Name = "BtnHdrCombine2"
         Me.BtnHdrCombine2.Size = New System.Drawing.Size(115, 23)
         Me.BtnHdrCombine2.TabIndex = 14
@@ -82,7 +83,7 @@ Partial Class HdrTestForm
         '
         'BtnNoHdr
         '
-        Me.BtnNoHdr.Location = New System.Drawing.Point(12, 26)
+        Me.BtnNoHdr.Location = New System.Drawing.Point(12, 28)
         Me.BtnNoHdr.Name = "BtnNoHdr"
         Me.BtnNoHdr.Size = New System.Drawing.Size(115, 23)
         Me.BtnNoHdr.TabIndex = 15
@@ -91,7 +92,7 @@ Partial Class HdrTestForm
         '
         'BtnHdrCombine3
         '
-        Me.BtnHdrCombine3.Location = New System.Drawing.Point(375, 26)
+        Me.BtnHdrCombine3.Location = New System.Drawing.Point(375, 28)
         Me.BtnHdrCombine3.Name = "BtnHdrCombine3"
         Me.BtnHdrCombine3.Size = New System.Drawing.Size(115, 23)
         Me.BtnHdrCombine3.TabIndex = 16
@@ -100,7 +101,7 @@ Partial Class HdrTestForm
         '
         'BtnHdrCombine1Unsafe
         '
-        Me.BtnHdrCombine1Unsafe.Location = New System.Drawing.Point(496, 26)
+        Me.BtnHdrCombine1Unsafe.Location = New System.Drawing.Point(496, 28)
         Me.BtnHdrCombine1Unsafe.Name = "BtnHdrCombine1Unsafe"
         Me.BtnHdrCombine1Unsafe.Size = New System.Drawing.Size(115, 23)
         Me.BtnHdrCombine1Unsafe.TabIndex = 17
@@ -125,12 +126,25 @@ Partial Class HdrTestForm
         Me.bJpegSave.Text = "JpegSave"
         Me.bJpegSave.UseVisualStyleBackColor = True
         '
+        '_chbUnsafeCombine3
+        '
+        Me._chbUnsafeCombine3.AutoSize = True
+        Me._chbUnsafeCombine3.Checked = True
+        Me._chbUnsafeCombine3.CheckState = System.Windows.Forms.CheckState.Checked
+        Me._chbUnsafeCombine3.Location = New System.Drawing.Point(375, 56)
+        Me._chbUnsafeCombine3.Name = "_chbUnsafeCombine3"
+        Me._chbUnsafeCombine3.Size = New System.Drawing.Size(60, 17)
+        Me._chbUnsafeCombine3.TabIndex = 20
+        Me._chbUnsafeCombine3.Text = "Unsafe"
+        Me._chbUnsafeCombine3.UseVisualStyleBackColor = True
+        '
         'HdrTestForm
         '
         Me.AllowDrop = True
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.ClientSize = New System.Drawing.Size(1078, 702)
+        Me.Controls.Add(Me._chbUnsafeCombine3)
         Me.Controls.Add(Me.bJpegSave)
         Me.Controls.Add(Me.bSave)
         Me.Controls.Add(Me.BtnHdrCombine1Unsafe)
@@ -152,6 +166,7 @@ Partial Class HdrTestForm
         Me.Controls.SetChildIndex(Me.BtnHdrCombine1Unsafe, 0)
         Me.Controls.SetChildIndex(Me.bSave, 0)
         Me.Controls.SetChildIndex(Me.bJpegSave, 0)
+        Me.Controls.SetChildIndex(Me._chbUnsafeCombine3, 0)
         CType(Me.PbFrame, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.TbBitOffset, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
@@ -167,4 +182,5 @@ Partial Class HdrTestForm
     Friend WithEvents BtnHdrCombine1Unsafe As Button
     Friend WithEvents bSave As Button
     Friend WithEvents bJpegSave As Button
+    Friend WithEvents _chbUnsafeCombine3 As CheckBox
 End Class

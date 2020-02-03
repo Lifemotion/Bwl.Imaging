@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Threading.Tasks;
 
 namespace Bwl.Imaging.Unsafe
 {
@@ -100,7 +101,7 @@ namespace Bwl.Imaging.Unsafe
                             b = srcInts[pixelAddr + 0] << bitShift;
                             g = srcInts[pixelAddr + 1] << bitShift;
                             r = srcInts[pixelAddr + 2] << bitShift;
-                            
+
                             while (r > 255 | g > 255 | b > 255)
                             {
                                 r = (r * k) >> 4;
@@ -118,6 +119,45 @@ namespace Bwl.Imaging.Unsafe
 
             trgtBmp.UnlockBits(trgtBmd);
             return trgtBmp;
+        }
+
+        private static byte[] _powTable;
+        public static Bitmap ConvertRawToHDRBitmap3Fast(int[] data, int width, int height)
+        {
+            if (_powTable == null)
+            {
+                _powTable = new byte[(1 << 12)];
+                var v = 0.4;
+                var k = 12;
+                for (var powArg = 0; powArg < _powTable.Length; powArg++)
+                {
+                    _powTable[powArg] = Convert.ToByte(Math.Min(Math.Pow(powArg, v) * k, 255));
+                }
+            }
+
+            Bitmap trgtBmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
+            BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+
+            unsafe
+            {
+                fixed (int* srcIntsFixed = data)
+                {
+                    int* srcInts = srcIntsFixed;
+                    byte* trgtBytes = (byte*)trgtBmd.Scan0;
+                    {
+                        Parallel.For(0, 3, (int channel) =>
+                        {
+                            for (int pixelAddr = channel; pixelAddr < width * height * 3; pixelAddr += 3)
+                            {
+                                trgtBytes[pixelAddr] = _powTable[srcInts[pixelAddr]];
+                            }
+                        });
+                    }
+                }
+
+                trgtBmp.UnlockBits(trgtBmd);
+                return trgtBmp;
+            }
         }
     }
 }

@@ -45,11 +45,13 @@ Public Class HdrTestForm
         Catch
         End Try
 
-        Try
-            _frame = RawIntFrame.FromFile(fname)
-            loaded = True
-        Catch
-        End Try
+        If Not loaded Then
+            Try
+                _frame = RawIntFrame.FromFile(fname)
+                loaded = True
+            Catch
+            End Try
+        End If
 
         If loaded Then
             TbBitOffset_Scroll(Nothing, Nothing)
@@ -92,14 +94,26 @@ Public Class HdrTestForm
     End Sub
 
     Private Sub BtnHdrCombine3_Click(sender As Object, e As EventArgs) Handles BtnHdrCombine3.Click
-        Dim mtr1 As RGBMatrix = Nothing
-        Dim mtr2 As RGBMatrix = Nothing
-        ComparePerfomance(Sub() mtr1 = _frame.ConvertHDR3(),
-                          Sub() mtr2 = _frame.ConvertHDR3Fast(),
-                "HDR3")
-        CompareResults(mtr1, mtr2)
-        PbFrame.Image = mtr2.ToBitmap()
-        PbFrame.Refresh()
+        If _chbUnsafeCombine3.Checked Then
+            Dim mtr1 As RGBMatrix = Nothing
+            Dim bmp2 As Bitmap = Nothing
+            ComparePerfomance(Sub() mtr1 = _frame.ConvertHDR3(),
+                              Sub() bmp2 = RawFrameFunctions.ConvertRawToHDRBitmap3Fast(_frame.Data, _frame.Width, _frame.Height),
+                              "HDR3Unsafe")
+            Dim mtr2 = BitmapConverter.BitmapToRGBMatrix(bmp2)
+            CompareResults(mtr1, mtr2)
+            PbFrame.Image = mtr2.ToBitmap()
+            PbFrame.Refresh()
+        Else
+            Dim mtr1 As RGBMatrix = Nothing
+            Dim mtr2 As RGBMatrix = Nothing
+            ComparePerfomance(Sub() mtr1 = _frame.ConvertHDR3(),
+                              Sub() mtr2 = _frame.ConvertHDR3Fast(),
+                    "HDR3")
+            CompareResults(mtr1, mtr2)
+            PbFrame.Image = mtr2.ToBitmap()
+            PbFrame.Refresh()
+        End If
     End Sub
 
     Private Sub BtnHdrCombine1Unsafe_Click(sender As Object, e As EventArgs) Handles BtnHdrCombine1Unsafe.Click

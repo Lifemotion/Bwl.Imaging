@@ -205,7 +205,7 @@ namespace Bwl.Imaging.Unsafe
                                 byte* m4 = srcScan4 + col;
                                 byte* t2 = trgtScan2 + col;
                                 double value = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
-                                               -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
+                                               -0.1 * m2[0] +  1.8 * m2[2] + -0.1 * m2[4] +
                                                -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
                                 value = value < 0 ? 0 : value;
                                 value = value > 255 ? 255 : value;
@@ -314,7 +314,7 @@ namespace Bwl.Imaging.Unsafe
                                 byte* m2 = yScan2 + col;
                                 byte* m4 = yScan4 + col;
                                 double valueY = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
-                                                -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
+                                                -0.1 * m2[0] +  1.8 * m2[2] + -0.1 * m2[4] +
                                                 -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
                                 valueY = valueY < 0 ? 0 : valueY;
                                 valueY = valueY > 255 ? 255 : valueY;
