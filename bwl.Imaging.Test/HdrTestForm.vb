@@ -54,7 +54,7 @@ Public Class HdrTestForm
         End If
 
         If loaded Then
-            TbBitOffset_Scroll(Nothing, Nothing)
+            BtnHdrCombine3_Click(Nothing, Nothing)
             _logger.AddMessage("Frame Loaded: " + fname)
         Else
             _logger.AddMessage("Frame was not loaded: " + fname)

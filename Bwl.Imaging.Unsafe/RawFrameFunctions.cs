@@ -121,20 +121,21 @@ namespace Bwl.Imaging.Unsafe
             return trgtBmp;
         }
 
-        private static byte[] _powTable;
+        private static byte[] _powTableHDR3;
+        private static void InitPowTableHDR3()
+        {
+            _powTableHDR3 = new byte[(1 << 12)];
+            var v = 0.4;
+            var k = 12;
+            for (var powArg = 0; powArg < _powTableHDR3.Length; powArg++)
+            {
+                _powTableHDR3[powArg] = Convert.ToByte(Math.Min(Math.Pow(powArg, v) * k, 255));
+            }
+        }
         public static Bitmap ConvertRawToHDRBitmap3Fast(int[] data, int width, int height)
         {
-            if (_powTable == null)
-            {
-                _powTable = new byte[(1 << 12)];
-                var v = 0.4;
-                var k = 12;
-                for (var powArg = 0; powArg < _powTable.Length; powArg++)
-                {
-                    _powTable[powArg] = Convert.ToByte(Math.Min(Math.Pow(powArg, v) * k, 255));
-                }
-            }
-
+            if (_powTableHDR3 == null) InitPowTableHDR3();
+ 
             Bitmap trgtBmp = new Bitmap(width, height, PixelFormat.Format24bppRgb);
             BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
 
@@ -149,7 +150,7 @@ namespace Bwl.Imaging.Unsafe
                         {
                             for (int pixelAddr = channel; pixelAddr < width * height * 3; pixelAddr += 3)
                             {
-                                trgtBytes[pixelAddr] = _powTable[srcInts[pixelAddr]];
+                                trgtBytes[pixelAddr] = _powTableHDR3[srcInts[pixelAddr]];
                             }
                         });
                     }
