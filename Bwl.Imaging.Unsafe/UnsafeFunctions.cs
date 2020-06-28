@@ -32,6 +32,10 @@ namespace Bwl.Imaging.Unsafe
             {
                 throw new Exception("srcBmp == null");
             }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
+            }
             lock (srcBmp)
             {
                 if ((srcBmp.PixelFormat == PixelFormat.Format8bppIndexed) && (trgtBmp.PixelFormat == PixelFormat.Format8bppIndexed))
@@ -74,6 +78,57 @@ namespace Bwl.Imaging.Unsafe
             }
         }
 
+        public static void PatchGray(Bitmap srcBmp, Bitmap trgtBmp, Rectangle region)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
+            }
+            lock (trgtBmp)
+            {
+                if ((trgtBmp.PixelFormat == PixelFormat.Format8bppIndexed) && (srcBmp.PixelFormat == PixelFormat.Format8bppIndexed))
+                {
+                    if ((srcBmp.Width == region.Width) && (srcBmp.Height == region.Height))
+                    {
+                        BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                        BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                        unsafe
+                        {
+                            int regionX = region.X;
+                            int regionY = region.Y;
+                            int regionW = region.Width;
+                            int regionH = region.Height;
+                            byte* srcBytes = (byte*)srcBmd.Scan0;
+                            byte* trgtBytes = (byte*)trgtBmd.Scan0 + (regionY * trgtBmd.Stride) + regionX;
+                            for (int rectRow = 0; rectRow < regionH; rectRow++)
+                            {
+                                for (int rectCol = 0; rectCol < regionW; rectCol++)
+                                {
+                                    trgtBytes[rectCol] = srcBytes[rectCol];
+                                }
+                                srcBytes += srcBmd.Stride;
+                                trgtBytes += trgtBmd.Stride;
+                            }
+                        }
+                        srcBmp.UnlockBits(srcBmd);
+                        trgtBmp.UnlockBits(trgtBmd);
+                    }
+                    else
+                    {
+                        throw new Exception("Inconsistent source image and source region");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
         public static Bitmap CropRgb(Bitmap srcBmp, Rectangle region)
         {
             if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
@@ -93,6 +148,10 @@ namespace Bwl.Imaging.Unsafe
             if (srcBmp == null)
             {
                 throw new Exception("srcBmp == null");
+            }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
             }
             lock (srcBmp)
             {
@@ -156,6 +215,78 @@ namespace Bwl.Imaging.Unsafe
             }
         }
 
+        public static void PatchRgb(Bitmap srcBmp, Bitmap trgtBmp, Rectangle region)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
+            }
+            lock (trgtBmp)
+            {
+                if ((trgtBmp.PixelFormat == srcBmp.PixelFormat) && ((trgtBmp.PixelFormat == PixelFormat.Format24bppRgb) || (trgtBmp.PixelFormat == PixelFormat.Format32bppArgb)))
+                {
+                    if ((srcBmp.Width == region.Width) && (srcBmp.Height == region.Height))
+                    {
+                        BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                        BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+                        int pixelSize = GetPixelSize(trgtBmp.PixelFormat);
+                        unsafe
+                        {
+                            int regionX = region.X;
+                            int regionY = region.Y;
+                            int regionW = region.Width;
+                            int regionH = region.Height;
+                            byte* srcBytes = (byte*)srcBmd.Scan0;
+                            byte* trgtBytes = (byte*)trgtBmd.Scan0 + (regionY * trgtBmd.Stride) + (regionX * pixelSize);
+                            if (pixelSize == 3)
+                            {
+                                for (int rectRow = 0; rectRow < regionH; rectRow++)
+                                {
+                                    for (int rectCol = 0; rectCol < regionW * 3; rectCol += 3)
+                                    {
+                                        trgtBytes[rectCol] = srcBytes[rectCol];
+                                        trgtBytes[rectCol + 1] = srcBytes[rectCol + 1];
+                                        trgtBytes[rectCol + 2] = srcBytes[rectCol + 2];
+                                    }
+                                    srcBytes += srcBmd.Stride;
+                                    trgtBytes += trgtBmd.Stride;
+                                }
+                            }
+                            else
+                            {
+                                for (int rectRow = 0; rectRow < regionH; rectRow++)
+                                {
+                                    for (int rectCol = 0; rectCol < regionW * 4; rectCol += 4)
+                                    {
+                                        trgtBytes[rectCol] = srcBytes[rectCol];
+                                        trgtBytes[rectCol + 1] = srcBytes[rectCol + 1];
+                                        trgtBytes[rectCol + 2] = srcBytes[rectCol + 2];
+                                        trgtBytes[rectCol + 3] = srcBytes[rectCol + 3];
+                                    }
+                                    srcBytes += srcBmd.Stride;
+                                    trgtBytes += trgtBmd.Stride;
+                                }
+                            }
+                        }
+                        srcBmp.UnlockBits(srcBmd);
+                        trgtBmp.UnlockBits(trgtBmd);
+                    }
+                    else
+                    {
+                        throw new Exception("Inconsistent source image and source region");
+                    }
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
         public static Bitmap Sharpen5Gray(Bitmap srcBmp)
         {
             if (srcBmp.PixelFormat == PixelFormat.Format8bppIndexed)
@@ -175,6 +306,10 @@ namespace Bwl.Imaging.Unsafe
             if (srcBmp == null)
             {
                 throw new Exception("srcBmp == null");
+            }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
             }
             lock (srcBmp)
             {
@@ -242,6 +377,10 @@ namespace Bwl.Imaging.Unsafe
             if (srcBmp == null)
             {
                 throw new Exception("srcBmp == null");
+            }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
             }
             lock (srcBmp)
             {
@@ -372,6 +511,10 @@ namespace Bwl.Imaging.Unsafe
             if (srcBmp == null)
             {
                 throw new Exception("srcBmp == null");
+            }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
             }
             lock (srcBmp)
             {
@@ -518,6 +661,10 @@ namespace Bwl.Imaging.Unsafe
             {
                 throw new Exception("srcBmp == null");
             }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
+            }
             lock (srcBmp)
             {
                 if ((srcBmp.PixelFormat == PixelFormat.Format8bppIndexed) && (trgtBmp.PixelFormat == PixelFormat.Format8bppIndexed))
@@ -572,6 +719,10 @@ namespace Bwl.Imaging.Unsafe
             if (srcBmp == null)
             {
                 throw new Exception("srcBmp == null");
+            }
+            if (trgtBmp == null)
+            {
+                throw new Exception("trgtBmp == null");
             }
             lock (srcBmp)
             {

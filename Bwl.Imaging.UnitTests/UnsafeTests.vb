@@ -29,10 +29,10 @@ Imports Bwl.Imaging.Unsafe
         Dim blueFromRow1 = UnsafeFunctions.CropGray(bmpGray, rectBlueRow1)
         Dim whiteFromRow1 = UnsafeFunctions.CropGray(bmpGray, rectWhiteRow1)
 
-        Dim redFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectRedRow1)
-        Dim greenFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectGreenRow1)
-        Dim blueFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectBlueRow1)
-        Dim whiteFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectWhiteRow1)
+        Dim redFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectRedRow2)
+        Dim greenFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectGreenRow2)
+        Dim blueFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectBlueRow2)
+        Dim whiteFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectWhiteRow2)
 
         Dim redMatrixFromRow1 = BitmapConverter.BitmapToGrayMatrix(redFromRow1)
         Dim greenMatrixFromRow1 = BitmapConverter.BitmapToGrayMatrix(greenFromRow1)
@@ -46,27 +46,68 @@ Imports Bwl.Imaging.Unsafe
 
         For row = 0 To S - 1
             For col = 0 To S - 1
-                Assert.IsTrue(Math.Abs(redMatrixFromRow1.GrayPixel(row, col) - 0.299 * 255) <= 2)
-                Assert.IsTrue(Math.Abs(greenMatrixFromRow1.GrayPixel(row, col) - 0.587 * 255) <= 2)
-                Assert.IsTrue(Math.Abs(blueMatrixFromRow1.GrayPixel(row, col) - 0.114 * 255) <= 2)
-                Assert.IsTrue(Math.Abs(redMatrixFromRow2.GrayPixel(row, col) - 0.299 * 255) <= 2)
-                Assert.IsTrue(Math.Abs(greenMatrixFromRow2.GrayPixel(row, col) - 0.587 * 255) <= 2)
-                Assert.IsTrue(Math.Abs(blueMatrixFromRow2.GrayPixel(row, col) - 0.114 * 255) <= 2)
+                Assert.AreEqual(redMatrixFromRow1.GrayPixel(row, col), 77)
+                Assert.AreEqual(greenMatrixFromRow1.GrayPixel(row, col), 151)
+                Assert.AreEqual(blueMatrixFromRow1.GrayPixel(row, col), 29)
+                Assert.AreEqual(whiteMatrixFromRow1.GrayPixel(row, col), 255)
+
+                Assert.AreEqual(whiteMatrixFromRow2.GrayPixel(row, col), 255)
+                Assert.AreEqual(blueMatrixFromRow2.GrayPixel(row, col), 29)
+                Assert.AreEqual(greenMatrixFromRow2.GrayPixel(row, col), 151)
+                Assert.AreEqual(redMatrixFromRow2.GrayPixel(row, col), 77)
             Next
         Next
     End Sub
 
-    <TestMethod()> Public Sub UnsafeCropRgb24Test()
-        UnsafeCropRgbTest(My.Resources.rgbw24)
+    <TestMethod()> Public Sub UnsafePatchGray24Test()
+        UnsafePatchGrayTest(My.Resources.gray24)
     End Sub
 
-    <TestMethod()>
-    Public Sub UnsafeNormalizeRGBTest()
-        Dim bmpRgb = My.Resources.rgb
-        Dim bmp2 = New Bitmap(bmpRgb.Width, bmpRgb.Height, bmpRgb.PixelFormat)
-        UnsafeFunctions.NormalizeRgb(bmpRgb, bmp2, 0)
-        'bmpRgb.Save("D:\1.bmp")
-        'bmp2.Save("D:\2.bmp")
+    <TestMethod()> Public Sub UnsafePatchGray25Test()
+        UnsafePatchGrayTest(My.Resources.gray25)
+    End Sub
+
+    Private Sub UnsafePatchGrayTest(bmpGray As Bitmap)
+        Dim S = bmpGray.Height \ 2
+
+        Dim rectRedRow1 = New Rectangle(0, 0, S, S)
+        Dim rectGreenRow1 = New Rectangle(S, 0, S, S)
+        Dim rectBlueRow1 = New Rectangle(2 * S, 0, S, S)
+        Dim rectWhiteRow1 = New Rectangle(3 * S, 0, S, S)
+
+        Dim rectRedRow2 = New Rectangle(3 * S, S, S, S)
+        Dim rectGreenRow2 = New Rectangle(2 * S, S, S, S)
+        Dim rectBlueRow2 = New Rectangle(1 * S, S, S, S)
+        Dim rectWhiteRow2 = New Rectangle(0, S, S, S)
+
+        Dim redFromRow1 = UnsafeFunctions.CropGray(bmpGray, rectRedRow1)
+        Dim greenFromRow1 = UnsafeFunctions.CropGray(bmpGray, rectGreenRow1)
+        Dim blueFromRow1 = UnsafeFunctions.CropGray(bmpGray, rectBlueRow1)
+        Dim whiteFromRow1 = UnsafeFunctions.CropGray(bmpGray, rectWhiteRow1)
+
+        Dim redFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectRedRow2)
+        Dim greenFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectGreenRow2)
+        Dim blueFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectBlueRow2)
+        Dim whiteFromRow2 = UnsafeFunctions.CropGray(bmpGray, rectWhiteRow2)
+
+        '---
+
+        UnsafeFunctions.PatchGray(whiteFromRow1, bmpGray, rectRedRow1)
+        UnsafeFunctions.PatchGray(blueFromRow1, bmpGray, rectGreenRow1)
+        UnsafeFunctions.PatchGray(greenFromRow1, bmpGray, rectBlueRow1)
+        UnsafeFunctions.PatchGray(redFromRow1, bmpGray, rectWhiteRow1)
+
+        UnsafeFunctions.PatchGray(redFromRow2, bmpGray, rectWhiteRow2)
+        UnsafeFunctions.PatchGray(greenFromRow2, bmpGray, rectBlueRow2)
+        UnsafeFunctions.PatchGray(blueFromRow2, bmpGray, rectGreenRow2)
+        UnsafeFunctions.PatchGray(whiteFromRow2, bmpGray, rectRedRow2)
+
+        bmpGray.RotateFlip(RotateFlipType.RotateNoneFlipY)
+        UnsafeCropGrayTest(bmpGray)
+    End Sub
+
+    <TestMethod()> Public Sub UnsafeCropRgb24Test()
+        UnsafeCropRgbTest(My.Resources.rgbw24)
     End Sub
 
     <TestMethod()> Public Sub UnsafeCropRgb25Test()
@@ -91,10 +132,10 @@ Imports Bwl.Imaging.Unsafe
         Dim blueFromRow1 = UnsafeFunctions.CropRgb(bmpRgb, rectBlueRow1)
         Dim whiteFromRow1 = UnsafeFunctions.CropRgb(bmpRgb, rectWhiteRow1)
 
-        Dim redFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectRedRow1)
-        Dim greenFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectGreenRow1)
-        Dim blueFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectBlueRow1)
-        Dim whiteFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectWhiteRow1)
+        Dim redFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectRedRow2)
+        Dim greenFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectGreenRow2)
+        Dim blueFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectBlueRow2)
+        Dim whiteFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectWhiteRow2)
 
         Dim redMatrixFromRow1 = BitmapConverter.BitmapToRGBMatrix(redFromRow1)
         Dim greenMatrixFromRow1 = BitmapConverter.BitmapToRGBMatrix(greenFromRow1)
@@ -120,6 +161,14 @@ Imports Bwl.Imaging.Unsafe
                 Assert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).G, CByte(0))
                 Assert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).B, CByte(255))
 
+                Assert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).R, CByte(255))
+                Assert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).G, CByte(255))
+                Assert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).B, CByte(255))
+
+                Assert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).R, CByte(255))
+                Assert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).G, CByte(255))
+                Assert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).B, CByte(255))
+
                 Assert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).R, CByte(255))
                 Assert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).G, CByte(0))
                 Assert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).B, CByte(0))
@@ -133,6 +182,62 @@ Imports Bwl.Imaging.Unsafe
                 Assert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).B, CByte(255))
             Next
         Next
+    End Sub
+
+    <TestMethod()> Public Sub UnsafePatchRgb24Test()
+        UnsafePatchRgbTest(My.Resources.rgbw24)
+    End Sub
+
+    <TestMethod()> Public Sub UnsafePatchRgb25Test()
+        UnsafePatchRgbTest(My.Resources.rgbw25)
+    End Sub
+
+    Private Sub UnsafePatchRgbTest(bmpRgb As Bitmap)
+        Dim S = bmpRgb.Height \ 2
+
+        Dim rectRedRow1 = New Rectangle(0, 0, S, S)
+        Dim rectGreenRow1 = New Rectangle(S, 0, S, S)
+        Dim rectBlueRow1 = New Rectangle(2 * S, 0, S, S)
+        Dim rectWhiteRow1 = New Rectangle(3 * S, 0, S, S)
+
+        Dim rectRedRow2 = New Rectangle(3 * S, S, S, S)
+        Dim rectGreenRow2 = New Rectangle(2 * S, S, S, S)
+        Dim rectBlueRow2 = New Rectangle(1 * S, S, S, S)
+        Dim rectWhiteRow2 = New Rectangle(0, S, S, S)
+
+        Dim redFromRow1 = UnsafeFunctions.CropRgb(bmpRgb, rectRedRow1)
+        Dim greenFromRow1 = UnsafeFunctions.CropRgb(bmpRgb, rectGreenRow1)
+        Dim blueFromRow1 = UnsafeFunctions.CropRgb(bmpRgb, rectBlueRow1)
+        Dim whiteFromRow1 = UnsafeFunctions.CropRgb(bmpRgb, rectWhiteRow1)
+
+        Dim redFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectRedRow2)
+        Dim greenFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectGreenRow2)
+        Dim blueFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectBlueRow2)
+        Dim whiteFromRow2 = UnsafeFunctions.CropRgb(bmpRgb, rectWhiteRow2)
+
+        '---
+
+        UnsafeFunctions.PatchRgb(whiteFromRow1, bmpRgb, rectRedRow1)
+        UnsafeFunctions.PatchRgb(blueFromRow1, bmpRgb, rectGreenRow1)
+        UnsafeFunctions.PatchRgb(greenFromRow1, bmpRgb, rectBlueRow1)
+        UnsafeFunctions.PatchRgb(redFromRow1, bmpRgb, rectWhiteRow1)
+
+        UnsafeFunctions.PatchRgb(redFromRow2, bmpRgb, rectWhiteRow2)
+        UnsafeFunctions.PatchRgb(greenFromRow2, bmpRgb, rectBlueRow2)
+        UnsafeFunctions.PatchRgb(blueFromRow2, bmpRgb, rectGreenRow2)
+        UnsafeFunctions.PatchRgb(whiteFromRow2, bmpRgb, rectRedRow2)
+
+        bmpRgb.RotateFlip(RotateFlipType.RotateNoneFlipY)
+        UnsafeCropRgbTest(bmpRgb)
+    End Sub
+
+    <TestMethod()>
+    Public Sub UnsafeNormalizeRGBTest()
+        Dim bmpRgb = My.Resources.rgb
+        Dim bmp2 = New Bitmap(bmpRgb.Width, bmpRgb.Height, bmpRgb.PixelFormat)
+        UnsafeFunctions.NormalizeRgb(bmpRgb, bmp2, 0)
+        'bmpRgb.Save("D:\1.bmp")
+        'bmp2.Save("D:\2.bmp")
     End Sub
 
     <TestMethod()> Public Sub UnsafeRgbToGray24Test()
