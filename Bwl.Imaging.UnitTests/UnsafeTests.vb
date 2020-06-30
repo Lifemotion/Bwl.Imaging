@@ -279,4 +279,55 @@ Imports Bwl.Imaging.Unsafe
         Dim hash = UnsafeFunctions.BitmapHashRgb(bmpRgb, 4)
         Assert.AreEqual(CInt(hash), 0) 'А в оригинале черный цвет нормальный
     End Sub
+
+    <TestMethod()> Public Sub UnsafeBitmapHashRgbAccessViolationTestGray()
+        Dim stp, w, h As Integer
+        Try
+            For stp = 1 To 100
+                For w = 8 To 100
+                    For h = 8 To 100
+                        Dim bmp = New Bitmap(w, h, Drawing.Imaging.PixelFormat.Format8bppIndexed)
+                        Dim hash = UnsafeFunctions.BitmapHashGray(bmp, stp)
+                        bmp.Dispose()
+                    Next
+                Next
+            Next
+        Catch ex As Exception
+            Throw New Exception(String.Format("UnsafeBitmapHashRgbAccessViolationTestGray: step:{0}, w:{1}, h:{2}", stp, w, h))
+        End Try
+    End Sub
+
+    <TestMethod()> Public Sub UnsafeBitmapHashRgbAccessViolationTest24bpp()
+        Dim stp, w, h As Integer
+        Try
+            For stp = 1 To 100
+                For w = 8 To 100
+                    For h = 8 To 100
+                        Dim bmp = New Bitmap(w, h, Drawing.Imaging.PixelFormat.Format24bppRgb)
+                        Dim hash = UnsafeFunctions.BitmapHashRgb(bmp, stp)
+                        bmp.Dispose()
+                    Next
+                Next
+            Next
+        Catch ex As Exception
+            Throw New Exception(String.Format("UnsafeBitmapHashRgbAccessViolationTest24bpp: step:{0}, w:{1}, h:{2}", stp, w, h))
+        End Try
+    End Sub
+
+    <TestMethod()> Public Sub UnsafeBitmapHashRgbAccessViolationTest32bpp()
+        Dim stp, w, h As Integer
+        Try
+            For stp = 1 To 100
+                For w = 8 To 100
+                    For h = 8 To 100
+                        Dim bmp = New Bitmap(w, h)
+                        Dim hash = UnsafeFunctions.BitmapHashRgb(bmp, stp)
+                        bmp.Dispose()
+                    Next
+                Next
+            Next
+        Catch ex As Exception
+            Throw New Exception(String.Format("UnsafeBitmapHashRgbAccessViolationTest32bpp: step:{0}, w:{1}, h:{2}", stp, w, h))
+        End Try
+    End Sub
 End Class
