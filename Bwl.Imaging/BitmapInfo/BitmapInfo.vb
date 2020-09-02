@@ -22,7 +22,7 @@ Public Class BitmapInfo
             'Перед предоставлением объекта проверяем, выполнен ли Lock на объекте синхронизации...
             If _bmpSemaphore.WaitOne(0) Then 'Если удалось заблокировать ресурс...
                 _bmpSemaphore.Release()
-                Throw New Exception("BitmapInfo.Bmp: 'Bmp' property access without BmpLock()") '...свойство Bmp используется некорректно (то есть без блокировки)!
+                Throw New Exception("BitmapInfo.Bmp: 'Bmp' property access without BmpLock() before") '...свойство Bmp используется некорректно (то есть без блокировки)!
             End If
             Return _bmp
         End Get
@@ -158,6 +158,47 @@ Public Class BitmapInfo
         Return result
     End Function
 
+    Public Sub EliminateBmp()
+        Try
+            BmpLock()
+            If _bmp IsNot Nothing Then
+                _bmp.Dispose()
+                _bmp = Nothing
+            End If
+            _bmpIsNothing = True
+        Catch ex As Exception
+            Throw ex
+        Finally
+            BmpUnlock()
+        End Try
+    End Sub
+
+    Public Sub EliminateGrayMatrix()
+        Try
+            BmpLock()
+            If _grayMatrix IsNot Nothing Then
+                _grayMatrix = Nothing
+            End If
+        Catch ex As Exception
+            Throw ex
+        Finally
+            BmpUnlock()
+        End Try
+    End Sub
+
+    Public Sub EliminateRGBMatrix()
+        Try
+            BmpLock()
+            If _rgbMatrix IsNot Nothing Then
+                _rgbMatrix = Nothing
+            End If
+        Catch ex As Exception
+            Throw ex
+        Finally
+            BmpUnlock()
+        End Try
+    End Sub
+
 #Region "IDisposable Support"
     Private disposedValue As Boolean
     Protected Overridable Sub Dispose(disposing As Boolean)
@@ -171,6 +212,7 @@ Public Class BitmapInfo
                     End If
                     _bmpIsNothing = True
                     _bmpSize = Nothing
+                    _bmpPixelFormat = Nothing
                     _grayMatrix = Nothing
                     _rgbMatrix = Nothing
                 Catch
