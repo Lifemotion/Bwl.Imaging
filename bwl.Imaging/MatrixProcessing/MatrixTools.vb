@@ -1,6 +1,23 @@
-﻿Imports System.Threading.Tasks
+﻿Imports System.Runtime.CompilerServices
+Imports System.Threading.Tasks
 
 Public Module MatrixTools
+
+    ''' <summary>
+    ''' Получение полутоновой матрицы на основе BitmapInfo
+    ''' </summary>
+    <Extension()>
+    Public Function GetGrayMatrix(bi As BitmapInfo) As GrayMatrix
+        Return BitmapConverter.BitmapToGrayMatrix(bi.GetClonedBmp())
+    End Function
+
+    ''' <summary>
+    ''' Получение полноцветной матрицы на основе BitmapInfo
+    ''' </summary>
+    <Extension()>
+    Public Function GetRGBMatrix(bi As BitmapInfo) As RGBMatrix
+        Return BitmapConverter.BitmapToRGBMatrix(bi.GetClonedBmp())
+    End Function
 
     ''' <summary>
     ''' Выравнивание полутоновой матрицы до ширины кратной 4
