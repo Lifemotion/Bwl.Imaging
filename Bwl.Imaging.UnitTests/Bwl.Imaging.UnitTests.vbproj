@@ -82,6 +82,9 @@
     <Import Include="Microsoft.VisualStudio.TestTools.UnitTesting" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\refs-src\JpegCodec.vb">
+      <Link>refs-src\JpegCodec.vb</Link>
+    </Compile>
     <Compile Include="BitmapInfoTests.vb" />
     <Compile Include="MatrixTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing
+Imports Bwl.Imaging.Unsafe
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
 <TestClass>
@@ -183,6 +184,93 @@ Public Class BitmapInfoTests
         End Try
         Assert.AreEqual(False, exceptionDetected)
     End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoJpegTest1()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
+        Dim jpg = JpegCodec.Encode(src).ToArray()
+        Dim bi = New BitmapInfo(jpg)
+        Dim bmpJpg = bi.GetClonedBmp()
+        Dim mtrxSrc = src.BitmapToRgbMatrix()
+        Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
+        Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
+        Assert.IsTrue(mtrxDiffPerc < 0.2)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoJpegTest2()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
+        Dim jpg = JpegCodec.Encode(src).ToArray()
+
+        Dim bi = New BitmapInfo(UnsafeFunctions.BitmapClone(src))
+        Assert.IsFalse(bi.BmpIsNothing)
+        bi.SetJpg(jpg)
+        Assert.IsTrue(bi.BmpIsNothing)
+
+        Dim biJpg = New BitmapInfo(jpg)
+        Assert.IsTrue(bi.BmpIsNothing)
+        bi.SetBmp(UnsafeFunctions.BitmapClone(src))
+        Assert.IsFalse(bi.BmpIsNothing)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoJpegTest3()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
+        Dim jpg = JpegCodec.Encode(src).ToArray()
+        Dim bi = New BitmapInfo(jpg, 1) 'Устанавливаем буффер JPEG
+        Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
+
+        For i = 1 To 4
+            Dim bmpJpg1 = bi.GetClonedBmp() '...получаем его, автоматически активируется автоматическое элиминирование битмапа
+            Assert.IsFalse(bi.BmpIsNothing) '...но битмап пока доступен...
+            Assert.IsNotNull(bmpJpg1) '...но битмап пока доступен.
+            System.Threading.Thread.Sleep(2000) 'Ждем достаточное время для автоэлиминирования...
+            Assert.IsTrue(bi.BmpIsNothing) '...теперь битмап должен быть пуст...
+            Dim bmpJpg2 = bi.GetClonedBmp() '...но повторное обращение...
+            Assert.IsFalse(bi.BmpIsNothing) '...указывает что битмап не пуст и по флагу...
+            Assert.IsNotNull(bmpJpg2) '...и по ссылке
+        Next
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoJpegTest4()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
+        Dim jpg = JpegCodec.Encode(src).ToArray()
+        Dim bi = New BitmapInfo(jpg, 1) 'Устанавливаем буффер JPEG
+        Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
+
+        For i = 1 To 4
+            Dim bmpJpg1 = bi.GetClonedBmp() '...получаем его, автоматически активируется автоматическое элиминирование битмапа
+            Assert.IsFalse(bi.BmpIsNothing) '...но битмап пока доступен...
+            Assert.IsNotNull(bmpJpg1) '...но битмап пока доступен.
+            System.Threading.Thread.Sleep(2000) 'Ждем достаточное время для автоэлиминирования...
+            Assert.IsTrue(bi.BmpIsNothing) '...теперь битмап должен быть пуст...
+
+            bi.BmpLock()
+            Try
+                Dim bmpJpg2 = bi.Bmp() '...но повторное обращение...
+                Assert.IsFalse(bi.BmpIsNothing) '...указывает что битмап не пуст и по флагу...
+                Assert.IsNotNull(bmpJpg2) '...и по ссылке
+            Finally
+                bi.BmpUnlock()
+            End Try
+        Next
+    End Sub
+
+    Private Function GetAvgMatrixesDiff(m1 As RGBMatrix, m2 As RGBMatrix) As Double
+        Dim avgDiffF As Double = 0
+        If m1.Width <> m2.Width OrElse m1.Height <> m2.Height Then
+            Throw New Exception("m1.Width <> m2.Width OrElse m1.Height <> m2.Height")
+        End If
+        For x = 0 To m1.Width - 1
+            For y = 0 To m2.Height - 1
+                Dim diff = Math.Abs(m1.RedPixel(x, y) - m2.RedPixel(x, y))
+                avgDiffF += diff / Byte.MaxValue
+            Next
+        Next
+        avgDiffF /= m1.Width * m1.Height
+        Return avgDiffF
+    End Function
 
     Private Function GetTestBmp() As Bitmap
         Return GetTestBmp(New Size(49, 100), Drawing.Imaging.PixelFormat.Format32bppArgb)
