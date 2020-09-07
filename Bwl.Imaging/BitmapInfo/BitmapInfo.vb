@@ -43,6 +43,12 @@ Public Class BitmapInfo
         End Get
     End Property
 
+    Public ReadOnly Property BmpAndJpgAreNothing As Boolean
+        Get
+            Return _bmpIsNothing AndAlso _jpg Is Nothing
+        End Get
+    End Property
+
     Public ReadOnly Property BmpSize As Size
         Get
             If _bmpSize IsNot Nothing Then
