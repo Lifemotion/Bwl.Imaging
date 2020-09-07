@@ -166,6 +166,12 @@
   <ItemGroup>
     <None Include="Resources\636080817147998076.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\jpeg8bpp.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\jpeg24bpp.jpg" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

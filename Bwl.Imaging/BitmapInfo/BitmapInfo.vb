@@ -95,16 +95,24 @@ Public Class BitmapInfo
     End Function
 
     Public Sub SetJpg(jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
-        Try
-            BmpLock()
-            EliminateBmp() 'При установке Jpeg чистим Bmp
-            _jpg = jpg
-            Me.BitmapKeepTimeS = bitmapKeepTimeS
-        Catch ex As Exception
-            Throw ex
-        Finally
-            BmpUnlock()
-        End Try
+        Dim jpgChannelCount = 0 'Количество каналов JPEG
+        Dim jpgSize = GetJpegSize(jpg, jpgChannelCount) 'Извлекаем данные о размере изображения из JPEG-потока
+        If (jpgChannelCount = 3 OrElse jpgChannelCount = 1) AndAlso (jpgSize.Width > 0 AndAlso jpgSize.Height > 0) Then
+            Try
+                BmpLock()
+                EliminateBmp() 'При установке JPEG чистим Bmp
+                _bmpSize = jpgSize
+                _bmpPixelFormat = If(jpgChannelCount = 3, PixelFormat.Format24bppRgb, PixelFormat.Format8bppIndexed)
+                _jpg = jpg
+                Me.BitmapKeepTimeS = bitmapKeepTimeS
+            Catch ex As Exception
+                Throw ex
+            Finally
+                BmpUnlock()
+            End Try
+        Else
+            Throw New Exception("BitmapInfo.SetJpg(): Can't parse JPEG data")
+        End If
     End Sub
 
     Public Sub SetBmp(bmp As Bitmap)
@@ -244,6 +252,54 @@ Public Class BitmapInfo
         End If
         _bmpIsNothing = True
     End Sub
+
+    ''' <summary>
+    ''' Извлечение размера изображения из JPEG-потока без его декодирования.
+    ''' </summary>
+    Private Function GetJpegSize(jpg As Byte(), ByRef channelCount As Integer) As Size
+        Dim res = New Size(-1, -1)
+        channelCount = -1
+        Try
+            Dim pos = 0 'Keeps track of the position within the file
+            If jpg(pos) = &HFF AndAlso jpg(pos + 1) = &HD8 AndAlso jpg(pos + 2) = &HFF AndAlso jpg(pos + 3) = &HE0 Then
+                pos += 4
+                'Check for valid JPEG header (null terminated JFIF)
+                If jpg(pos + 2) = AscW("J"c) AndAlso jpg(pos + 3) = AscW("F"c) AndAlso jpg(pos + 4) = AscW("I"c) AndAlso jpg(pos + 5) = AscW("F"c) AndAlso jpg(pos + 6) = &H0 Then
+                    'Retrieve the block length of the first block since the first block will not contain the size of file
+                    Dim blockLength = jpg(pos) * 256 + jpg(pos + 1)
+                    Do While pos < jpg.Length
+                        pos += blockLength 'Increase the file index to get to the next block
+                        If pos >= jpg.Length Then
+                            Return res 'Check to protect against segmentation faults
+                        End If
+                        If jpg(pos) <> &HFF Then
+                            Return res 'Check that we are truly at the start of another block
+                        End If
+                        If jpg(pos + 1) = &HC0 Then '0xFFC0 is the "Start of frame" marker which contains the file size
+                            'The structure of the 0xFFC0 block is quite simple [0xFFC0][ushort length][uchar precision][ushort x][ushort y]
+                            Dim height = jpg(pos + 5) * 256 + jpg(pos + 6)
+                            Dim width = jpg(pos + 7) * 256 + jpg(pos + 8)
+                            channelCount = jpg(pos + 9)
+                            res = New Size(width, height)
+                            Return res
+                        Else
+                            pos += 2 'Skip the block marker
+                            blockLength = jpg(pos) * 256 + jpg(pos + 1) 'Go to the next block
+                        End If
+                    Loop
+                    Return res 'If this point is reached then no size was found
+                Else
+                    Return res
+                End If 'Not a valid JFIF string
+            Else
+                Return res
+            End If 'Not a valid SOI header
+        Catch ex As Exception
+            res = New Size(-1, -1)
+            channelCount = -1
+        End Try
+        Return res
+    End Function
 
 #Region "IDisposable Support"
     Private _disposed As Boolean

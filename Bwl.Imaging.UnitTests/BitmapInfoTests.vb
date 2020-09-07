@@ -186,7 +186,40 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
+    Public Sub BitmapInfoJpegTest0()
+        Dim jpg = GetResourceFileData("636080817147998076.jpg")
+        Dim sw = New Stopwatch()
+        sw.Start()
+        Dim bi = New BitmapInfo(jpg)
+        sw.Stop()
+        Dim jpegParseTimeMs = sw.ElapsedMilliseconds
+        Assert.IsTrue(jpegParseTimeMs < 10)
+    End Sub
+
+    <TestMethod>
     Public Sub BitmapInfoJpegTest1()
+        Dim jpg = GetResourceFileData("jpeg8bpp.jpg")
+        Dim bi = New BitmapInfo(jpg)
+        Dim bmpSize = bi.BmpSize
+        Dim bmpPixelFormat = bi.BmpPixelFormat
+        Assert.IsTrue(bmpSize.Width = 48)
+        Assert.IsTrue(bmpSize.Height = 96)
+        Assert.IsTrue(bmpPixelFormat = Drawing.Imaging.PixelFormat.Format8bppIndexed)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoJpegTest2()
+        Dim jpg = GetResourceFileData("jpeg24bpp.jpg")
+        Dim bi = New BitmapInfo(jpg)
+        Dim bmpSize = bi.BmpSize
+        Dim bmpPixelFormat = bi.BmpPixelFormat
+        Assert.IsTrue(bmpSize.Width = 48)
+        Assert.IsTrue(bmpSize.Height = 96)
+        Assert.IsTrue(bmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoJpegTest3()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
         Dim bi = New BitmapInfo(jpg)
@@ -198,7 +231,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoJpegTest2()
+    Public Sub BitmapInfoJpegTest4()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
 
@@ -214,7 +247,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoJpegTest3()
+    Public Sub BitmapInfoJpegTest5()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
         Dim bi = New BitmapInfo(jpg, 1) 'Устанавливаем буффер JPEG
@@ -233,7 +266,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoJpegTest4()
+    Public Sub BitmapInfoJpegTest6()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
         Dim bi = New BitmapInfo(jpg, 1) 'Устанавливаем буффер JPEG
@@ -291,5 +324,12 @@ Public Class BitmapInfoTests
             Next
         End If
         Return bmp
+    End Function
+
+    Private Function GetResourceFileData(fileName As String) As Byte()
+        Dim exePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
+        Dim dataPath = IO.Path.Combine(exePath, "..", "..", "Resources")
+        Dim data = IO.File.ReadAllBytes(IO.Path.Combine(dataPath, fileName))
+        Return data
     End Function
 End Class
