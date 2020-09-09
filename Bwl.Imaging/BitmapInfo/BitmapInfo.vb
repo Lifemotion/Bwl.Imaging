@@ -1,6 +1,9 @@
 ﻿Imports System.Threading
 Imports Bwl.Imaging.Unsafe
 
+''' <summary>
+''' Потокобезопасная обвязка Bitmap-а, с поддержкой кешированных свойств изображения и JPEG-кеша.
+''' </summary>
 Public Class BitmapInfo
     Implements IDisposable
 
@@ -13,9 +16,9 @@ Public Class BitmapInfo
     Private ReadOnly _bmpSemaphore As New Semaphore(1, 1)
 
     ''' <summary>
-    ''' Время хранения декомпрессированного битмапа (если изначально работаем от JPEG-потока).
+    ''' Время хранения декомпрессированного битмапа (если доступен JPEG-поток для экономии ОЗУ).
     ''' </summary>
-    Public Property BitmapKeepTimeS As Single = Single.MaxValue
+    Public Property BitmapKeepTimeS As Single = 5
 
     '''<remarks>
     ''' При обращении к Bmp обязательно использовать методы BmpLock() / BmpUnlock()
@@ -72,12 +75,12 @@ Public Class BitmapInfo
     Public Sub New()
     End Sub
 
-    Public Sub New(bmp As Bitmap, jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
-        SetBmpAndJpg(bmp, jpg, bitmapKeepTimeS)
+    Public Sub New(bmp As Bitmap, jpg As Byte())
+        SetBmpAndJpg(bmp, jpg)
     End Sub
 
-    Public Sub New(jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
-        SetJpg(jpg, bitmapKeepTimeS)
+    Public Sub New(jpg As Byte())
+        SetJpg(jpg)
     End Sub
 
     Public Sub New(bmp As Bitmap)
@@ -98,7 +101,7 @@ Public Class BitmapInfo
         Return _jpg
     End Function
 
-    Public Sub SetBmpAndJpg(bmp As Bitmap, jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
+    Public Sub SetBmpAndJpg(bmp As Bitmap, jpg As Byte())
         Dim jpgChannelCount = 0 'Количество каналов JPEG
         Dim jpgSize = GetJpegSize(jpg, jpgChannelCount) 'Извлекаем данные о размере изображения из JPEG-потока
         If (jpgChannelCount = 3 OrElse jpgChannelCount = 1) AndAlso (jpgSize.Width > 0 AndAlso jpgSize.Height > 0) Then
@@ -110,8 +113,7 @@ Public Class BitmapInfo
                         EliminateBmp() 'При установке JPEG чистим Bmp
                         SetBmpInternal(bmp) 'Устанавливаем Bmp
                         _jpg = jpg 'Все данные по размеру и форматам изображения установлены с Bmp, JPEG проверен и просто присваиваем
-                        Me.BitmapKeepTimeS = bitmapKeepTimeS
-                        BitmapDisposeWithDelay(bitmapKeepTimeS) 'Отложенная очистка битмапа также должна быть активирована
+                        BitmapDisposeWithDelay(Me.BitmapKeepTimeS) 'Отложенная очистка битмапа также должна быть активирована
                     Catch ex As Exception
                         Throw ex
                     Finally
@@ -128,7 +130,7 @@ Public Class BitmapInfo
         End If
     End Sub
 
-    Public Sub SetJpg(jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
+    Public Sub SetJpg(jpg As Byte())
         Dim jpgChannelCount = 0 'Количество каналов JPEG
         Dim jpgSize = GetJpegSize(jpg, jpgChannelCount) 'Извлекаем данные о размере изображения из JPEG-потока
         If (jpgChannelCount = 3 OrElse jpgChannelCount = 1) AndAlso (jpgSize.Width > 0 AndAlso jpgSize.Height > 0) Then
@@ -138,7 +140,6 @@ Public Class BitmapInfo
                 _bmpSize = jpgSize
                 _bmpPixelFormat = If(jpgChannelCount = 3, PixelFormat.Format24bppRgb, PixelFormat.Format8bppIndexed)
                 _jpg = jpg
-                Me.BitmapKeepTimeS = bitmapKeepTimeS
             Catch ex As Exception
                 Throw ex
             Finally
@@ -240,7 +241,7 @@ Public Class BitmapInfo
         If _bmp Is Nothing AndAlso _jpg IsNot Nothing Then
             Dim bmp = DecodeJpeg(_jpg)
             SetBmpInternal(bmp)
-            BitmapDisposeWithDelay(BitmapKeepTimeS)
+            BitmapDisposeWithDelay(Me.BitmapKeepTimeS) 'Отложенная очистка битмапа
         End If
         Return _bmp
     End Function

@@ -250,7 +250,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest5()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
-        Dim bi = New BitmapInfo(jpg, 1) 'Устанавливаем буффер JPEG
+        Dim bi = New BitmapInfo(jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем буффер JPEG
         Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
 
         For i = 1 To 4
@@ -269,7 +269,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest6()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
-        Dim bi = New BitmapInfo(jpg, 1) 'Устанавливаем буффер JPEG
+        Dim bi = New BitmapInfo(jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем буффер JPEG
         Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
 
         For i = 1 To 4
@@ -294,7 +294,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest7()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
-        Dim bi = New BitmapInfo(src, jpg, 1) 'Устанавливаем буффер JPEG
+        Dim bi = New BitmapInfo(src, jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем буффер JPEG
         Assert.IsFalse(bi.BmpIsNothing) 'Оба значения должны быть установлены (Bmp)
         Assert.IsFalse(bi.JpgIsNothing) 'Оба значения должны быть установлены (Jpg)
         Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Был установлен битмап, соотв. данные должны соотв. ему
@@ -313,7 +313,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest8()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
-        Dim bi = New BitmapInfo(src, jpg, 1) 'Устанавливаем буффер JPEG
+        Dim bi = New BitmapInfo(src, jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем буффер JPEG
         Assert.IsFalse(bi.BmpIsNothing) 'Оба значения должны быть установлены (Bmp)
         Assert.IsFalse(bi.JpgIsNothing) 'Оба значения должны быть установлены (Jpg)
         Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Был установлен битмап, соотв. данные должны соотв. ему
@@ -328,12 +328,12 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest9()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
-        Dim bi = New BitmapInfo(src, jpg, 1) 'Устанавливаем буффер JPEG
+        Dim bi = New BitmapInfo(src, jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем буффер JPEG
         Assert.IsFalse(bi.BmpIsNothing) 'Оба значения должны быть установлены (Bmp)
         Assert.IsFalse(bi.JpgIsNothing) 'Оба значения должны быть установлены (Jpg)
         Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Был установлен битмап, соотв. данные должны соотв. ему
 
-        bi.ClearJpg() 'Этот вызов чистит Jpg, и автоматически считываются параметры BMP (32 bpp)
+        bi.ClearJpg() 'Этот вызов чистит Jpg, и автоматически считываются параметры Bmp (32 bpp)
         Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bmp3 = bi.GetClonedBmp()
         Assert.IsTrue(bmp3.PixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb)
