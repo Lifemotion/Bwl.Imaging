@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing
+Imports System.Threading
 Imports Bwl.Imaging.Unsafe
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
@@ -23,12 +24,13 @@ Public Class BitmapInfoTests
         Dim src = GetTestBmp()
         Dim bi = New BitmapInfo(src)
         Dim exceptionDetected = False
+        bi.BmpLock()
         Try
-            bi.BmpLock()
             Dim bmp = bi.Bmp
-            bi.BmpUnlock()
         Catch ex As Exception
             exceptionDetected = True
+        Finally
+            bi.BmpUnlock()
         End Try
         Assert.AreEqual(False, exceptionDetected)
     End Sub
@@ -290,53 +292,54 @@ Public Class BitmapInfoTests
         Next
     End Sub
 
+    ''' <summary>
+    ''' В этом тесте два потока пытаются получить одновременный доступ к BitmapInfo.
+    ''' Для одного из потоков BmpLock() успешен,
+    ''' а для второго - нет (в ходе ожидания, по истечении таймаута) выбрасывается
+    ''' исключение. Обычно в блоке Finally разблокируем bi при исключении, но разблокировать
+    ''' должен тот поток, который выполнял блокировку. То есть BmpLock() нельзя вносить
+    ''' в TryCatch.
+    ''' </summary>
     <TestMethod>
-    Public Sub BitmapInfoJpegTest7()
+    Public Sub BitmapInfoLockTest()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
-        Dim jpg = JpegCodec.Encode(src).ToArray()
-        Dim bi = New BitmapInfo(src, jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем буффер JPEG
-        Assert.IsFalse(bi.BmpIsNothing) 'Оба значения должны быть установлены (Bmp)
-        Assert.IsFalse(bi.JpgIsNothing) 'Оба значения должны быть установлены (Jpg)
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Был установлен битмап, соотв. данные должны соотв. ему
+        Dim bi = New BitmapInfo(src) With {.BitmapKeepTimeS = 1}
 
-        'Тавкже оба изображения должны совпадать
-        Dim src2 = bi.GetClonedBmp()
-        Dim jpg2 = bi.GetJpg()
-        Dim bmpJpg2 = New Bitmap(New IO.MemoryStream(jpg2))
-        Dim mtrxSrc2 = src2.BitmapToRgbMatrix()
-        Dim mtrxBmp2 = bmpJpg2.BitmapToRgbMatrix()
-        Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc2, mtrxBmp2) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.2)
-    End Sub
+        Dim lockedCount = 0
 
-    <TestMethod>
-    Public Sub BitmapInfoJpegTest8()
-        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
-        Dim jpg = JpegCodec.Encode(src).ToArray()
-        Dim bi = New BitmapInfo(src, jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем буффер JPEG
-        Assert.IsFalse(bi.BmpIsNothing) 'Оба значения должны быть установлены (Bmp)
-        Assert.IsFalse(bi.JpgIsNothing) 'Оба значения должны быть установлены (Jpg)
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Был установлен битмап, соотв. данные должны соотв. ему
+        'Это нормальный поток - он блокирует BitmapInfo, а потом разблокирует
+        Dim thr1 = New Threading.Thread(Sub()
+                                            bi.BmpLock()
+                                            Try
+                                                Interlocked.Increment(lockedCount)
+                                                Thread.Sleep(5000)
+                                            Catch ex As Exception
+                                            Finally
+                                                bi.BmpUnlock()
+                                                Interlocked.Decrement(lockedCount)
+                                            End Try
+                                        End Sub) With {.IsBackground = True}
+        thr1.Start()
 
-        bi.ClearBmp() 'Этот вызов чистит Bmp, и автоматически считываются параметры JPEG, который еще есть (у него 24 бита, прозрачность не сохраняется)
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb)
-        Dim bmp3 = bi.GetClonedBmp()
-        Assert.IsTrue(bmp3.PixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb)
-    End Sub
+        Thread.Sleep(1000)
 
-    <TestMethod>
-    Public Sub BitmapInfoJpegTest9()
-        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
-        Dim jpg = JpegCodec.Encode(src).ToArray()
-        Dim bi = New BitmapInfo(src, jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем буффер JPEG
-        Assert.IsFalse(bi.BmpIsNothing) 'Оба значения должны быть установлены (Bmp)
-        Assert.IsFalse(bi.JpgIsNothing) 'Оба значения должны быть установлены (Jpg)
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Был установлен битмап, соотв. данные должны соотв. ему
+        'Это поток-нарушитель, он пытается заблокировать BitmapInfo, а когда не получается - выполняет разблокировку
+        'РАНЬШЕ, чем нормальный поток. Это приводит к ошибке на уровне нормального потока.
+        Dim thr2 = New Threading.Thread(Sub()
+                                            bi.BmpLock(1000)
+                                            Try
+                                                Interlocked.Increment(lockedCount)
+                                            Catch ex As Exception
+                                            Finally
+                                                bi.BmpUnlock()
+                                                Interlocked.Decrement(lockedCount)
+                                            End Try
+                                        End Sub) With {.IsBackground = True}
+        thr2.Start()
 
-        bi.ClearJpg() 'Этот вызов чистит Jpg, и автоматически считываются параметры Bmp (32 bpp)
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb)
-        Dim bmp3 = bi.GetClonedBmp()
-        Assert.IsTrue(bmp3.PixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb)
+        Thread.Sleep(10000)
+
+        Assert.IsTrue(Interlocked.Read(lockedCount) = 0)
     End Sub
 
     Private Function GetAvgMatrixesDiff(m1 As RGBMatrix, m2 As RGBMatrix) As Double

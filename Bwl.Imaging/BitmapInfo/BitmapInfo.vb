@@ -9,14 +9,13 @@ Public Class BitmapInfo
 
     Private _jpg As Byte()
     Private _bmp As Bitmap
-    Private _bmpIsNothing As Boolean
     Private _bmpSize As Nullable(Of Size)
     Private _bmpPixelFormat As Nullable(Of PixelFormat)
 
     Private ReadOnly _bmpSemaphore As New Semaphore(1, 1)
 
     ''' <summary>
-    ''' Время хранения декомпрессированного битмапа (если доступен JPEG-поток для экономии ОЗУ).
+    ''' Время хранения декомпрессированного битмапа (если доступны JPEG-данные для экономии ОЗУ).
     ''' </summary>
     Public Property BitmapKeepTimeS As Single = 5
 
@@ -42,13 +41,13 @@ Public Class BitmapInfo
 
     Public ReadOnly Property BmpIsNothing As Boolean
         Get
-            Return _bmpIsNothing
+            Return _bmp Is Nothing
         End Get
     End Property
 
     Public ReadOnly Property BmpAndJpgAreNothing As Boolean
         Get
-            Return _bmpIsNothing AndAlso _jpg Is Nothing
+            Return _bmp Is Nothing AndAlso _jpg Is Nothing
         End Get
     End Property
 
@@ -67,16 +66,12 @@ Public Class BitmapInfo
             If _bmpPixelFormat IsNot Nothing Then
                 Return _bmpPixelFormat.Value
             Else
-                Throw New Exception("BitmapInfo.PixelFormat: Bitmap is Nothing")
+                Throw New Exception("BitmapInfo.BmpPixelFormat: Bitmap is Nothing")
             End If
         End Get
     End Property
 
     Public Sub New()
-    End Sub
-
-    Public Sub New(bmp As Bitmap, jpg As Byte())
-        SetBmpAndJpg(bmp, jpg)
     End Sub
 
     Public Sub New(jpg As Byte())
@@ -87,56 +82,57 @@ Public Class BitmapInfo
         SetBmp(bmp)
     End Sub
 
+    ''' <summary>
+    ''' Блокировка доступа к разделяемому ресурсу (порождает исключение по таймауту).
+    ''' </summary>
+    ''' <remarks>  
+    ''' Типичная схема использования:
+    ''' 1: .BmpLock() 'Не оборачиваем Try-Catch: может вызвать исключение таймаута и в Finally вызовет в итоге лишний .BmpUnlock()
+    ''' 2: Try
+    ''' 3:     ... 'Этот код может вызвать исключения, но если дошли до него - ресурс был получен на .BmpLock() - исключения не было
+    ''' 4: Catch ex As Exception
+    ''' 5:     ... 'Обработали исключения кода как требуется...
+    ''' 6: Finally
+    ''' 7:     .BmpUnlock() '...и в итоге освободили доступ к разделяемому ресурсу
+    ''' 8: End Try
+    ''' </remarks>
+    ''' <param name="timeoutMs"></param>
     Public Sub BmpLock(Optional timeoutMs As Integer = 10000)
         If Not _bmpSemaphore.WaitOne(timeoutMs) Then
             Throw New Exception(String.Format("BitmapInfo.BmpLock(): Timeout, {0} ms", timeoutMs))
         End If
     End Sub
 
+    ''' <summary>
+    ''' Освобождение доступа к разделяемому ресурсу (при попытке выполнить на свободном ресурсе дает исключение).
+    ''' </summary>
     Public Sub BmpUnlock()
-        _bmpSemaphore.Release()
+        Try
+            _bmpSemaphore.Release()
+        Catch
+            Throw New Exception("BitmapInfo.BmpUnlock(): Already unlocked")
+        End Try
     End Sub
 
+    ''' <summary>
+    ''' Возвращает JPEG-данные (возвращаемое значение может быть пустым при работе с обычным Bitmap-ом).
+    ''' </summary>
     Public Function GetJpg() As Byte()
         Return _jpg
     End Function
 
-    Public Sub SetBmpAndJpg(bmp As Bitmap, jpg As Byte())
+    ''' <summary>
+    ''' Устанавливает JPEG-данные и элиминирует данные Bitmap-а.
+    ''' </summary>
+    ''' <param name="jpg">JPEG-данные.</param>
+    ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+    Public Sub SetJpg(jpg As Byte(), Optional timeoutMs As Integer = 10000)
         Dim jpgChannelCount = 0 'Количество каналов JPEG
         Dim jpgSize = GetJpegSize(jpg, jpgChannelCount) 'Извлекаем данные о размере изображения из JPEG-потока
         If (jpgChannelCount = 3 OrElse jpgChannelCount = 1) AndAlso (jpgSize.Width > 0 AndAlso jpgSize.Height > 0) Then
-            If bmp.Size = jpgSize Then
-                Dim bmpChannelCount = If(bmp.PixelFormat = PixelFormat.Format8bppIndexed, 1, 3)
-                If bmpChannelCount = jpgChannelCount Then
-                    Try
-                        BmpLock()
-                        EliminateBmp() 'При установке JPEG чистим Bmp
-                        SetBmpInternal(bmp) 'Устанавливаем Bmp
-                        _jpg = jpg 'Все данные по размеру и форматам изображения установлены с Bmp, JPEG проверен и просто присваиваем
-                        BitmapDisposeWithDelay(Me.BitmapKeepTimeS) 'Отложенная очистка битмапа также должна быть активирована
-                    Catch ex As Exception
-                        Throw ex
-                    Finally
-                        BmpUnlock()
-                    End Try
-                Else
-                    Throw New Exception("BitmapInfo.SetBmpAndJpg(): Bitmap vs JPEG: incompatible pixel format")
-                End If
-            Else
-                Throw New Exception("BitmapInfo.SetBmpAndJpg(): Bitmap vs JPEG: different size")
-            End If
-        Else
-            Throw New Exception("BitmapInfo.SetBmpAndJpg(): Can't parse JPEG data")
-        End If
-    End Sub
-
-    Public Sub SetJpg(jpg As Byte())
-        Dim jpgChannelCount = 0 'Количество каналов JPEG
-        Dim jpgSize = GetJpegSize(jpg, jpgChannelCount) 'Извлекаем данные о размере изображения из JPEG-потока
-        If (jpgChannelCount = 3 OrElse jpgChannelCount = 1) AndAlso (jpgSize.Width > 0 AndAlso jpgSize.Height > 0) Then
+            BmpLock(timeoutMs)
             Try
-                BmpLock()
-                EliminateBmp() 'При установке JPEG чистим Bmp
+                EliminateBmpInternal() 'При установке JPEG чистим Bmp
                 _bmpSize = jpgSize
                 _bmpPixelFormat = If(jpgChannelCount = 3, PixelFormat.Format24bppRgb, PixelFormat.Format8bppIndexed)
                 _jpg = jpg
@@ -150,10 +146,15 @@ Public Class BitmapInfo
         End If
     End Sub
 
-    Public Sub SetBmp(bmp As Bitmap)
+    ''' <summary>
+    ''' Устанавливает Bitmap и элиминирует данные JPEG.
+    ''' </summary>
+    ''' <param name="bmp">Bitmap для установки.</param>
+    ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+    Public Sub SetBmp(bmp As Bitmap, Optional timeoutMs As Integer = 10000)
+        BmpLock(timeoutMs)
         Try
-            BmpLock()
-            EliminateJpg() 'При установке Bmp чистим Jpeg
+            EliminateJpgInternal() 'При установке Bmp чистим Jpeg
             SetBmpInternal(bmp)
         Catch ex As Exception
             Throw ex
@@ -162,19 +163,17 @@ Public Class BitmapInfo
         End Try
     End Sub
 
-    Private Sub SetBmpInternal(bmp As Bitmap)
-        _bmp = bmp
-        _bmpIsNothing = _bmp Is Nothing
-        _bmpSize = If(_bmp IsNot Nothing, _bmp.Size, Nothing)
-        _bmpPixelFormat = If(_bmp IsNot Nothing, _bmp.PixelFormat, Nothing)
-    End Sub
-
-    Public Function GetClonedBmp() As Bitmap
+    ''' <summary>
+    ''' Получение клонированного изображения.
+    ''' </summary>
+    ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+    ''' <returns>Клонированный Bitmap.</returns>
+    Public Function GetClonedBmp(Optional timeoutMs As Integer = 10000) As Bitmap
         Dim result As Bitmap = Nothing
+        BmpLock(timeoutMs)
         Try
-            BmpLock()
             Dim bmp = GetBitmapDecoded()
-            result = BmpClone2(bmp)
+            result = BmpCloneInternal(bmp)
         Catch ex As Exception
             Throw ex
         Finally
@@ -183,13 +182,18 @@ Public Class BitmapInfo
         Return result
     End Function
 
-    Public Function GetClonedBmpGray() As Bitmap
+    ''' <summary>
+    ''' Получение клонированного изображения.
+    ''' </summary>
+    ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+    ''' <returns>Клонированный Bitmap.</returns>
+    Public Function GetClonedBmpGray(Optional timeoutMs As Integer = 10000) As Bitmap
         Dim result As Bitmap = Nothing
+        BmpLock(timeoutMs)
         Try
-            BmpLock()
             Dim bmp = GetBitmapDecoded()
             If bmp.PixelFormat = Drawing.Imaging.PixelFormat.Format8bppIndexed Then
-                result = BmpClone2(bmp)
+                result = BmpCloneInternal(bmp)
             Else
                 result = UnsafeFunctions.RgbToGray(bmp)
             End If
@@ -201,11 +205,15 @@ Public Class BitmapInfo
         Return result
     End Function
 
-    Public Sub Clear()
+    ''' <summary>
+    ''' Очистка изображений Bitmap/JPEG.
+    ''' </summary>
+    ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+    Public Sub Clear(Optional timeoutMs As Integer = 10000)
+        BmpLock(timeoutMs)
         Try
-            BmpLock()
-            EliminateJpg()
-            EliminateBmp()
+            EliminateJpgInternal()
+            EliminateBmpInternal()
         Catch ex As Exception
             Throw ex
         Finally
@@ -214,28 +222,7 @@ Public Class BitmapInfo
     End Sub
 
     ''' <summary>
-    ''' Очистка Bitmap-а.
-    ''' </summary>
-    ''' <remarks>Если внутри есть JPEG - он будет переустановлен с подтяжкой свойств (размер/формат пикселя).</remarks>
-    Public Sub ClearBmp()
-        Dim jpg = _jpg
-        If jpg IsNot Nothing Then 'Если есть данные JPEG...
-            SetJpg(jpg) '...то очистку битмапа можно выполнить более рационально - EliminateBmp() внутри вызывается автоматически
-        Else
-            EliminateBmp() '...или же очистку Bitmap-а вызываем явно
-        End If
-    End Sub
-
-    ''' <summary>
-    ''' Очистка JPEG.
-    ''' </summary>
-    ''' <remarks>Если внутри есть Bitmap - он будет переустановлен с подтяжкой свойств (размер/формат пикселя).</remarks>
-    Public Sub ClearJpg()
-        SetBmp(_bmp) 'Очистка JPEG выполняется автоматически, гарантируется наличие свойств от Bitmap-а
-    End Sub
-
-    ''' <summary>
-    ''' Извлечение данных Bitmap-а.
+    ''' Извлечение данных Bitmap-а (если он пуст, и есть JPEG-данные).
     ''' </summary>
     Private Function GetBitmapDecoded() As Bitmap
         If _bmp Is Nothing AndAlso _jpg IsNot Nothing Then
@@ -254,7 +241,14 @@ Public Class BitmapInfo
         If bitmapKeepTimeS >= 0 AndAlso bitmapKeepTimeS <> Single.MaxValue Then
             Dim thr = New Thread(Sub()
                                      Thread.Sleep(TimeSpan.FromSeconds(bitmapKeepTimeS))
-                                     EliminateBmp()
+                                     BmpLock()
+                                     Try
+                                         EliminateBmpInternal()
+                                     Catch ex As Exception
+                                         Throw ex
+                                     Finally
+                                         BmpUnlock()
+                                     End Try
                                  End Sub) With {.IsBackground = True}
             thr.Start()
         End If
@@ -283,7 +277,7 @@ Public Class BitmapInfo
     ''' </summary>
     ''' <param name="bmp">Исходное изображение.</param>
     ''' <returns>Клонированное изображение.</returns>
-    Private Function BmpClone2(bmp As Bitmap) As Bitmap
+    Private Function BmpCloneInternal(bmp As Bitmap) As Bitmap
         Dim result As Bitmap = Nothing
         Try
             result = UnsafeFunctions.BitmapClone(bmp)
@@ -291,22 +285,27 @@ Public Class BitmapInfo
             Try
                 result = New Bitmap(bmp)
             Catch
-                Throw New Exception("BitmapInfo:BmpClone2() failed")
+                Throw New Exception("BitmapInfo:BmpCloneInternal() failed")
             End Try
         End Try
         Return result
     End Function
 
-    Private Sub EliminateJpg()
+    Private Sub EliminateJpgInternal()
         _jpg = Nothing
     End Sub
 
-    Private Sub EliminateBmp()
+    Private Sub EliminateBmpInternal()
         If _bmp IsNot Nothing Then
             _bmp.Dispose()
             _bmp = Nothing
         End If
-        _bmpIsNothing = True
+    End Sub
+
+    Private Sub SetBmpInternal(bmp As Bitmap)
+        _bmp = bmp
+        _bmpSize = If(_bmp IsNot Nothing, _bmp.Size, Nothing)
+        _bmpPixelFormat = If(_bmp IsNot Nothing, _bmp.PixelFormat, Nothing)
     End Sub
 
     ''' <summary>
@@ -363,14 +362,7 @@ Public Class BitmapInfo
     Protected Overridable Sub Dispose(disposing As Boolean)
         If Not _disposed Then
             If disposing Then
-                Try
-                    BmpLock()
-                    EliminateJpg()
-                    EliminateBmp()
-                Catch
-                Finally
-                    BmpUnlock()
-                End Try
+                Clear()
             End If
         End If
         _disposed = True
