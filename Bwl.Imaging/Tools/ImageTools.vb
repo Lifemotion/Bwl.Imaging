@@ -50,4 +50,12 @@ Public Module ImageTools
         Dim bottom = points.Max(Function(item) item.Y)
         Return Rectangle.FromLTRB(left, top, right, bottom)
     End Function
+
+    Public Function ConvertTo(img As Image, targetPixelFormat As PixelFormat) As Bitmap
+        Dim bmp = New Bitmap(img.Width, img.Height, targetPixelFormat)
+        Using gr = Graphics.FromImage(bmp)
+            gr.DrawImage(img, New Rectangle(0, 0, img.Width, img.Height))
+        End Using
+        Return bmp
+    End Function
 End Module

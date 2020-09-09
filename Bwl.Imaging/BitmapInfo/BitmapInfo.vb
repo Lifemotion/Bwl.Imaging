@@ -72,6 +72,10 @@ Public Class BitmapInfo
     Public Sub New()
     End Sub
 
+    Public Sub New(bmp As Bitmap, jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
+        SetBmpAndJpg(bmp, jpg, bitmapKeepTimeS)
+    End Sub
+
     Public Sub New(jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
         SetJpg(jpg, bitmapKeepTimeS)
     End Sub
@@ -93,6 +97,36 @@ Public Class BitmapInfo
     Public Function GetJpg() As Byte()
         Return _jpg
     End Function
+
+    Public Sub SetBmpAndJpg(bmp As Bitmap, jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
+        Dim jpgChannelCount = 0 'Количество каналов JPEG
+        Dim jpgSize = GetJpegSize(jpg, jpgChannelCount) 'Извлекаем данные о размере изображения из JPEG-потока
+        If (jpgChannelCount = 3 OrElse jpgChannelCount = 1) AndAlso (jpgSize.Width > 0 AndAlso jpgSize.Height > 0) Then
+            If bmp.Size = jpgSize Then
+                Dim bmpChannelCount = If(bmp.PixelFormat = PixelFormat.Format8bppIndexed, 1, 3)
+                If bmpChannelCount = jpgChannelCount Then
+                    Try
+                        BmpLock()
+                        EliminateBmp() 'При установке JPEG чистим Bmp
+                        SetBmpInternal(bmp) 'Устанавливаем Bmp
+                        _jpg = jpg 'Все данные по размеру и форматам изображения установлены с Bmp, JPEG проверен и просто присваиваем
+                        Me.BitmapKeepTimeS = bitmapKeepTimeS
+                        BitmapDisposeWithDelay(bitmapKeepTimeS) 'Отложенная очистка битмапа также должна быть активирована
+                    Catch ex As Exception
+                        Throw ex
+                    Finally
+                        BmpUnlock()
+                    End Try
+                Else
+                    Throw New Exception("BitmapInfo.SetBmpAndJpg(): Bitmap vs JPEG: incompatible pixel format")
+                End If
+            Else
+                Throw New Exception("BitmapInfo.SetBmpAndJpg(): Bitmap vs JPEG: different size")
+            End If
+        Else
+            Throw New Exception("BitmapInfo.SetBmpAndJpg(): Can't parse JPEG data")
+        End If
+    End Sub
 
     Public Sub SetJpg(jpg As Byte(), Optional bitmapKeepTimeS As Single = Single.MaxValue)
         Dim jpgChannelCount = 0 'Количество каналов JPEG
@@ -176,6 +210,27 @@ Public Class BitmapInfo
         Finally
             BmpUnlock()
         End Try
+    End Sub
+
+    ''' <summary>
+    ''' Очистка Bitmap-а.
+    ''' </summary>
+    ''' <remarks>Если внутри есть JPEG - он будет переустановлен с подтяжкой свойств (размер/формат пикселя).</remarks>
+    Public Sub ClearBmp()
+        Dim jpg = _jpg
+        If jpg IsNot Nothing Then 'Если есть данные JPEG...
+            SetJpg(jpg) '...то очистку битмапа можно выполнить более рационально - EliminateBmp() внутри вызывается автоматически
+        Else
+            EliminateBmp() '...или же очистку Bitmap-а вызываем явно
+        End If
+    End Sub
+
+    ''' <summary>
+    ''' Очистка JPEG.
+    ''' </summary>
+    ''' <remarks>Если внутри есть Bitmap - он будет переустановлен с подтяжкой свойств (размер/формат пикселя).</remarks>
+    Public Sub ClearJpg()
+        SetBmp(_bmp) 'Очистка JPEG выполняется автоматически, гарантируется наличие свойств от Bitmap-а
     End Sub
 
     ''' <summary>
