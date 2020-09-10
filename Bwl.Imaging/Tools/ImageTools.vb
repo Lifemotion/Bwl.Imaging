@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing.Drawing2D
+Imports System.Runtime.CompilerServices
 
 Public Module ImageTools
     Public Function Resize(img As Bitmap, W As Integer, H As Integer,
@@ -51,6 +52,7 @@ Public Module ImageTools
         Return Rectangle.FromLTRB(left, top, right, bottom)
     End Function
 
+    <Extension()>
     Public Function ConvertTo(img As Image, targetPixelFormat As PixelFormat) As Bitmap
         Dim bmp = New Bitmap(img.Width, img.Height, targetPixelFormat)
         Using gr = Graphics.FromImage(bmp)

@@ -229,7 +229,7 @@ Public Class BitmapInfoTests
         Dim mtrxSrc = src.BitmapToRgbMatrix()
         Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.2)
+        Assert.IsTrue(mtrxDiffPerc < 0.5)
     End Sub
 
     <TestMethod>
@@ -290,6 +290,25 @@ Public Class BitmapInfoTests
                 bi.BmpUnlock()
             End Try
         Next
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoBmp2JpgTest()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
+        Dim bi = New BitmapInfo(UnsafeFunctions.BitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Assert.IsFalse(bi.BmpIsNothing) 'Bitmap уже есть...
+        Assert.IsTrue(bi.JpgIsNothing) '...а JPEG не развернут
+        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Исходный Bitmap имеет 32 бита на пиксель
+        bi.Bmp2Jpg()
+        Assert.IsTrue(bi.BmpIsNothing) 'Bitmap элиминирован при установке JPEG...
+        Assert.IsFalse(bi.JpgIsNothing) '...а JPEG развернут
+        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При восстановлении из JPEG пиксель 24 бита
+        'Проверка изображений на соответствие
+        Dim bmpJpg = bi.GetClonedBmp() 'Восстановленный из JPEG битмап
+        Dim mtrxSrc = src.BitmapToRgbMatrix()
+        Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
+        Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
+        Assert.IsTrue(mtrxDiffPerc < 0.5)
     End Sub
 
     ''' <summary>

@@ -68,6 +68,9 @@
     <Import Include="System.Linq" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\refs-src\JpegCodec.vb">
+      <Link>refs-src\JpegCodec.vb</Link>
+    </Compile>
     <Compile Include="BitmapInfo\BitmapInfo.vb" />
     <Compile Include="Bitmap\BitmapObject.vb" />
     <Compile Include="Bitmap\DisplayBitmap.vb" />
