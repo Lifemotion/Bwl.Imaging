@@ -117,22 +117,26 @@ Public Class BitmapInfo
     End Sub
 
     ''' <summary>
-    ''' "Перенос" Bitmap-а в JPEG.
+    ''' Обеспечивает экономию ОЗУ:
+    ''' 1 - При наличии Bitmap-а и отсутствии JPEG-а: формируем JPEG на основе Bitmap-а.
+    ''' 2 - При наличии Bitmap-а и наличии JPEG-а: элиминирование Bitmap-а и переустановка JPEG-а.
     ''' </summary>
     ''' <remarks>
     ''' Q=90 - высокое качество с сохранением мелких деталей и цветных градиентов.
     ''' Q=80 - высокое качество с сохранением мелких деталей.
     ''' Q=60 - приемлемое качество для технических целей (дальше размер падает медленнее и растут артефакты).
     ''' Q=50 - качество отладочного канала.
-    ''' </remarks>    
+    ''' </remarks>
     ''' <param name="quality">Уровень качества JPEG.</param>
     ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-    Public Sub Bmp2Jpg(Optional quality As Integer = 80,
-                       Optional timeoutMs As Integer = 10000)
+    Public Sub Compress(Optional quality As Integer = 80,
+                        Optional timeoutMs As Integer = 10000)
         BmpLock(timeoutMs)
         Try
-            If _bmp IsNot Nothing AndAlso _jpg Is Nothing Then
-                Dim jpg = JpegCodec.Encode(_bmp, quality).ToArray()
+            If _bmp IsNot Nothing Then
+                'Если JPEG-а нет, сформируем. Если есть - битмап был получен декомпрессией JPEG,
+                'просто переустановим JPEG-данные и элиминируем Bitmap, освободив ОЗУ.
+                Dim jpg = If(_jpg Is Nothing, JpegCodec.Encode(_bmp, quality).ToArray(), _jpg)
                 SetJpg(jpg, -1) '-1 - для отказа от блокировки/разблокировки разделяемого ресурса
             End If
         Finally
