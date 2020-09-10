@@ -117,7 +117,7 @@ Public Class BitmapInfo
     End Sub
 
     ''' <summary>
-    ''' "Перенос" Bitmap-а в JPEG (если JPEG-данные есть, действие не выполняется).
+    ''' "Перенос" Bitmap-а в JPEG.
     ''' </summary>
     ''' <remarks>
     ''' Q=90 - высокое качество с сохранением мелких деталей и цветных градиентов.
@@ -131,7 +131,7 @@ Public Class BitmapInfo
                        Optional timeoutMs As Integer = 10000)
         BmpLock(timeoutMs)
         Try
-            If _bmp IsNot Nothing Then
+            If _bmp IsNot Nothing AndAlso _jpg Is Nothing Then
                 Dim jpg = JpegCodec.Encode(_bmp, quality).ToArray()
                 SetJpg(jpg, -1) '-1 - для отказа от блокировки/разблокировки разделяемого ресурса
             End If
@@ -285,8 +285,8 @@ Public Class BitmapInfo
     ''' <returns>Декомпрессированное изображение.</returns>
     Private Function DecodeJpegInternal(jpg As Byte()) As Bitmap
         Dim result As Bitmap = Nothing
-        If jpg Is Nothing OrElse jpg.Length = 0 Then
-            Throw New Exception("BitmapInfo.DecodeJpeg(): Can't get frame - stored JPEG stream is empty or null")
+        If jpg Is Nothing Then
+            Throw New Exception("BitmapInfo.DecodeJpeg(): JPEG is Nothing")
         Else
             Try
                 result = New Bitmap(New IO.MemoryStream(jpg))
