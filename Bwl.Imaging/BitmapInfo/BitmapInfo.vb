@@ -22,16 +22,34 @@ Public Class BitmapInfo
     Private _bitmapEliminatedCount As Long
 
     ''' <summary>
-    ''' Глобальный счетчик осуществленных компрессий (не переустановок JPEG).
+    ''' Глобальный счетчик осуществленных компрессий JPEG (а не переприсваиваний).
     ''' </summary>
-    Public ReadOnly Property GlobalCompressedCount As Long
+    Public Shared ReadOnly Property GlobalCompressedCount As Long
         Get
             Return Interlocked.Read(_globalCompressedCount)
         End Get
     End Property
 
     ''' <summary>
-    ''' Счетчик осуществленных компрессий (не переустановок JPEG) экземпляра.
+    ''' Глобальный счетчик декомпрессий JPEG.
+    ''' </summary>
+    Public Shared ReadOnly Property GlobalDecompressedCount As Long
+        Get
+            Return Interlocked.Read(_globalDecompressedCount)
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Глобальный счетчик количества элиминирований Bitmap-а.
+    ''' </summary>
+    Public Shared ReadOnly Property GlobalBitmapEliminatedCount As Long
+        Get
+            Return Interlocked.Read(_globalBitmapEliminatedCount)
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Счетчик осуществленных компрессий JPEG (а не переприсваиваний).
     ''' </summary>
     Public ReadOnly Property CompressedCount As Long
         Get
@@ -40,16 +58,7 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Глобальный счетчик декомпрессий.
-    ''' </summary>
-    Public ReadOnly Property GlobalDecompressedCount As Long
-        Get
-            Return Interlocked.Read(_globalDecompressedCount)
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' Счетчик декомпрессий экземпляра.
+    ''' Счетчик декомпрессий JPEG.
     ''' </summary>
     Public ReadOnly Property DecompressedCount As Long
         Get
@@ -58,16 +67,7 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Глобальный счетчик количества элиминирований Bitmap-а.
-    ''' </summary>
-    Public ReadOnly Property GlobalBitmapEliminatedCount As Long
-        Get
-            Return Interlocked.Read(_globalBitmapEliminatedCount)
-        End Get
-    End Property
-
-    ''' <summary>
-    ''' Счетчик количества элиминирований Bitmap-а экземпляра.
+    ''' Счетчик количества элиминирований Bitmap-а.
     ''' </summary>
     Public ReadOnly Property BitmapEliminatedCount As Long
         Get
@@ -80,12 +80,15 @@ Public Class BitmapInfo
     ''' </summary>
     Public Property BitmapKeepTimeS As Single = 5
 
+    ''' <summary>
+    ''' Прямой доступ по ссылке к хранимому Bitmap-у.
+    ''' </summary>
     '''<remarks>
-    ''' При обращении к Bmp обязательно использовать методы BmpLock() / BmpUnlock()
+    ''' При обращении к Bmp обязательно использовать методы BmpLock() / BmpUnlock().
     '''</remarks>
     Public ReadOnly Property Bmp As Bitmap
         Get
-            'Перед предоставлением объекта проверяем, выполнен ли Lock на объекте синхронизации...
+            'Перед предоставлением объекта проверяем, выполнен ли Lock() на объекте синхронизации...
             If _bmpSemaphore.WaitOne(0) Then 'Если удалось заблокировать ресурс...
                 _bmpSemaphore.Release()
                 Throw New Exception("BitmapInfo.Bmp: 'Bmp' property access without BmpLock() before") '...свойство Bmp используется некорректно (то есть без блокировки)!
