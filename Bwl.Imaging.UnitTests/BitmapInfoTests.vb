@@ -36,7 +36,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoSetBmpTest()
+    Public Sub BitmapInfoSetBmpTest1()
         Dim src1 = GetTestBmp()
         Dim src2 = GetTestBmp()
         For i = 0 To Math.Min(src2.Width, src2.Height) - 1
@@ -55,6 +55,20 @@ Public Class BitmapInfoTests
             exceptionDetected = True
         End Try
         Assert.AreEqual(False, exceptionDetected)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoSetBmpTest2()
+        Dim src1 = GetTestBmp()
+        Dim src2 = GetTestBmp()
+        Dim bi = New BitmapInfo(src1) With {.BitmapKeepTimeS = 2} 'Исходный битмап загружен...
+        bi.Compress() '...теперь он сжат в JPEG, а Bitmap элиминирован - ОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №1
+        Dim bmpJpg = bi.GetClonedBmp() '...была декомпрессия из Jpeg в Bmp и запустился отложенный Dispose для Bitmap-а НЕОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2
+        bi.SetBmp(src2) '...и тут мы ставим второй Bmp, в то же время НЕОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2 готовиться сработать
+        Thread.Sleep(3000) 'за 3 секунды должен отработать/не отработать отложенный Dispose() - НЕОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2, но т.к. цель сменилась - отработки нет
+        Assert.IsTrue(bi.CompressedCount = 1)
+        Assert.IsTrue(bi.DecompressedCount = 1)
+        Assert.IsTrue(bi.BitmapEliminatedCount = 1) 'Если все прошло нормально, второй Bitmap не попадет под ненужное элиминирование
     End Sub
 
     <TestMethod>
