@@ -138,9 +138,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\_4x3-rgb.bmp">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <None Include="Resources\_4x3-rgb.bmp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\_4x3-gray.bmp" />
@@ -171,6 +169,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\jpeg24bpp.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\No_JFIF.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CMYK.jpg" />
+    <None Include="Resources\Gray.jpg" />
+    <None Include="Resources\RGB.jpg" />
+    <None Include="Resources\YCbCr.jpg" />
+    <None Include="Resources\YCbCrK.jpg" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">

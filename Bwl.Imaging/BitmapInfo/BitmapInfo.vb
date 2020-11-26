@@ -460,44 +460,47 @@ Public Class BitmapInfo
     ''' <summary>
     ''' Извлечение размера изображения из JPEG-потока без его декодирования.
     ''' </summary>
-    Private Function GetJpegSize(jpg As Byte(), ByRef channelCount As Integer) As Size
+    Private Function GetJpegSize(jpg As Byte(), ByRef channelCount As Integer,
+                                 Optional maxBytesInSearch As Integer = 1024) As Size
+        'Инициализация фиктивными значениями, чтобы фиксировать ситуации "не считывания"
         Dim res = New Size(-1, -1)
         channelCount = -1
+        'Количество обнаруженных таблиц квантования
+        Dim quantTbl = 0
         Try
-            Dim pos = 0 'Keeps track of the position within the file
-            If jpg(pos) = &HFF AndAlso jpg(pos + 1) = &HD8 AndAlso jpg(pos + 2) = &HFF AndAlso jpg(pos + 3) = &HE0 Then
-                pos += 4
-                'Check for valid JPEG header (null terminated JFIF)
-                If jpg(pos + 2) = AscW("J"c) AndAlso jpg(pos + 3) = AscW("F"c) AndAlso jpg(pos + 4) = AscW("I"c) AndAlso jpg(pos + 5) = AscW("F"c) AndAlso jpg(pos + 6) = &H0 Then
-                    'Retrieve the block length of the first block since the first block will not contain the size of file
-                    Dim blockLength = jpg(pos) * 256 + jpg(pos + 1)
-                    Do While pos < jpg.Length
-                        pos += blockLength 'Increase the file index to get to the next block
-                        If pos >= jpg.Length Then
-                            Return res 'Check to protect against segmentation faults
-                        End If
-                        If jpg(pos) <> &HFF Then
-                            Return res 'Check that we are truly at the start of another block
-                        End If
-                        If jpg(pos + 1) = &HC0 Then '0xFFC0 is the "Start of frame" marker which contains the file size
-                            'The structure of the 0xFFC0 block is quite simple [0xFFC0][ushort length][uchar precision][ushort x][ushort y]
+            Dim pos = 0 'Позиция в файле
+            If jpg(pos) = &HFF AndAlso jpg(pos + 1) = &HD8 Then
+                pos += 2 'Перешагиваем через маркер
+                Dim blockLength = 0 'Длина блока пока неизвестна...
+                Do While pos < Math.Min(maxBytesInSearch, jpg.Length) 'Работа в пределах допустимой области файла
+                    pos += blockLength 'Переходим к следующему блоку
+                    If pos > jpg.Length - 2 Then 'Выход за пределы массива: "jpg(pos + 1)"
+                        Return res 'Ошибка - вышли за пределы области данных для поиска
+                    End If
+                    If jpg(pos) <> &HFF Then 'Проверка на то, действительно ли мы перешли на заголовок блока (если нет - ошибка)
+                        Return res 'Ошибка - не обнаружен признак маркера блока
+                    End If
+                    If jpg(pos + 1) = &HC0 Then '0xFFC0 - маркер начала кадра, далее можно узнать размеры изображения
+                        If quantTbl > 0 Then 'Если JPEG валиден, должны были встретить минимум один блок 0xFFDB - таблицу квантования
+                            'Структура блока 0xFFC0: [0xFFC0][ushort length][uchar precision][ushort x][ushort y]
                             Dim height = jpg(pos + 5) * 256 + jpg(pos + 6)
                             Dim width = jpg(pos + 7) * 256 + jpg(pos + 8)
                             channelCount = jpg(pos + 9)
                             res = New Size(width, height)
-                            Return res
-                        Else
-                            pos += 2 'Skip the block marker
-                            blockLength = jpg(pos) * 256 + jpg(pos + 1) 'Go to the next block
                         End If
-                    Loop
-                    Return res 'If this point is reached then no size was found
-                Else
-                    Return res
-                End If 'Not a valid JFIF string
+                        Return res 'Данные о размере изображения считаны
+                    Else
+                        If jpg(pos + 1) = &HDB Then '0xFFDB - маркер таблицы квантования (учитываем ее нахождение, т.к. это также является признаком валидного JPEG)
+                            quantTbl += 1 'При поиске 0xFFC0 все равно проходим по этим маркерам, лучше их подсчитать
+                        End If
+                        pos += 2 'Перешагиваем через маркер блока...
+                        blockLength = jpg(pos) * 256 + jpg(pos + 1) '...и переходим к следующему
+                    End If
+                Loop
+                Return res 'Ошибка - исчерпали данные для поиска
             Else
-                Return res
-            End If 'Not a valid SOI header
+                Return res 'Ошибка - не найден стартовый маркер
+            End If
         Catch ex As Exception
             res = New Size(-1, -1)
             channelCount = -1
