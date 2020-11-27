@@ -308,7 +308,19 @@ Public Class BitmapInfoTests
 
     <TestMethod>
     Public Sub BitmapInfoJpegTest_Formats()
-        For Each file In {"No_JFIF.jpg", "CMYK.jpg", "Gray.jpg", "RGB.jpg", "YCbCr.jpg", "YCbCrK.jpg"}
+        For Each file In {"CMYK.jpg", "Gray.jpg", "RGB.jpg", "YCbCr.jpg", "YCbCrK.jpg"}
+            Dim jpg = GetResourceFileData(file) 'Читаем файл
+            Dim bi = New BitmapInfo(jpg) 'Устанавливаем JPEG
+            Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
+            Dim bmpJpg = bi.GetClonedBmp() '...получаем Bitmap
+            Assert.IsTrue(bmpJpg.Size = bi.BmpSize) 'Проверка
+            Assert.IsTrue(bmpJpg.PixelFormat = bi.BmpPixelFormat) 'Проверка
+        Next
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoJpegTest_CamFormats()
+        For Each file In {"26FWD_IZHS.jpg", "No_JFIF.jpg"}
             Dim jpg = GetResourceFileData(file) 'Читаем файл
             Dim bi = New BitmapInfo(jpg) 'Устанавливаем JPEG
             Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...

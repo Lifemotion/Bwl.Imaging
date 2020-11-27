@@ -465,8 +465,6 @@ Public Class BitmapInfo
         'Инициализация фиктивными значениями, чтобы фиксировать ситуации "не считывания"
         Dim res = New Size(-1, -1)
         channelCount = -1
-        'Количество обнаруженных таблиц квантования
-        Dim quantTbl = 0
         Try
             Dim pos = 0 'Позиция в файле
             If jpg(pos) = &HFF AndAlso jpg(pos + 1) = &HD8 Then
@@ -481,18 +479,13 @@ Public Class BitmapInfo
                         Return res 'Ошибка - не обнаружен признак маркера блока
                     End If
                     If jpg(pos + 1) = &HC0 Then '0xFFC0 - маркер начала кадра, далее можно узнать размеры изображения
-                        If quantTbl > 0 Then 'Если JPEG валиден, должны были встретить минимум один блок 0xFFDB - таблицу квантования
-                            'Структура блока 0xFFC0: [0xFFC0][ushort length][uchar precision][ushort x][ushort y]
-                            Dim height = jpg(pos + 5) * 256 + jpg(pos + 6)
-                            Dim width = jpg(pos + 7) * 256 + jpg(pos + 8)
-                            channelCount = jpg(pos + 9)
-                            res = New Size(width, height)
-                        End If
+                        'Структура блока 0xFFC0: [0xFFC0][ushort length][uchar precision][ushort x][ushort y]
+                        Dim height = jpg(pos + 5) * 256 + jpg(pos + 6)
+                        Dim width = jpg(pos + 7) * 256 + jpg(pos + 8)
+                        channelCount = jpg(pos + 9)
+                        res = New Size(width, height)
                         Return res 'Данные о размере изображения считаны
                     Else
-                        If jpg(pos + 1) = &HDB Then '0xFFDB - маркер таблицы квантования (учитываем ее нахождение, т.к. это также является признаком валидного JPEG)
-                            quantTbl += 1 'При поиске 0xFFC0 все равно проходим по этим маркерам, лучше их подсчитать
-                        End If
                         pos += 2 'Перешагиваем через маркер блока...
                         blockLength = jpg(pos) * 256 + jpg(pos + 1) '...и переходим к следующему
                     End If

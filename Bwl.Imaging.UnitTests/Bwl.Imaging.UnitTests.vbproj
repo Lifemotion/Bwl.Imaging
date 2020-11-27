@@ -180,6 +180,9 @@
     <None Include="Resources\YCbCr.jpg" />
     <None Include="Resources\YCbCrK.jpg" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\26FWD_IZHS.jpg" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
