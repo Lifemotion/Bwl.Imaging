@@ -36,7 +36,7 @@
     Public Function PolygonIsEmpty(polygon As PointF()) As Boolean
         If polygon.Length > 3 Then
             Dim firstPoint = polygon(0)
-            For i = 0 To polygon.Length - 1
+            For i = 1 To polygon.Length - 1
                 Dim currentPoint = polygon(i)
                 If currentPoint <> firstPoint Then
                     Return False
@@ -49,18 +49,18 @@
     ''' <summary>
     ''' Тест: точка находится внутри полигона?
     ''' </summary>
-    Public Function PointInPolygon(point As PointF, points As PointF()) As Boolean
-        Dim result As Boolean = False
-        Dim i As Integer = 0
-        Dim j = points.Length - 1
-        For i = 0 To points.Length - 1
-            If ((((points(i).Y <= point.Y) And (point.Y < points(j).Y)) Or ((points(j).Y <= point.Y) And (point.Y < points(i).Y)))) Then
-                If (point.X < (points(j).X - points(i).X) * (point.Y - points(i).Y) / (points(j).Y - points(i).Y) + points(i).X) Then
+    Public Function PointInPolygon(point As PointF, polygon As PointF()) As Boolean
+        Dim result = False
+        Dim N = polygon.Length
+        Dim j = N - 1
+        For i = 0 To N - 1
+            If ((polygon(i).Y <= point.Y) AndAlso (point.Y < polygon(j).Y)) OrElse ((polygon(j).Y <= point.Y) AndAlso (point.Y < polygon(i).Y)) Then
+                If point.X < (polygon(j).X - polygon(i).X) * (point.Y - polygon(i).Y) / (polygon(j).Y - polygon(i).Y) + polygon(i).X Then
                     result = Not result
                 End If
             End If
             j = i
-        Next i
+        Next
         Return result
     End Function
 
