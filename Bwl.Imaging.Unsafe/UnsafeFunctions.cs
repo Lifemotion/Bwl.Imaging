@@ -340,7 +340,7 @@ namespace Bwl.Imaging.Unsafe
                                 byte* m4 = srcScan4 + col;
                                 byte* t2 = trgtScan2 + col;
                                 double value = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
-                                               -0.1 * m2[0] +  1.8 * m2[2] + -0.1 * m2[4] +
+                                               -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
                                                -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
                                 value = value < 0 ? 0 : value;
                                 value = value > 255 ? 255 : value;
@@ -453,7 +453,7 @@ namespace Bwl.Imaging.Unsafe
                                 byte* m2 = yScan2 + col;
                                 byte* m4 = yScan4 + col;
                                 double valueY = -0.1 * m0[0] + -0.1 * m0[2] + -0.1 * m0[4] +
-                                                -0.1 * m2[0] +  1.8 * m2[2] + -0.1 * m2[4] +
+                                                -0.1 * m2[0] + 1.8 * m2[2] + -0.1 * m2[4] +
                                                 -0.1 * m4[0] + -0.1 * m4[2] + -0.1 * m4[4];
                                 valueY = valueY < 0 ? 0 : valueY;
                                 valueY = valueY > 255 ? 255 : valueY;
@@ -987,6 +987,79 @@ namespace Bwl.Imaging.Unsafe
                     }
                     srcBmp.UnlockBits(srcBmd);
                     return trgtData;
+                }
+                else
+                {
+                    throw new Exception("Unsupported pixel format");
+                }
+            }
+        }
+
+        public static bool JpegDecodedOK(Bitmap srcBmp)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            lock (srcBmp)
+            {
+                if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
+                {
+                    bool diffDetected = false;
+                    int sizeLong = sizeof(long);
+                    int jpegBlockSize = 8;
+                    BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);                    
+                    int jpegRowA = srcBmd.Height - (2 * jpegBlockSize);
+                    int jpegRowB = srcBmd.Height - (1 * jpegBlockSize);
+                    if ((srcBmd.Width * srcPixelSize) % sizeLong == 0) // Если можем сравнивать полезные данные как как long-и...
+                    {
+                        unsafe
+                        {
+                            byte* srcBytesA = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowA;
+                            byte* srcBytesB = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowB;
+                            long* srcLongsA = (long*)srcBytesA;
+                            long* srcLongsB = (long*)srcBytesB;
+                            for (int jpegBlockRow = 0; jpegBlockRow < jpegBlockSize; jpegBlockRow++) // Проходим по всем строкам блоков JPEG
+                            {
+                                for (int col = 0; col < (srcBmd.Width * srcPixelSize) / sizeLong; col++)
+                                {
+                                    if (srcLongsA[col] != srcLongsB[col])
+                                    {
+                                        diffDetected = true; // Найдено отличие в элементах строки
+                                        jpegBlockRow = jpegBlockSize;
+                                        break;
+                                    }
+                                }
+                                srcLongsA += srcBmd.Stride / sizeLong;
+                                srcLongsB += srcBmd.Stride / sizeLong;
+                            }
+                        }
+                    }
+                    else //...иначе работаем с данными-байтами
+                    {
+                        unsafe
+                        {
+                            byte* srcBytesA = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowA;
+                            byte* srcBytesB = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowB;
+                            for (int jpegBlockRow = 0; jpegBlockRow < jpegBlockSize; jpegBlockRow++) // Проходим по всем строкам блоков JPEG
+                            {
+                                for (int col = 0; col < srcBmd.Width * srcPixelSize; col++)
+                                {
+                                    if (srcBytesA[col] != srcBytesB[col])
+                                    {
+                                        diffDetected = true; // Найдено отличие в элементах строки
+                                        jpegBlockRow = jpegBlockSize;
+                                        break;
+                                    }
+                                }
+                                srcBytesA += srcBmd.Stride;
+                                srcBytesB += srcBmd.Stride;
+                            }
+                        }
+                    }
+                    srcBmp.UnlockBits(srcBmd);
+                    return diffDetected;
                 }
                 else
                 {
