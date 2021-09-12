@@ -1005,61 +1005,45 @@ namespace Bwl.Imaging.Unsafe
             {
                 if ((srcBmp.PixelFormat == PixelFormat.Format24bppRgb) || (srcBmp.PixelFormat == PixelFormat.Format32bppArgb))
                 {
-                    bool diffDetected = false;
-                    int sizeLong = sizeof(long);
+                    bool checkResult = true;
                     int jpegBlockSize = 8;
                     BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
-                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);                    
-                    int jpegRowA = srcBmd.Height - (2 * jpegBlockSize);
-                    int jpegRowB = srcBmd.Height - (1 * jpegBlockSize);
-                    if ((srcBmd.Width * srcPixelSize) % sizeLong == 0) // Если можем сравнивать полезные данные как как long-и...
+                    int srcPixelSize = GetPixelSize(srcBmp.PixelFormat);
+                    int fullJpegBlocksH = srcBmd.Height / jpegBlockSize; // Количество полных JPEG-блоков по ширине
+                    int fullJpegBlocksW = srcBmd.Width / jpegBlockSize; // Количество полных JPEG-блоков по ширине
+                    int maxCol = fullJpegBlocksW * jpegBlockSize * srcPixelSize; // Максимальное значение столбца
+                    for (int jpegBlockH = 0; jpegBlockH < fullJpegBlocksH - 2; jpegBlockH++)
                     {
+                        var jpegRowA = (jpegBlockH + 0) * jpegBlockSize;
+                        var jpegRowB = (jpegBlockH + 2) * jpegBlockSize;
                         unsafe
                         {
                             byte* srcBytesA = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowA;
                             byte* srcBytesB = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowB;
-                            long* srcLongsA = (long*)srcBytesA;
-                            long* srcLongsB = (long*)srcBytesB;
+                            var diffDetected = false; // Сброс флага для работы с очередной JPEG-строкой
                             for (int jpegBlockRow = 0; jpegBlockRow < jpegBlockSize; jpegBlockRow++) // Проходим по всем строкам блоков JPEG
                             {
-                                for (int col = 0; col < (srcBmd.Width * srcPixelSize) / sizeLong; col++)
-                                {
-                                    if (srcLongsA[col] != srcLongsB[col])
-                                    {
-                                        diffDetected = true; // Найдено отличие в элементах строки
-                                        jpegBlockRow = jpegBlockSize;
-                                        break;
-                                    }
-                                }
-                                srcLongsA += srcBmd.Stride / sizeLong;
-                                srcLongsB += srcBmd.Stride / sizeLong;
-                            }
-                        }
-                    }
-                    else //...иначе работаем с данными-байтами
-                    {
-                        unsafe
-                        {
-                            byte* srcBytesA = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowA;
-                            byte* srcBytesB = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowB;
-                            for (int jpegBlockRow = 0; jpegBlockRow < jpegBlockSize; jpegBlockRow++) // Проходим по всем строкам блоков JPEG
-                            {
-                                for (int col = 0; col < srcBmd.Width * srcPixelSize; col++)
+                                for (int col = 0; col < maxCol; col++) // Работаем только с полными блоками JPEG
                                 {
                                     if (srcBytesA[col] != srcBytesB[col])
                                     {
-                                        diffDetected = true; // Найдено отличие в элементах строки
-                                        jpegBlockRow = jpegBlockSize;
-                                        break;
+                                        diffDetected = true; // Обнаружено отличие между JPEG-строками...
+                                        jpegBlockRow = jpegBlockSize; //...отключаем внешний цикл...
+                                        break; //...и выходим
                                     }
                                 }
                                 srcBytesA += srcBmd.Stride;
                                 srcBytesB += srcBmd.Stride;
                             }
+                            if (!diffDetected) // Если не обнаружено различий в данных JPEG-блока - проверка провалена
+                            {
+                                checkResult = false;
+                                break;
+                            }
                         }
                     }
                     srcBmp.UnlockBits(srcBmd);
-                    return diffDetected;
+                    return checkResult;
                 }
                 else
                 {
