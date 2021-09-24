@@ -1015,17 +1015,20 @@ namespace Bwl.Imaging.Unsafe
                     for (int jpegBlockH = 0; jpegBlockH < fullJpegBlocksH - 2; jpegBlockH++)
                     {
                         var jpegRowA = (jpegBlockH + 0) * jpegBlockSize;
-                        var jpegRowB = (jpegBlockH + 2) * jpegBlockSize;
+                        var jpegRowB = (jpegBlockH + 1) * jpegBlockSize;
+                        var jpegRowC = (jpegBlockH + 2) * jpegBlockSize;
                         unsafe
                         {
                             byte* srcBytesA = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowA;
                             byte* srcBytesB = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowB;
+                            byte* srcBytesC = (byte*)srcBmd.Scan0 + srcBmd.Stride * jpegRowC;
                             var diffDetected = false; // Сброс флага для работы с очередной JPEG-строкой
                             for (int jpegBlockRow = 0; jpegBlockRow < jpegBlockSize; jpegBlockRow++) // Проходим по всем строкам блоков JPEG
                             {
                                 for (int col = 0; col < maxCol; col++) // Работаем только с полными блоками JPEG
                                 {
-                                    if (srcBytesA[col] != srcBytesB[col])
+                                    // Элементы всех трех строк JPEG должны быть различны
+                                    if ((srcBytesA[col] != srcBytesB[col]) && (srcBytesA[col] != srcBytesC[col]) && (srcBytesB[col] != srcBytesC[col]))
                                     {
                                         diffDetected = true; // Обнаружено отличие между JPEG-строками...
                                         jpegBlockRow = jpegBlockSize; //...отключаем внешний цикл...
@@ -1034,6 +1037,7 @@ namespace Bwl.Imaging.Unsafe
                                 }
                                 srcBytesA += srcBmd.Stride;
                                 srcBytesB += srcBmd.Stride;
+                                srcBytesC += srcBmd.Stride;
                             }
                             if (!diffDetected) // Если не обнаружено различий в данных JPEG-блока - проверка провалена
                             {
