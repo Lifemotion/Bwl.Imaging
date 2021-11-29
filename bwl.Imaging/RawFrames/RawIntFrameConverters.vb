@@ -282,16 +282,22 @@ Public Module RawIntFrameConverters
     End Function
 
     <Extension()>
-    Public Function ConvertHDR3Fast(frame As RawIntFrame) As RGBMatrix
+    Public Function ConvertHDR3Fast(frame As RawIntFrame,
+                                    Optional v As Double = 0.5,
+                                    Optional k As Double = 5) As RGBMatrix
+        'Таблицы
+        Static vs As Double = 0.5
+        Static ks As Double = 5
         Static powTable As Integer()
-        If powTable Is Nothing Then
-            powTable = New Integer((1 << 12) - 1) {}
-            Dim v = 0.4
-            Dim k = 12
+        If powTable Is Nothing OrElse vs <> v OrElse ks <> k Then
+            vs = v
+            ks = k
+            powTable = New Integer(4095) {} '4095 - 12 bit
             For powArg = 0 To powTable.Length - 1
-                powTable(powArg) = Math.Min(Math.Pow(powArg, v) * k, 255)
+                powTable(powArg) = Math.Min(Math.Pow(powArg, vs) * ks, 255)
             Next
         End If
+        'Расчет
         Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
         Dim frameData = frame.Data
         Parallel.For(0, 3, Sub(channel As Integer)
