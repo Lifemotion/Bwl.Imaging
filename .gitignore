@@ -1,5 +1,9 @@
 *.suo
+.vs
 bin
 obj
+output
 debug
 release
+packages
+

@@ -148,13 +148,11 @@
             Dim lineOffset2 = (y * 2 + 1) * _width
             Dim resOffset = y * (_width \ 2)
             For x = 0 To _width \ 2 - 1
-                Dim point As Integer = 0
-                point += matrix(x * 2 + lineOffset1)
-                point += matrix(x * 2 + 1 + lineOffset1)
-                point += matrix(x * 2 + lineOffset2)
-                point += matrix(x * 2 + 1 + lineOffset2)
-                point \= 4
-                result(x + resOffset) = point
+                Dim elem = matrix(x * 2 + lineOffset1)
+                elem += matrix(x * 2 + 1 + lineOffset1)
+                elem += matrix(x * 2 + lineOffset2)
+                elem += matrix(x * 2 + 1 + lineOffset2)
+                result(x + resOffset) = elem / 4
             Next
         Next
         Return result

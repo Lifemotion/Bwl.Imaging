@@ -1,4 +1,6 @@
-﻿Public Class BitmapObject
+﻿Imports System.Drawing
+
+Public Class BitmapObject
     Public Property RectangleF As RectangleF
     Public Property Bitmap As Bitmap
 

@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.Serialization
+﻿Imports System.Drawing
+Imports System.Runtime.Serialization
 
 Public Class PointC
     Implements ICloneable
@@ -57,7 +58,7 @@ Public Class PointC
     End Function
 
     Public Function ToPoint() As Point
-        Return New Point(X, Y)
+        Return New Point(CInt(X), CInt(Y))
     End Function
 
 End Class

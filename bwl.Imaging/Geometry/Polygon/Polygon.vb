@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.Serialization
+﻿Imports System.Drawing
+Imports System.Runtime.Serialization
 
 <DataContractAttribute()>
 Public Class Polygon
@@ -27,7 +28,7 @@ Public Class Polygon
         _points = points
     End Sub
 
-    Public ReadOnly Property Left
+    Public ReadOnly Property Left As Single
         Get
             Dim min = Single.MaxValue
             For Each pnt In _points
@@ -37,7 +38,7 @@ Public Class Polygon
         End Get
     End Property
 
-    Public ReadOnly Property Top
+    Public ReadOnly Property Top As Single
         Get
             Dim min = Single.MaxValue
             For Each pnt In _points
@@ -47,7 +48,7 @@ Public Class Polygon
         End Get
     End Property
 
-    Public ReadOnly Property Right
+    Public ReadOnly Property Right As Single
         Get
             Dim max = Single.MinValue
             For Each pnt In _points
@@ -57,7 +58,7 @@ Public Class Polygon
         End Get
     End Property
 
-    Public ReadOnly Property Bottom
+    Public ReadOnly Property Bottom As Single
         Get
             Dim max = Single.MinValue
             For Each pnt In _points
@@ -67,13 +68,13 @@ Public Class Polygon
         End Get
     End Property
 
-    Public ReadOnly Property Width
+    Public ReadOnly Property Width As Single
         Get
             Return Right - Left
         End Get
     End Property
 
-    Public ReadOnly Property Height
+    Public ReadOnly Property Height As Single
         Get
             Return Bottom - Top
         End Get

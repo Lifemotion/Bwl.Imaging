@@ -1,4 +1,6 @@
-﻿Public Module VectorTools
+﻿Imports System.Drawing
+
+Public Module VectorTools
     Public Class Vector
         Public Property X As Double
         Public Property Y As Double
@@ -72,7 +74,7 @@
         Dim zNorm = targetLen / z 'Нормализатор к заданной длине
         Dim xn = vector.X * zNorm
         Dim yn = vector.Y * zNorm
-        Return New PointF(xn, yn)
+        Return New PointF(CSng(xn), CSng(yn))
     End Function
 
     ''' <summary>

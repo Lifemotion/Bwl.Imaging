@@ -1,4 +1,6 @@
-﻿Imports System.Runtime.CompilerServices
+﻿Imports System.Drawing
+Imports System.Drawing.Imaging
+Imports System.Runtime.CompilerServices
 Imports System.Runtime.InteropServices
 Imports System.Threading.Tasks
 
@@ -10,7 +12,7 @@ Public Class BitmapOperations
     Private _rawBytes As Byte()
     Private _width As Integer, _height As Integer
     Private _channels As Integer
-    Private _bytesGray2D As Integer()
+    Private _gray2D As Integer()
 
     Public Property RawBytes() As Byte()
         Set(value As Byte())
@@ -58,7 +60,7 @@ Public Class BitmapOperations
             Using ap As New AutoPinner(tmpBytes)
                 Dim srcBytes = srcBD.Scan0
                 Dim rawBytes = ap.GetIntPtr()
-                CopyMemory(rawBytes, srcBytes, tmpBytes.Length) 'fast!
+                CopyMemory(rawBytes, srcBytes, CUInt(tmpBytes.Length)) 'fast!
             End Using
         Else
             Using ap As New AutoPinner(tmpBytes)
@@ -66,7 +68,7 @@ Public Class BitmapOperations
                 Dim rawBytes = ap.GetIntPtr()
                 Dim rawStride = _width * _channels
                 For row = 0 To _height - 1
-                    CopyMemory(rawBytes, srcBytes, rawStride) 'exact!
+                    CopyMemory(rawBytes, srcBytes, CUInt(rawStride)) 'exact!
                     srcBytes += srcStride
                     rawBytes += rawStride
                 Next
@@ -89,21 +91,21 @@ Public Class BitmapOperations
 
     Public Function GetGrayMatrix() As GrayMatrix
         Dim result As GrayMatrix = Nothing
-        If _bytesGray2D Is Nothing OrElse _bytesGray2D.Length <> (_width * _height) Then
-            ReDim _bytesGray2D(_width * _height - 1)
+        If _gray2D Is Nothing OrElse _gray2D.Length <> (_width * _height) Then
+            ReDim _gray2D(_width * _height - 1)
         End If
         Select Case _channels
             Case 1
                 For i = 0 To _width * _height - 1
-                    _bytesGray2D(i) = _rawBytes(i)
+                    _gray2D(i) = _rawBytes(i)
                 Next
-                result = New GrayMatrix(_bytesGray2D, _width, _height)
+                result = New GrayMatrix(_gray2D, _width, _height)
             Case 3
                 For i = 0 To _width * _height - 1
                     'Y = 0.299 R + 0.587 G + 0.114 B - CCIR-601 (http://inst.eecs.berkeley.edu/~cs150/Documents/ITU601.PDF)
-                    _bytesGray2D(i) = _rawBytes(i * 3) * 0.114 + _rawBytes(i * 3 + 1) * 0.587 + _rawBytes(i * 3 + 2) * 0.299
+                    _gray2D(i) = CInt(_rawBytes(i * 3) * 0.114 + _rawBytes(i * 3 + 1) * 0.587 + _rawBytes(i * 3 + 2) * 0.299)
                 Next
-                result = New GrayMatrix(_bytesGray2D, _width, _height)
+                result = New GrayMatrix(_gray2D, _width, _height)
         End Select
         Return result
     End Function
@@ -141,9 +143,7 @@ Public Class BitmapOperations
         Dim matrixGray = matrix.Gray
         For i = 0 To _width * _height - 1
             Dim pixel = matrixGray(i)
-            If pixel < 0 Then pixel = 0
-            If pixel > 255 Then pixel = 255
-            _rawBytes(i) = pixel
+            _rawBytes(i) = Limit(pixel)
         Next
     End Sub
 
@@ -163,15 +163,9 @@ Public Class BitmapOperations
                 Dim pixelR = matrixRed(i)
                 Dim pixelG = matrixGreen(i)
                 Dim pixelB = matrixBlue(i)
-                If pixelR < 0 Then pixelR = 0
-                If pixelR > 255 Then pixelR = 255
-                If pixelG < 0 Then pixelG = 0
-                If pixelG > 255 Then pixelG = 255
-                If pixelB < 0 Then pixelB = 0
-                If pixelB > 255 Then pixelB = 255
-                _rawBytes(i * 3 + 2) = pixelR
-                _rawBytes(i * 3 + 1) = pixelG
-                _rawBytes(i * 3) = pixelB
+                _rawBytes(i * 3 + 2) = Limit(pixelR)
+                _rawBytes(i * 3 + 1) = Limit(pixelG)
+                _rawBytes(i * 3) = Limit(pixelB)
             Next
         Next
     End Sub
@@ -188,7 +182,7 @@ Public Class BitmapOperations
             Using ap As New AutoPinner(_rawBytes)
                 Dim rawBytes = ap.GetIntPtr()
                 Dim resBytes = resultBD.Scan0
-                CopyMemory(resBytes, rawBytes, _rawBytes.Length) 'fast!
+                CopyMemory(resBytes, rawBytes, CUInt(_rawBytes.Length)) 'fast!
             End Using
         Else
             Using ap As New AutoPinner(_rawBytes)
@@ -196,7 +190,7 @@ Public Class BitmapOperations
                 Dim resBytes = resultBD.Scan0
                 Dim rawStride = _width * _channels
                 For row = 0 To _height - 1
-                    CopyMemory(resBytes, rawBytes, rawStride) 'exact!
+                    CopyMemory(resBytes, rawBytes, CUInt(rawStride)) 'exact!
                     rawBytes += rawStride
                     resBytes += resStride
                 Next

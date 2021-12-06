@@ -1,9 +1,10 @@
-﻿Imports System.Runtime.CompilerServices
+﻿Imports System.Drawing
+Imports System.Runtime.CompilerServices
 
 Public Module Extensions
     <Extension()>
     Public Function ToPoint(pointF As PointF) As System.Drawing.Point
-        Return New System.Drawing.Point(pointF.X, pointF.Y)
+        Return New System.Drawing.Point(CInt(pointF.X), CInt(pointF.Y))
     End Function
 
     <Extension()>
@@ -13,7 +14,7 @@ Public Module Extensions
 
     <Extension()>
     Public Function Dist(this As PointF, arg As PointF) As Single
-        Return Math.Sqrt((this.X - arg.X) ^ 2 + (this.Y - arg.Y) ^ 2)
+        Return CSng(Math.Sqrt((this.X - arg.X) ^ 2 + (this.Y - arg.Y) ^ 2))
     End Function
 
     <Extension()>

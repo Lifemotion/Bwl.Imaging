@@ -1,4 +1,6 @@
-﻿Public Structure RGB
+﻿Imports System.Drawing
+
+Public Structure RGB
     'Новых конструкторов добавлять не надо!
     Implements IRGBConvertable
 
@@ -39,11 +41,11 @@
     Public Shared Function FromHsv(h As Integer, s As Integer, v As Integer, alpha As Integer) As RGB
         Dim valuemax = 255
         Dim rgb As RGB
-        Dim hi = Math.Floor(h / 60.0) Mod 6
-        Dim vmin = (valuemax - s) * v / valuemax
+        Dim hi = Limit(h / 60.0) Mod 6
+        Dim vmin = Limit((valuemax - s) * v / valuemax)
         Dim a = (v - vmin) * ((h Mod 60) / 60.0)
-        Dim vinc = vmin + a
-        Dim vdec = v - a
+        Dim vinc = Limit(vmin + a)
+        Dim vdec = Limit(v - a)
         Select Case hi
             Case 0 : rgb.R = v : rgb.G = vinc : rgb.B = vmin
             Case 1 : rgb.R = vdec : rgb.G = v : rgb.B = vmin
@@ -62,12 +64,6 @@
 
     Public Function ToColor() As Color
         Return Color.FromArgb(Limit(A), Limit(R), Limit(G), Limit(B))
-    End Function
-
-    Public Shared Function Limit(data As Integer) As Byte
-        If data < 0 Then data = 0
-        If data > 255 Then data = 255
-        Return data
     End Function
 
     Public Function ToRGB() As RGB Implements IRGBConvertable.ToRGB

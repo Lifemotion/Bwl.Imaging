@@ -43,11 +43,11 @@
             Dim channel(mtr.Length - 1) As Integer
 
             For i = 0 To mtr.Length - 1
-                Dim pixel As Double = mtr(i)
+                Dim pixel As Double = Math.Round(mtr(i))
                 If pixel < Integer.MinValue OrElse pixel > Integer.MaxValue Then
                     Throw New Exception("matrice element is out of integer's range")
                 End If
-                channel(i) = pixel
+                channel(i) = CInt(pixel)
             Next
             _matrices.Add(channel)
         Next
@@ -69,7 +69,7 @@
                 If pixel < Integer.MinValue OrElse pixel > Integer.MaxValue Then
                     Throw New Exception("matrice element is out of integer's range after multiplier")
                 End If
-                channel(i) = pixel
+                channel(i) = CInt(pixel)
             Next
             _matrices.Add(channel)
         Next
@@ -91,7 +91,7 @@
                 If pixel < Integer.MinValue OrElse pixel > Integer.MaxValue Then
                     Throw New Exception("matrice element is out of integer's range after multiplier")
                 End If
-                channel(i) = pixel
+                channel(i) = CInt(pixel)
             Next
             _matrices.Add(channel)
         Next

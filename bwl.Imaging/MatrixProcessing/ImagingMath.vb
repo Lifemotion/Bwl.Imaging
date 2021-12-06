@@ -1,8 +1,30 @@
-﻿Public Module ImagingMath
+﻿Imports System.Drawing
+
+Public Module ImagingMath
+
+    ''' <summary>
+    ''' Ограничение значения диапазоном Byte.
+    ''' </summary>
+    Public Function Limit(value As Integer, Optional maxValue As Integer = 255) As Byte
+        value = CInt(Math.Floor(value))
+        value = If(value < 0, 0, value)
+        value = If(value > maxValue, maxValue, value)
+        Return CByte(value)
+    End Function
+
+    ''' <summary>
+    ''' Ограничение значения диапазоном Byte.
+    ''' </summary>
+    Public Function Limit(value As Double, Optional maxValue As Double = 255) As Byte
+        value = Math.Floor(value)
+        value = If(value < 0, 0, value)
+        value = If(value > maxValue, maxValue, value)
+        Return CByte(value)
+    End Function
 
     ''' <summary>
     '''  Статистика по яркости
-    ''' </summary>    
+    ''' </summary>
     Public Function GetBrightnessStats(img As GrayMatrix) As BrightnessStats
         Dim tmpSum As Long
         Dim stats As New BrightnessStats With {.BrMax = 0, .BrMin = 255}
@@ -15,14 +37,14 @@
             tmpSum += imgGray(k)
             tmpHist(imgGray(k)) += 1
         Next
-        tmpSum /= img.Width * img.Height
-        stats.BrAvg = tmpSum
+        tmpSum = CLng(tmpSum / (img.Width * img.Height))
+        stats.BrAvg = CInt(tmpSum)
 
         For i = 0 To 255
-            tmpMax += tmpHist(i) / 255
+            tmpMax = CLng(tmpMax + tmpHist(i) / 255)
         Next
         For i = 0 To 255
-            stats.Histogram(i) = tmpHist(i) \ (tmpMax \ 128 + 1)
+            stats.Histogram(i) = CInt(tmpHist(i) \ (tmpMax \ 128 + 1))
         Next
         Return stats
     End Function
@@ -50,8 +72,8 @@
     ''' <param name="weight2">Вес для точки 2.</param>
     Public Function Bilinear(point1 As PointF, point2 As PointF, weight1 As Double, weight2 As Double) As PointF
         Dim result As PointF
-        result.X = Bilinear(point1.X, point2.X, weight1, weight2)
-        result.Y = Bilinear(point1.Y, point2.Y, weight1, weight2)
+        result.X = CSng(Bilinear(point1.X, point2.X, weight1, weight2))
+        result.Y = CSng(Bilinear(point1.Y, point2.Y, weight1, weight2))
         Return result
     End Function
 

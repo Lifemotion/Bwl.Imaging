@@ -1,4 +1,6 @@
-﻿Imports Bwl.Imaging
+﻿Imports System.Drawing
+Imports System.Drawing.Imaging
+Imports Bwl.Imaging
 
 Public Class RawIntFrame
     Inherits BlobContainer
@@ -11,8 +13,8 @@ Public Class RawIntFrame
         _Width = width
         _Height = height
         Me.Data = data
-        Attributes.Add("Width", width.ToString)
-        Attributes.Add("Height", height.ToString)
+        Attributes.Add("Width", width.ToString())
+        Attributes.Add("Height", height.ToString())
         Blobs.Add(New IntegerBlob With {.ID = "Scan0", .Data = data})
     End Sub
 
@@ -43,18 +45,20 @@ Public Class RawIntFrame
     End Sub
 
     Public Shared Function FromLegacyFile(filename As String) As RawIntFrame
-        Dim fs As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
-        Dim sw As New IO.StreamReader(fs)
-        Dim width = sw.ReadLine
-        Dim height = sw.ReadLine
-        Dim arr(width * height * 3) As Integer
-        For i = 0 To arr.Length - 1
-            arr(i) = sw.ReadLine()
-        Next
-        fs.Close()
-        Dim frame As New RawIntFrame(width, height, arr)
-        frame.Data = arr
-        Return frame
+        Using fs = New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
+            Using sw As New IO.StreamReader(fs)
+                Dim width = CInt(sw.ReadLine())
+                Dim height = CInt(sw.ReadLine())
+                Dim arr(width * height * 3) As Integer
+                For i = 0 To arr.Length - 1
+                    arr(i) = CInt(sw.ReadLine())
+                Next
+                fs.Close()
+                Dim frame As New RawIntFrame(width, height, arr)
+                frame.Data = arr
+                Return frame
+            End Using
+        End Using
     End Function
 
     Public Overloads Shared Function FromFile(filename As String) As RawIntFrame
@@ -77,10 +81,10 @@ Public Class RawIntFrame
         Dim col = HSV.FromRgb(1, 1, 1)
         Dim _encoderParameters As New EncoderParameters(1)
         Dim _codecInfo As ImageCodecInfo = GetCodecInfo(ImageFormat.Jpeg)
-        _encoderParameters.Param(0) = New EncoderParameter(System.Drawing.Imaging.Encoder.Quality, quality)
+        _encoderParameters.Param(0) = New EncoderParameter(Encoder.Quality, quality)
         Dim mtrs = RawIntFrameConverters.ConvertTo8BitPair(Me)
-        Dim bmph = mtrs(0).ToBitmap
-        Dim bmpl = mtrs(1).ToBitmap
+        Dim bmph = mtrs(0).ToBitmap()
+        Dim bmpl = mtrs(1).ToBitmap()
         Dim fnameh = filenameWithoutExthension + "_h.jpeg"
         Dim fnamel = filenameWithoutExthension + "_l.jpeg"
         bmph.Save(fnameh, _codecInfo, _encoderParameters)
@@ -92,7 +96,7 @@ Public Class RawIntFrame
         Dim fnamel = filenameWithoutExthension + "_l.jpeg"
         Dim bmph = New Bitmap(fnameh)
         Dim bmpl = New Bitmap(fnamel)
-        Dim mtrs = {bmph.BitmapToRgbMatrix, bmpl.BitmapToRgbMatrix}
+        Dim mtrs = {bmph.BitmapToRgbMatrix(), bmpl.BitmapToRgbMatrix()}
         Dim frame = RawIntFrameConverters.ConvertFrom8BitPair(mtrs)
         Return frame
     End Function

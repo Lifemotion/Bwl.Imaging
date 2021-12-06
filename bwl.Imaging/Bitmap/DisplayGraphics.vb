@@ -1,4 +1,6 @@
 ﻿
+Imports System.Drawing
+
 Public Class DisplayGraphics
     Public Enum QualityMode
         Normal
@@ -56,7 +58,7 @@ Public Class DisplayGraphics
     End Property
 
     Public Sub KeepAspectRatio()
-        KeepAspectRatio(_baseMulX, _baseMulY)
+        KeepAspectRatio(CInt(_baseMulX), CInt(_baseMulY))
     End Sub
 
     Public Sub KeepAspectRatio(bkgWidth As Integer, bkgHeight As Integer)
@@ -69,9 +71,9 @@ Public Class DisplayGraphics
             Dim aspectRatioBitmap = bkgWidth / bkgHeight
             If aspectRatioControl > aspectRatioBitmap Then
                 Dim ardivF = aspectRatioBitmap / aspectRatioControl
-                _bkgX1F = 0.5 - ardivF * 0.5
+                _bkgX1F = CSng(0.5 - ardivF * 0.5)
                 _bkgY1F = 0
-                _bkgX2F = 0.5 + ardivF * 0.5
+                _bkgX2F = CSng(0.5 + ardivF * 0.5)
                 _bkgY2F = 1
                 Dim bkgWF = _bkgX2F - _bkgX1F
                 Dim bkgW = If(MultiplyOnBitmapSize, bkgWF * _width, bkgWF)
@@ -81,9 +83,9 @@ Public Class DisplayGraphics
             If aspectRatioControl < aspectRatioBitmap Then
                 Dim ardivF = aspectRatioControl / aspectRatioBitmap
                 _bkgX1F = 0
-                _bkgY1F = 0.5 - ardivF * 0.5
+                _bkgY1F = CSng(0.5 - ardivF * 0.5)
                 _bkgX2F = 1
-                _bkgY2F = 0.5 + ardivF * 0.5
+                _bkgY2F = CSng(0.5 + ardivF * 0.5)
                 Dim bkgHF = _bkgY2F - _bkgY1F
                 Dim bkgH = If(MultiplyOnBitmapSize, bkgHF * _height, bkgHF)
                 _mulY = bkgH
@@ -201,7 +203,7 @@ Public Class DisplayGraphics
             Dim dy = y2 - y1
             Dim length = Math.Sqrt(dx ^ 2 + dy ^ 2)
             If length > 0 Then
-                Dim angle As Single = Math.Atan2(dy, dx)
+                Dim angle As Single = CSng(Math.Atan2(dy, dx))
                 Dim sz = 5
                 _graphics.DrawLine(_pen,
                                    x1 * _mulX + _offsetX + CSng(Math.Cos(angle - Math.PI / 2) * sz),
@@ -314,20 +316,31 @@ Public Class DisplayGraphics
 
     Public Sub DrawObject(color As Color, obj As Object, Optional lineWidth As Single = 0, Optional pointSize As Single = 0)
         If GetType(Vector).IsAssignableFrom(obj.GetType) Then
-            Dim vector As Vector = obj
+            Dim vector = DirectCast(obj, Vector)
             DrawVector(color, vector.Point1.X, vector.Point1.Y, vector.Point2.X, vector.Point2.Y)
         ElseIf GetType(Polygon).IsAssignableFrom(obj.GetType) Then
-            DrawPoligon(color, obj, lineWidth)
-        ElseIf GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType) Then
-            DrawPoint(color, obj.x, obj.y, pointSize)
-        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType) Or GetType(RectangleFC).IsAssignableFrom(obj.GetType) Or GetType(Rectangle).IsAssignableFrom(obj.GetType) Then
-            DrawRectangle(color, obj, lineWidth)
+            DrawPoligon(color, DirectCast(obj, Polygon), lineWidth)
+        ElseIf GetType(PointC).IsAssignableFrom(obj.GetType) Then
+            Dim pointC = DirectCast(obj, PointC)
+            DrawPoint(color, pointC.X, pointC.Y, pointSize)
+        ElseIf GetType(PointF).IsAssignableFrom(obj.GetType) Then
+            Dim pointF = DirectCast(obj, PointF)
+            DrawPoint(color, pointF.X, pointF.Y, pointSize)
+        ElseIf GetType(Point).IsAssignableFrom(obj.GetType) Then
+            Dim point = DirectCast(obj, Point)
+            DrawPoint(color, point.X, point.Y, pointSize)
+        ElseIf GetType(RectangleF).IsAssignableFrom(obj.GetType) Then
+            DrawRectangle(color, DirectCast(obj, RectangleF), lineWidth)
+        ElseIf GetType(RectangleFC).IsAssignableFrom(obj.GetType) Then
+            DrawRectangle(color, DirectCast(obj, RectangleFC).RectangleF, lineWidth)
+        ElseIf GetType(Rectangle).IsAssignableFrom(obj.GetType) Then
+            DrawRectangle(color, DirectCast(obj, Rectangle), lineWidth)
         ElseIf GetType(BitmapObject).IsAssignableFrom(obj.GetType) Then
-            DrawBitmap(obj)
+            DrawBitmap(DirectCast(obj, BitmapObject))
         ElseIf GetType(Bitmap).IsAssignableFrom(obj.GetType) Then
-            DrawBitmap(obj, 0, 0, 1, 1)
+            DrawBitmap(DirectCast(obj, Bitmap), 0, 0, 1, 1)
         ElseIf GetType(TextObject).IsAssignableFrom(obj.GetType) Then
-            DrawText(color, obj)
+            DrawText(color, DirectCast(obj, TextObject))
         End If
     End Sub
 
@@ -353,11 +366,10 @@ Public Class DisplayGraphics
         Return New PointF((bitmapPoint.X - _offsetX) / _mulX, (bitmapPoint.Y - _offsetY) / _mulY)
     End Function
 
-    Public Function IsBitmapPointInsideBound(obj As Object, bitmapX As Integer, bitmapY As Integer)
+    Public Function IsBitmapPointInsideBound(obj As Object, bitmapX As Integer, bitmapY As Integer) As Boolean
         Dim bound = GetBoundRectangeF(obj)
         Dim scrp = GetObjectPoint(New PointF(bitmapX, bitmapY))
-        If bound.Contains(scrp) Then Return True
-        Return False
+        Return bound.Contains(scrp)
     End Function
 
     Public Function ExtendRectangleAtLineWidth(rect As RectangleF) As RectangleF
@@ -370,9 +382,24 @@ Public Class DisplayGraphics
     End Function
 
     Public Function GetBoundRectangeF(obj As Object) As RectangleF
-        If GetType(PointC).IsAssignableFrom(obj.GetType) Or GetType(PointF).IsAssignableFrom(obj.GetType) Or GetType(Point).IsAssignableFrom(obj.GetType) Then
-            Dim px As Single = obj.X
-            Dim py As Single = obj.Y
+        If GetType(PointC).IsAssignableFrom(obj.GetType) Then
+            Dim pointC = DirectCast(obj, PointC)
+            Dim px = pointC.X
+            Dim py = pointC.Y
+            Dim sx = (DefaultPointSize * 2) / _mulX
+            Dim bound = New RectangleF(px - sx / 2, py - sx / 2, sx, sx)
+            Return ExtendRectangleAtLineWidth(bound)
+        ElseIf GetType(PointF).IsAssignableFrom(obj.GetType) Then
+            Dim pointF = DirectCast(obj, PointF)
+            Dim px = pointF.X
+            Dim py = pointF.Y
+            Dim sx = (DefaultPointSize * 2) / _mulX
+            Dim bound = New RectangleF(px - sx / 2, py - sx / 2, sx, sx)
+            Return ExtendRectangleAtLineWidth(bound)
+        ElseIf GetType(Point).IsAssignableFrom(obj.GetType) Then
+            Dim point = DirectCast(obj, Point)
+            Dim px = point.X
+            Dim py = point.Y
             Dim sx = (DefaultPointSize * 2) / _mulX
             Dim bound = New RectangleF(px - sx / 2, py - sx / 2, sx, sx)
             Return ExtendRectangleAtLineWidth(bound)

@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.Serialization
+﻿Imports System.Drawing
+Imports System.Runtime.Serialization
 
 <DataContractAttribute()>
 Public Class Line

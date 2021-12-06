@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.Serialization
+﻿Imports System.Drawing
+Imports System.Runtime.Serialization
 <KnownType(GetType(Polygon))>
 <KnownType(GetType(Tetragon))>
 <KnownType(GetType(Line))>

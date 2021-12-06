@@ -13,14 +13,13 @@ Public Class Segmentation
         Dim k = 0.8
         For y = 0 To matrix.Height - 1
             Dim rowstart = y * matrix.Width
-            Dim last As Boolean = 0
             For x = 0 To matrix.Width - 1
                 Dim pix = matrix.Gray(x + rowstart)
                 If Math.Abs(pix - segmValue) > threshold Then
                     segmIndex += 1
                     segmValue = pix
                 Else
-                    segmValue = segmValue * k + pix * (1 - k)
+                    segmValue = CInt(segmValue * k + pix * (1 - k))
                 End If
                 segments.Gray(x + rowstart) = segmIndex
                 segmentsValues.Gray(x + rowstart) = segmValue
@@ -56,7 +55,7 @@ Public Class Segmentation
             Dim downSegmVal = segmentsValues.Gray(nextRowstart + x)
 
             If Math.Abs(segmVal - downSegmVal) < threshold And downSegm > segm Then
-                segmVal = segmVal * 0.5 + downSegmVal * 0.5
+                segmVal = CInt(segmVal * 0.5 + downSegmVal * 0.5)
                 For i = x To width - 1
                     If segments.Gray(nextRowstart + i) <> downSegm Then Exit For
                     segments.Gray(nextRowstart + i) = segm
@@ -91,7 +90,7 @@ Public Class Segmentation
         Dim segmIndex As Integer = 1
         For y = 0 To matrix.Height - 1
             Dim rowstart = y * matrix.Width
-            Dim last As Boolean = 0
+            Dim last As Boolean = False
             For x = 0 To matrix.Width - 1
                 Dim pix = matrix.Gray(x + rowstart)
                 If pix < binarizeThreshold Then
@@ -111,7 +110,7 @@ Public Class Segmentation
         Dim segmIndex As Integer = 1
         For y = 0 To matrix.Height - 1
             Dim rowstart = y * matrix.Width
-            Dim last As Boolean = 0
+            Dim last As Boolean = False
             For x = 0 To matrix.Width - 1
                 Dim pix = matrix.Gray(x + rowstart)
                 If pix > binarizeThreshold Then

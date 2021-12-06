@@ -1,4 +1,5 @@
 ﻿
+Imports System.Drawing
 ''' <summary>
 ''' Простой детектор движения (изменений в кадре). Для каждого видеоисточника должен быть свой детектор.
 ''' </summary>
@@ -22,13 +23,13 @@ Public Class MoveDetector
 
     Private _afterMoveCounter As Integer
 
-    Public Function Process(image As Bitmap)
+    Public Function Process(image As Bitmap) As Boolean
         Dim bmp As New Bitmap(image, 64, 32)
         Dim mtr As GrayMatrix = BitmapConverter.BitmapToGrayMatrix(bmp)
         Return Process(mtr)
     End Function
 
-    Public Function Process(matrix As GrayMatrix)
+    Public Function Process(matrix As GrayMatrix) As Boolean
         SyncLock Me
             Static lastMatrix As GrayMatrix
             If lastMatrix IsNot Nothing AndAlso lastMatrix.Width = matrix.Width AndAlso lastMatrix.Height = matrix.Height Then

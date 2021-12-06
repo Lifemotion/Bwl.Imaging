@@ -1,4 +1,6 @@
-﻿Imports System.Threading
+﻿Imports System.Drawing
+Imports System.Drawing.Imaging
+Imports System.Threading
 Imports Bwl.Imaging.Unsafe
 
 ''' <summary>
@@ -78,7 +80,7 @@ Public Class BitmapInfo
     ''' <summary>
     ''' Время хранения декомпрессированного битмапа (если доступны JPEG-данные для экономии ОЗУ).
     ''' </summary>
-    Public Property BitmapKeepTimeS As Single = 2
+    Public Property BitmapKeepTimeS As Single = 5
 
     ''' <summary>
     ''' Прямой доступ по ссылке к хранимому Bitmap-у.

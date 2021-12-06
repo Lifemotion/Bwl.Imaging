@@ -25,7 +25,6 @@ Public Class BlobContainer
     Public ReadOnly Property Blobs As New List(Of IntegerBlob)
 
     Public Sub New()
-
     End Sub
 
     Public Sub New(bc As BlobContainer)
@@ -34,19 +33,57 @@ Public Class BlobContainer
     End Sub
 
     Public Sub Save(filename As String)
-        Dim fs As New IO.FileStream(filename, IO.FileMode.OpenOrCreate, IO.FileAccess.ReadWrite)
-        For Each attr In Attributes
-            WriteLineToStream(fs, attr.Key + "=" + attr.Value + vbCrLf)
-        Next
-        For Each Blob In Blobs
-            WriteLineToStream(fs, "{BlobStart}=" + Blob.ID + "," + Blob.Data.GetType.ToString() + "," + Blob.Data.Length.ToString + vbNullChar)
-            Blob.WriteDataToStream(fs)
-            WriteLineToStream(fs, "{BlobEnd}=" + Blob.ID + vbCrLf)
-        Next
-        WriteLineToStream(fs, "{End}={End}" + vbCrLf)
-        fs.Close()
-        fs.Dispose()
+        Using fs As New IO.FileStream(filename, IO.FileMode.OpenOrCreate, IO.FileAccess.ReadWrite)
+            For Each attr In Attributes
+                WriteLineToStream(fs, attr.Key + "=" + attr.Value + vbCrLf)
+            Next
+            For Each Blob In Blobs
+                WriteLineToStream(fs, "{BlobStart}=" + Blob.ID + "," + Blob.Data.GetType.ToString() + "," + Blob.Data.Length.ToString + vbNullChar)
+                Blob.WriteDataToStream(fs)
+                WriteLineToStream(fs, "{BlobEnd}=" + Blob.ID + vbCrLf)
+            Next
+            WriteLineToStream(fs, "{End}={End}" + vbCrLf)
+            fs.Flush()
+            fs.Close()
+        End Using
     End Sub
+
+    Public Shared Function FromFile(filename As String) As BlobContainer
+        Using fs As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
+            Dim file As New BlobContainer
+            Do
+                Dim keyvalue = ReadLineFromStream(fs).Split("="c)
+                If keyvalue.Length > 1 Then
+                    Dim key = keyvalue(0)
+                    Dim value = keyvalue(1)
+                    Select Case key
+                        Case "{BlobStart}"
+                            Dim params = value.Split(","c)
+                            If params.Length <> 3 Then Throw New Exception("Bad file format")
+                            Dim id = params(0)
+                            Dim typename = params(1)
+                            Dim length = CInt(params(2))
+                            Select Case typename
+                                Case "System.Int32[]"
+                                    Dim blob As New IntegerBlob
+                                    blob.ReadDataFromStream(fs, length)
+                                    blob.ID = id
+                                    file.Blobs.Add(blob)
+                                    Dim endline = ReadLineFromStream(fs).Split("="c)
+                                    If endline(0) <> "{BlobEnd}" Then Throw New Exception("Bad BlobContainer file: BLOB " + id + " not finished with {BlobEnd}")
+                                Case Else
+                                    Throw New Exception("Bad BlobContainer file: unsupported BLOB type:" + typename)
+                            End Select
+                        Case "{End}"
+                            Exit Do
+                        Case Else
+                            file.Attributes.Add(key, value)
+                    End Select
+                End If
+            Loop
+            Return file
+        End Using
+    End Function
 
     Private Shared Sub WriteLineToStream(fs As IO.FileStream, line As String)
         Dim bytes = Text.Encoding.UTF8.GetBytes(line)
@@ -55,51 +92,14 @@ Public Class BlobContainer
 
     Private Shared Function ReadLineFromStream(fs As IO.FileStream) As String
         Dim bytes As New List(Of Byte)
-        Dim read = fs.ReadByte
+        Dim read = fs.ReadByte()
         Do While read = 10 Or read = 13
-            read = fs.ReadByte
+            read = fs.ReadByte()
         Loop
         Do While read <> 10 And read <> 13 And read <> &H0
-            bytes.Add(read)
-            read = fs.ReadByte
+            bytes.Add(CByte(read))
+            read = fs.ReadByte()
         Loop
         Return System.Text.Encoding.UTF8.GetString(bytes.ToArray)
     End Function
-
-    Public Shared Function FromFile(filename As String) As BlobContainer
-        Dim fs As New IO.FileStream(filename, IO.FileMode.Open, IO.FileAccess.Read)
-        Dim file As New BlobContainer
-        Do
-            Dim keyvalue = ReadLineFromStream(fs).Split("=")
-            If keyvalue.Length > 1 Then
-                Dim key = keyvalue(0)
-                Dim value = keyvalue(1)
-                Select Case key
-                    Case "{BlobStart}"
-                        Dim params = value.Split(",")
-                        If params.Length <> 3 Then Throw New Exception("Bad file format")
-                        Dim id = params(0)
-                        Dim typename = params(1)
-                        Dim length = CInt(params(2))
-                        Select Case typename
-                            Case "System.Int32[]"
-                                Dim blob As New IntegerBlob
-                                blob.ReadDataFromStream(fs, length)
-                                blob.ID = id
-                                file.Blobs.Add(blob)
-                                Dim endline = ReadLineFromStream(fs).Split("=")
-                                If endline(0) <> "{BlobEnd}" Then Throw New Exception("Bad BlobContainer file: BLOB " + id + " not finished with {BlobEnd}")
-                            Case Else
-                                Throw New Exception("Bad BlobContainer file: unsupported BLOB type:" + typename)
-                        End Select
-                    Case "{End}"
-                        Exit Do
-                    Case Else
-                        file.Attributes.Add(key, value)
-                End Select
-            End If
-        Loop
-        Return file
-    End Function
-
 End Class

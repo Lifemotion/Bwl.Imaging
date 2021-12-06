@@ -1,4 +1,6 @@
 ﻿
+Imports System.Drawing
+
 Public Class TextObject
 
     Public Property Point1 As PointF

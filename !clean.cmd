@@ -1,2 +1,2 @@
 tools\!vs-tools !git-clean
-pause
+pause 0

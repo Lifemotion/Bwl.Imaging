@@ -20,10 +20,7 @@ Public Module Filters
                                                     -0.1 * imgGray(m0RowOffset + col) + -0.1 * imgGray(m0RowOffset + col + 2) + -0.1 * imgGray(m0RowOffset + col + 4) +
                                                     -0.1 * imgGray(m2RowOffset + col) + +1.8 * imgGray(m2RowOffset + col + 2) + -0.1 * imgGray(m2RowOffset + col + 4) +
                                                     -0.1 * imgGray(m4RowOffset + col) + -0.1 * imgGray(m4RowOffset + col + 2) + -0.1 * imgGray(m4RowOffset + col + 4)
-
-                                                    value = If(value < 0, 0, value)
-                                                    value = If(value > 255, 255, value)
-                                                    resGray(m2RowOffset + col + 2) = value
+                                                    resGray(m2RowOffset + col + 2) = Limit(value)
                                                 Next
                                             End Sub)
         Return res
@@ -65,11 +62,10 @@ Public Module Filters
         Dim height As Integer = img.Height
         Dim xmin As Integer = stats.BrMin
         Dim xmax As Integer = stats.BrMax
-
         If xmax > xmin Then
             Dim imgGray = img.Gray
             For k = 0 To img.Width * img.Height - 1
-                imgGray(k) = (imgGray(k) - xmin) / (xmax - xmin) * (ymax - ymin) + ymin
+                imgGray(k) = CInt((imgGray(k) - xmin) / (xmax - xmin) * (ymax - ymin) + ymin)
             Next
         End If
     End Sub

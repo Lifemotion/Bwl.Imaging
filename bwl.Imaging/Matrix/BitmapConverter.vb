@@ -1,4 +1,5 @@
-﻿Imports System.Runtime.CompilerServices
+﻿Imports System.Drawing
+Imports System.Runtime.CompilerServices
 
 Public Class BitmapConverter
     Public Shared Function BitmapToGrayMatrix(bitmap As Bitmap) As GrayMatrix

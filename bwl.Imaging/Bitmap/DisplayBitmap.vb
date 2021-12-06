@@ -1,4 +1,6 @@
-﻿Public Class DisplayBitmap
+﻿Imports System.Drawing
+
+Public Class DisplayBitmap
     Inherits DisplayGraphics
     Protected _bitmap As Bitmap
 

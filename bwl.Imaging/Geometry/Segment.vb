@@ -1,4 +1,6 @@
-﻿Public Class Segment
+﻿Imports System.Drawing
+
+Public Class Segment
     Public Property Left As Integer
     Public Property Top As Integer
     Public Property Width As Integer
@@ -29,20 +31,20 @@
 
     Public ReadOnly Property CenterX As Integer
         Get
-            Return Left + Width / 2
+            Return CInt(Left + Width / 2)
         End Get
     End Property
 
     Public ReadOnly Property WHRatio As Single
         Get
             If Height = 0 Then Return 0
-            Return Width / Height
+            Return CInt(Width / Height)
         End Get
     End Property
 
     Public ReadOnly Property CenterY As Integer
         Get
-            Return Top + Height / 2
+            Return CInt(Top + Height / 2)
         End Get
     End Property
 

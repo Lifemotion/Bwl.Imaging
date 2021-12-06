@@ -148,9 +148,9 @@ Public Module RawIntFrameConverters
             Do While (r > p Or g > p Or b > p) 'And (Math.Abs(r - b) > t Or Math.Abs(g - b) > t Or Math.Abs(g - r) > t)
                 '    Do While (r > p Or g > p Or b > p) And (Math.Abs(r - b) > t Or Math.Abs(g - b) > t Or Math.Abs(g - r) > t)
                 '    Do While (r > p Or g > p Or b > p) And Not (r > t And g > t And b > t)
-                r = r * k
-                g = g * k
-                b = b * k
+                r = CInt(r * k)
+                g = CInt(g * k)
+                b = CInt(b * k)
             Loop
             mtr1.Red(i) = Math.Min(r, 255)
             mtr1.Green(i) = Math.Min(g, 255)
@@ -202,8 +202,8 @@ Public Module RawIntFrameConverters
     <Extension()>
     Public Function ConvertHDR2(frame As RawIntFrame, baseGain As Integer) As RGBMatrix
         Dim mtr1 As New RGBMatrix(frame.Width, frame.Height)
-        Dim max1 As New GrayMatrix(frame.Width / 4 + 8, frame.Height / 4 + 8)
-        Dim min1 As New GrayMatrix(frame.Width / 4 + 8, frame.Height / 4 + 8)
+        Dim max1 As New GrayMatrix(frame.Width \ 4 + 8, frame.Height \ 4 + 8)
+        Dim min1 As New GrayMatrix(frame.Width \ 4 + 8, frame.Height \ 4 + 8)
 
         For y = 0 To frame.Height - 1
             For x = 0 To frame.Width - 1
@@ -212,14 +212,14 @@ Public Module RawIntFrameConverters
                 Dim r = frame.Data((x + y * frame.Width) * 3 + 2)
 
                 If baseGain > 4 Then baseGain = 4
-                '     r = r >> (4 - baseGain)
+                '    r = r >> (4 - baseGain)
                 '    g = g >> (4 - baseGain)
                 '    b = b >> (4 - baseGain)
 
                 Dim max = Math.Max(Math.Max(r, g), b)
                 Dim min = Math.Min(Math.Min(r, g), b)
-                max1.GrayPixel(x / 4, y / 4) = max / 16
-                min1.GrayPixel(x / 4, y / 4) = min / 16
+                max1.GrayPixel(x \ 4, y \ 4) = max \ 16
+                min1.GrayPixel(x \ 4, y \ 4) = min \ 16
 
                 mtr1.RedPixel(x, y) = r
                 mtr1.GreenPixel(x, y) = g
@@ -237,13 +237,13 @@ Public Module RawIntFrameConverters
                 Dim g = frame.Data((x + y * frame.Width) * 3 + 1)
                 Dim r = frame.Data((x + y * frame.Width) * 3 + 2)
 
-                Dim min = min1.GrayPixel(x / 4, y / 4) * 16
-                Dim max = max1.GrayPixel(x / 4, y / 4) * 16
+                Dim min = min1.GrayPixel(x \ 4, y \ 4) * 16
+                Dim max = max1.GrayPixel(x \ 4, y \ 4) * 16
 
                 If max > 255 Then
-                    r = r * k / max
-                    g = g * k / max
-                    b = b * k / max
+                    r = r * k \ max
+                    g = g * k \ max
+                    b = b * k \ max
                 End If
 
                 mtr1.RedPixel(x, y) = Math.Min(r, 255)
@@ -269,9 +269,9 @@ Public Module RawIntFrameConverters
                 If r < m Then r = m
                 If g < m Then g = m
                 If b < m Then b = m
-                b = Math.Pow((b - m), v) * k
-                g = Math.Pow((g - m), v) * k
-                r = Math.Pow((r - m), v) * k
+                b = CInt(Math.Pow((b - m), v) * k)
+                g = CInt(Math.Pow((g - m), v) * k)
+                r = CInt(Math.Pow((r - m), v) * k)
 
                 mtr1.RedPixel(x, y) = Math.Min(r, 255)
                 mtr1.GreenPixel(x, y) = Math.Min(g, 255)
@@ -294,7 +294,7 @@ Public Module RawIntFrameConverters
             ks = k
             powTable = New Integer(4095) {} '4095 - 12 bit
             For powArg = 0 To powTable.Length - 1
-                powTable(powArg) = Math.Min(Math.Pow(powArg, vs) * ks, 255)
+                powTable(powArg) = CInt(Math.Min(Math.Pow(powArg, vs) * ks, 255))
             Next
         End If
         'Расчет
