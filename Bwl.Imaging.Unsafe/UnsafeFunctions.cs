@@ -10,7 +10,15 @@ namespace Bwl.Imaging.Unsafe
     public static class UnsafeFunctions
     {
         [DllImport("msvcrt.dll", EntryPoint = "memcpy", CallingConvention = CallingConvention.Cdecl, SetLastError = false), SuppressUnmanagedCodeSecurity]
-        public static unsafe extern void* memcpy(void* dest, void* src, ulong count);
+        private static unsafe extern void* memcpy(void* dest, void* src, ulong count);
+
+        public static void CopyMemory(IntPtr dest, IntPtr src, ulong count)
+        {
+            unsafe
+            {
+                memcpy((byte*)dest, (byte*)src, count);
+            }
+        }
 
         public static Bitmap CropGray(Bitmap srcBmp, Rectangle region)
         {

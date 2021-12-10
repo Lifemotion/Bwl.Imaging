@@ -5,8 +5,9 @@ Imports System.Runtime.InteropServices
 Imports System.Threading.Tasks
 
 Public Class BitmapOperations
-    <DllImport("kernel32.dll", EntryPoint:="CopyMemory", SetLastError:=False)>
-    Public Shared Sub CopyMemory(ByVal dest As IntPtr, ByVal src As IntPtr, ByVal count As UInteger)
+
+    Public Shared Sub CopyMemory(ByVal dest As IntPtr, ByVal src As IntPtr, ByVal count As ULong)
+        Unsafe.UnsafeFunctions.CopyMemory(dest, src, count)
     End Sub
 
     Private _rawBytes As Byte()
