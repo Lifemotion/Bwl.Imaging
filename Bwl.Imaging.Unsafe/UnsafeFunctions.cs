@@ -1089,7 +1089,7 @@ namespace Bwl.Imaging.Unsafe
                         }
                     }
                     srcBmp.UnlockBits(srcBmd);
-                    return (ulong)hash;
+                    return hash;
                 }
                 else
                 {
@@ -1126,13 +1126,27 @@ namespace Bwl.Imaging.Unsafe
                         }
                     }
                     srcBmp.UnlockBits(srcBmd);
-                    return (ulong)hash;
+                    return hash;
                 }
                 else
                 {
                     throw new Exception("Unsupported pixel format");
                 }
             }
+        }
+
+        public static ulong BitmapHashIntPtr(IntPtr src, Size size, PixelFormat pixelFormat, int step)
+        {
+            ulong hash = 0;
+            unsafe
+            {
+                byte* srcBytes = (byte*)src.ToPointer();
+                for (int i = 0; i < size.Width * size.Height * GetPixelSize(pixelFormat); i += step)
+                {
+                    hash += srcBytes[i];
+                }
+            }
+            return hash;
         }
 
         private static int GetPixelSize(PixelFormat fmt)
