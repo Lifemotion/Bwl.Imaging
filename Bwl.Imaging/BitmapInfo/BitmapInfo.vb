@@ -116,8 +116,8 @@ Public Class BitmapInfo
     ''' Bitmap пуст?
     ''' </summary>
     '''<remarks>
-    '''Если Bitmap пуст, это не означает, что изображение отсутствует.
-    '''Возможно, используется хранение в JPEG.
+    '''Если Bitmap пуст, это не означает, что изображение отсутствует,
+    '''возможно, используется хранение в JPEG.
     '''</remarks>
     Public ReadOnly Property BmpIsNothing As Boolean
         Get
@@ -246,13 +246,26 @@ Public Class BitmapInfo
     End Sub
 
     ''' <summary>
-    ''' Возвращает JPEG-данные (возвращаемое значение может быть пустым при работе с обычным Bitmap-ом).
+    ''' Возвращает JPEG-данные.
     ''' </summary>
+    ''' <param name="ifEmptyCreateFromBitmap">Сформировать JPEG на основе Bitmap-а (если JPEG-потока нет).</param>
+    ''' <param name="quality">Уровень качества JPEG.</param>
     ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-    Public Function GetJpg(Optional timeoutMs As Integer = 10000) As Byte()
+    ''' <remarks>
+    ''' Формирование JPEG на основе Bitmap-а при вызове данного метода при активном флаге ifEmptyCreateFromBitmap
+    ''' не приводит к установке внутреннего JPEG-потока или элиминированию исходного Bitmap-а.
+    ''' Если требуется сжать Bitmap, установить JPEG-поток и затем освободить память от Bitmap-а - используйте метод Compress().
+    ''' </remarks>
+    Public Function GetJpg(Optional ifEmptyCreateFromBitmap As Boolean = True,
+                           Optional quality As Integer = 80,
+                           Optional timeoutMs As Integer = 10000) As Byte()
         BmpLock(timeoutMs)
         Try
-            Return If(_jpg IsNot Nothing, _jpg.ToArray(), Nothing) 'Так безопаснее
+            Dim jpg = _jpg?.ToArray()
+            If jpg Is Nothing AndAlso ifEmptyCreateFromBitmap AndAlso _bmp IsNot Nothing Then
+                jpg = JpegCodec.Encode(_bmp, quality).ToArray()
+            End If
+            Return jpg
         Finally
             BmpUnlock()
         End Try
