@@ -863,7 +863,6 @@ namespace Bwl.Imaging.Unsafe
         public static Bitmap BitmapFromIntPtr(IntPtr src, Size size, PixelFormat pixelFormat)
         {
             Bitmap trgtBmp = new Bitmap(size.Width, size.Height, pixelFormat);
-            int pixelSize = GetPixelSize(pixelFormat);
             BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
             unsafe
             {
@@ -881,6 +880,89 @@ namespace Bwl.Imaging.Unsafe
                 memcpy((byte*)trgtBmd.Scan0, (byte*)src.ToPointer(), (ulong)(trgtBmd.Stride * trgtBmd.Height));
             }
             trgtBmp.UnlockBits(trgtBmd);
+        }
+
+        public static byte[] BitmapToArray(Bitmap srcBmp)
+        {
+            if (srcBmp == null)
+            {
+                throw new Exception("srcBmp == null");
+            }
+            lock (srcBmp)
+            {
+                BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
+                int pixelSize = GetPixelSize(srcBmp.PixelFormat);
+                var pixelAreaSize = srcBmd.Stride * srcBmd.Height;
+                byte[] trgtData = new byte[pixelAreaSize + 5];
+                unsafe
+                {
+                    fixed (byte* trgtDataFixed = trgtData)
+                    {
+                        memcpy(trgtDataFixed, (byte*)srcBmd.Scan0, (ulong)(pixelAreaSize));
+                    }
+                }
+                srcBmp.UnlockBits(srcBmd);
+                
+                trgtData[pixelAreaSize + 0] = (byte)pixelSize;
+                trgtData[pixelAreaSize + 1] = (byte)((srcBmd.Width >> 0) & 0xFF);
+                trgtData[pixelAreaSize + 2] = (byte)((srcBmd.Width >> 8) & 0xFF);
+                trgtData[pixelAreaSize + 3] = (byte)((srcBmd.Height >> 0) & 0xFF);
+                trgtData[pixelAreaSize + 4] = (byte)((srcBmd.Height >> 8) & 0xFF);
+                
+                return trgtData;
+            }
+        }
+
+        public static Bitmap ArrayToBitmap(byte[] srcData)
+        {
+            if (srcData == null)
+            {
+                throw new Exception("srcData == null");
+            }
+            int pixelAreaSize = srcData.Length - 5;
+            int pixelSize = srcData[pixelAreaSize + 0];
+            int w = (int)(srcData[pixelAreaSize + 1] | (srcData[pixelAreaSize + 2] << 8));
+            int h = (int)(srcData[pixelAreaSize + 3] | (srcData[pixelAreaSize + 4] << 8));
+
+            PixelFormat pixelFormat;
+            switch (pixelSize)
+            {
+                case 1:
+                    {
+                        pixelFormat = PixelFormat.Format8bppIndexed;
+                        break;
+                    }
+                case 3:
+                    {
+                        pixelFormat = PixelFormat.Format24bppRgb;
+                        break;
+                    }
+                case 4:
+                    {
+                        pixelFormat = PixelFormat.Format32bppRgb;
+                        break;
+                    }
+                default:
+                    {
+                        throw new Exception("Unsupported pixel format");
+                    }
+            }
+            
+            Bitmap trgtBmp = new Bitmap(w, h, pixelFormat);
+            if (pixelSize == 1)
+            {
+                trgtBmp.Palette = GetGrayScalePalette();
+            }
+            BitmapData trgtBmd = trgtBmp.LockBits(new Rectangle(0, 0, trgtBmp.Width, trgtBmp.Height), ImageLockMode.WriteOnly, trgtBmp.PixelFormat);
+            unsafe
+            {
+                fixed (byte* srcDataFixed = srcData)
+                {
+                    memcpy((byte*)trgtBmd.Scan0, (byte*)srcDataFixed, (ulong)(trgtBmd.Stride * trgtBmd.Height));
+                }
+            }
+            trgtBmp.UnlockBits(trgtBmd);
+            return trgtBmp;
         }
 
         public static byte[] BitmapProbeGray(Bitmap srcBmp, int step)

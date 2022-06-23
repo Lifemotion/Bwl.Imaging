@@ -330,4 +330,38 @@ Imports Bwl.Imaging.Unsafe
             Throw New Exception(String.Format("UnsafeBitmapHashRgbAccessViolationTest32bpp: step:{0}, w:{1}, h:{2}", stp, w, h))
         End Try
     End Sub
+
+    <TestMethod()> Public Sub BitmapToArrayTestGray24()
+        BitmapToArrayTest(My.Resources.gray24)
+    End Sub
+
+    <TestMethod()> Public Sub BitmapToArrayTestGray25()
+        BitmapToArrayTest(My.Resources.gray25)
+    End Sub
+
+    <TestMethod()> Public Sub BitmapToArrayTestRgb24()
+        BitmapToArrayTest(My.Resources.rgbw24)
+    End Sub
+
+    <TestMethod()> Public Sub BitmapToArrayTestRgb25()
+        BitmapToArrayTest(My.Resources.rgbw25)
+    End Sub
+
+    Private Sub BitmapToArrayTest(bmp1 As Bitmap)
+        Dim array1 = UnsafeFunctions.BitmapToArray(bmp1)
+        Dim bmp2 = UnsafeFunctions.ArrayToBitmap(array1)
+        Dim array2 = UnsafeFunctions.BitmapToArray(bmp2)
+        Assert.IsTrue(array1.SequenceEqual(array2))
+        CompareBitmaps(bmp1, bmp2)
+    End Sub
+
+    Private Sub CompareBitmaps(bmp1 As Bitmap, bmp2 As Bitmap)
+        For x = 0 To bmp1.Width - 1
+            For y = 0 To bmp1.Height - 1
+                If bmp1.GetPixel(x, y) <> bmp2.GetPixel(x, y) Then
+                    Throw New Exception("bmp1.GetPixel(x, y) <> bmp2.GetPixel(x, y)")
+                End If
+            Next
+        Next
+    End Sub
 End Class
