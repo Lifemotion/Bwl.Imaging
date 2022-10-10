@@ -23,7 +23,7 @@ Public Class DisplayObject
     Public Property PointSize As Single = 0.0
     Public Property Caption As String = ""
     Public Property Group As String = ""
-    Public Property Parameters As New ParametersDictionary
+    Public Property Parameters As New ParametersDictionaryList
 
     Public Sub New()
     End Sub

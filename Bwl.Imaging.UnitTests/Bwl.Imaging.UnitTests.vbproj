@@ -55,6 +55,7 @@
     <Reference Include="System.Drawing.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Drawing.Common.6.0.0\lib\net461\System.Drawing.Common.dll</HintPath>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -89,9 +90,13 @@
     <Compile Include="..\refs-src\JpegCodec.vb">
       <Link>refs-src\JpegCodec.vb</Link>
     </Compile>
-    <Compile Include="BitmapInfoTests.vb" />
+    <Compile Include="..\refs-src\Serializer.vb">
+      <Link>refs-src\Serializer.vb</Link>
+    </Compile>
+    <Compile Include="Image\BitmapInfoTests.vb" />
+    <Compile Include="Parameters\ParametersDictionaryTest.vb" />
     <Compile Include="VectorTools\VectorToolsTest.vb" />
-    <Compile Include="MatrixTests.vb" />
+    <Compile Include="Image\MatrixTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -108,7 +113,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="UnsafeTests.vb" />
+    <Compile Include="Image\UnsafeTests.vb" />
     <Compile Include="VectorTools\PolygonTest.vb" />
   </ItemGroup>
   <ItemGroup>

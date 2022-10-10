@@ -1,23 +1,7 @@
-﻿Public Class Parameter
-    Public Property Key As String = ""
-    Public Property Value As String = ""
-    Public Property Unit As String = ""
-    Public Property Visible As Boolean = True
-    Public Property Caption As String = ""
-    Public Property AdditionalSettings As String = ""
-    Public Sub New()
-
-    End Sub
-    Public Sub New(key As String, value As String)
-        Me.Key = key
-        Me.Value = value
-    End Sub
-End Class
-
-Public Class ParametersDictionary
+﻿Public Class ParametersDictionaryList
     Inherits List(Of Parameter)
 
-    Public Overloads Function Add(key As String, value As String) As Parameter
+    Public Overloads Function Add(key As String, value As String, Optional visible As Boolean = False) As Parameter
         SyncLock Me
             If key Is Nothing OrElse key.Length = 0 Then Throw New Exception("ParametersDictionary::Add(): key Is Nothing OrElse key.Length = 0")
             For Each param In Me
@@ -25,7 +9,7 @@ Public Class ParametersDictionary
                     Throw New Exception("Parameter with this key exists")
                 End If
             Next
-            Dim newParam As New Parameter(key, value)
+            Dim newParam As New Parameter(key, value, visible)
             Me.Add(newParam)
 
             Return newParam
