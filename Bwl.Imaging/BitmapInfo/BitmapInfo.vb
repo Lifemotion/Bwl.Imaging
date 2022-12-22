@@ -8,6 +8,7 @@ Imports Bwl.Imaging.Unsafe
 ''' </summary>
 Public Class BitmapInfo
     Implements IDisposable
+    Implements ICloneable
 
     Private ReadOnly _bmpSemaphore As New Semaphore(1, 1)
 
@@ -355,6 +356,26 @@ Public Class BitmapInfo
     End Function
 
     ''' <summary>
+    ''' Получение клонированной копии.
+    ''' </summary>
+    ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+    ''' <returns>Клонированная копия.</returns>
+    Public Function GetClonedCopy(Optional timeoutMs As Integer = 10000) As BitmapInfo
+        Dim result As BitmapInfo = Nothing
+        BmpLock(timeoutMs)
+        Try
+            If _jpg IsNot Nothing Then
+                result = New BitmapInfo(_jpg.ToArray())
+            ElseIf _bmp IsNot Nothing Then
+                result = New BitmapInfo(BmpCloneInternal(_bmp))
+            End If
+        Finally
+            BmpUnlock()
+        End Try
+        Return result
+    End Function
+
+    ''' <summary>
     ''' Очистка изображений Bitmap/JPEG.
     ''' </summary>
     ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
@@ -531,5 +552,11 @@ Public Class BitmapInfo
     Public Sub Dispose() Implements IDisposable.Dispose
         Dispose(True)
     End Sub
+#End Region
+
+#Region "ICloneable"
+    Public Function Clone() As Object Implements ICloneable.Clone
+        Return GetClonedCopy()
+    End Function
 #End Region
 End Class

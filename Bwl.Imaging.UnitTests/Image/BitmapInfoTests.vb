@@ -366,6 +366,62 @@ Public Class BitmapInfoTests
         Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При восстановлении из JPEG пиксель 24 бита        
     End Sub
 
+    <TestMethod>
+    Public Sub BitmapInfoCloneTest11()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
+        Dim bi1 = New BitmapInfo(UnsafeFunctions.BitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi2 = bi1.GetClonedCopy()
+        'Проверка изображений на соответствие
+        Dim bmp1 = bi1.GetClonedBmp()
+        Dim bmp2 = bi2.GetClonedBmp()
+        Dim mtrx1 = bmp1.BitmapToRgbMatrix()
+        Dim mtrx2 = bmp2.BitmapToRgbMatrix()
+        Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
+        Assert.IsTrue(mtrxDiffPerc < 0.5)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoCloneTest12()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
+        Dim bi1 = New BitmapInfo(UnsafeFunctions.BitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi2 As BitmapInfo = bi1.Clone()
+        'Проверка изображений на соответствие
+        Dim bmp1 = bi1.GetClonedBmp()
+        Dim bmp2 = bi2.GetClonedBmp()
+        Dim mtrx1 = bmp1.BitmapToRgbMatrix()
+        Dim mtrx2 = bmp2.BitmapToRgbMatrix()
+        Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
+        Assert.IsTrue(mtrxDiffPerc < 0.5)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoCloneTest21()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
+        Dim bi1 = New BitmapInfo(JpegCodec.Encode(src).ToArray()) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi2 = bi1.GetClonedCopy()
+        'Проверка изображений на соответствие
+        Dim bmp1 = bi1.GetClonedBmp()
+        Dim bmp2 = bi2.GetClonedBmp()
+        Dim mtrx1 = bmp1.BitmapToRgbMatrix()
+        Dim mtrx2 = bmp2.BitmapToRgbMatrix()
+        Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
+        Assert.IsTrue(mtrxDiffPerc < 0.5)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoCloneTest22()
+        Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
+        Dim bi1 = New BitmapInfo(JpegCodec.Encode(src).ToArray()) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi2 As BitmapInfo = bi1.Clone()
+        'Проверка изображений на соответствие
+        Dim bmp1 = bi1.GetClonedBmp()
+        Dim bmp2 = bi2.GetClonedBmp()
+        Dim mtrx1 = bmp1.BitmapToRgbMatrix()
+        Dim mtrx2 = bmp2.BitmapToRgbMatrix()
+        Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
+        Assert.IsTrue(mtrxDiffPerc < 0.5)
+    End Sub
+
     ''' <summary>
     ''' В этом тесте два потока пытаются получить одновременный доступ к BitmapInfo.
     ''' Для одного из потоков BmpLock() успешен,
