@@ -1,4 +1,5 @@
 ﻿Imports System.Drawing
+Imports System.IO
 Imports System.Threading
 Imports Bwl.Imaging.Unsafe
 Imports Microsoft.VisualStudio.TestTools.UnitTesting
@@ -214,6 +215,20 @@ Public Class BitmapInfoTests
 
     <TestMethod>
     Public Sub BitmapInfoJpegTest1()
+        Dim jpg = GetResourceFileData("638067000726558653.jpg")
+        Dim sw = New Stopwatch()
+        Dim biJpg = New BitmapInfo(jpg)
+        Dim bmp = New Bitmap(New MemoryStream(jpg))
+        'Проверка изображений на соответствие
+        Dim bmpBnfo = biJpg.GetClonedBmp()
+        Dim mtrxBnfo = bmpBnfo.BitmapToRgbMatrix() 'JPG
+        Dim mtrxBmp = bmp.BitmapToRgbMatrix() 'BMP
+        Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxBnfo, mtrxBmp) * 100
+        Assert.IsTrue(mtrxDiffPerc < 0.5)
+    End Sub
+
+    <TestMethod>
+    Public Sub BitmapInfoJpegTest2()
         Dim jpg = GetResourceFileData("jpeg8bpp.jpg")
         Dim bi = New BitmapInfo(jpg)
         Dim bmpSize = bi.BmpSize
@@ -224,7 +239,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoJpegTest2()
+    Public Sub BitmapInfoJpegTest3()
         Dim jpg = GetResourceFileData("jpeg24bpp.jpg")
         Dim bi = New BitmapInfo(jpg)
         Dim bmpSize = bi.BmpSize
@@ -235,7 +250,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoJpegTest3()
+    Public Sub BitmapInfoJpegTest4()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
         Dim bi = New BitmapInfo(jpg)
@@ -247,7 +262,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoJpegTest4()
+    Public Sub BitmapInfoJpegTest5()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
 
@@ -263,7 +278,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoJpegTest5()
+    Public Sub BitmapInfoJpegTest6()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
         Dim bi = New BitmapInfo(jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем JPEG
@@ -282,7 +297,7 @@ Public Class BitmapInfoTests
     End Sub
 
     <TestMethod>
-    Public Sub BitmapInfoJpegTest6()
+    Public Sub BitmapInfoJpegTest7()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
         Dim bi = New BitmapInfo(jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем JPEG
