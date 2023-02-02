@@ -454,7 +454,7 @@ Public Class BitmapInfo
             Try
                 result = New Bitmap(bmp)
             Catch
-                Throw New Exception("BitmapInfo.BmpClone() failed")
+                Throw New Exception("BitmapInfo.BmpCloneInternal() failed")
             End Try
         End Try
         Return result
@@ -475,22 +475,23 @@ Public Class BitmapInfo
     ''' отложенным Dispose()-ом. При отслеживании ссылки-цели элиминируется в точности
     ''' тот Bitmap, что и планировалось.</remarks>
     Private Sub EliminateBmpInternal(target As Bitmap)
-        If _bmp IsNot Nothing AndAlso target IsNot Nothing AndAlso Object.ReferenceEquals(_bmp, target) Then
-            Try
-                _bmp.Dispose()
-                Interlocked.Increment(_globalBitmapEliminatedCount)
-                Interlocked.Increment(_bitmapEliminatedCount)
-            Catch
-            Finally
+        Try
+            target?.Dispose()
+            Interlocked.Increment(_globalBitmapEliminatedCount)
+            Interlocked.Increment(_bitmapEliminatedCount)
+        Catch
+        Finally
+            'При нескольких декомпрессиях элиминирование _bmp должно произойти на крайнем по времени экземпляре
+            If Object.ReferenceEquals(_bmp, target) Then
                 _bmp = Nothing
-            End Try
-        End If
+            End If
+        End Try
     End Sub
 
     Private Sub SetBmpInternal(bmp As Bitmap)
         _bmp = bmp
-        _bmpSize = If(_bmp IsNot Nothing, _bmp.Size, Nothing)
-        _bmpPixelFormat = If(_bmp IsNot Nothing, _bmp.PixelFormat, Nothing)
+        _bmpSize = _bmp?.Size
+        _bmpPixelFormat = _bmp?.PixelFormat
     End Sub
 
     ''' <summary>
@@ -499,40 +500,47 @@ Public Class BitmapInfo
     Private Function GetJpegSize(jpg As Byte(), ByRef channelCount As Integer,
                                  Optional maxBytesInSearch As Integer = 1024) As Size
         'Инициализация фиктивными значениями, чтобы фиксировать ситуации "не считывания"
-        Dim res = New Size(-1, -1)
         channelCount = -1
+        Dim res = New Size(-1, -1)
+
         Try
-            Dim pos = 0 'Позиция в файле
-            If jpg(pos) = &HFF AndAlso jpg(pos + 1) = &HD8 Then
-                pos += 2 'Перешагиваем через маркер
-                Dim blockLength = 0 'Длина блока пока неизвестна...
-                Do While pos < Math.Min(maxBytesInSearch, jpg.Length) 'Работа в пределах допустимой области файла
-                    pos += blockLength 'Переходим к следующему блоку
-                    If pos > jpg.Length - 2 Then 'Выход за пределы массива: "jpg(pos + 1)"
-                        Return res 'Ошибка - вышли за пределы области данных для поиска
-                    End If
-                    If jpg(pos) <> &HFF Then 'Проверка на то, действительно ли мы перешли на заголовок блока (если нет - ошибка)
-                        Return res 'Ошибка - не обнаружен признак маркера блока
-                    End If
-                    If jpg(pos + 1) = &HC0 Then '0xFFC0 - маркер начала кадра, далее можно узнать размеры изображения
-                        'Структура блока 0xFFC0: [0xFFC0][ushort length][uchar precision][ushort x][ushort y]
-                        Dim height = jpg(pos + 5) * 256 + jpg(pos + 6)
-                        Dim width = jpg(pos + 7) * 256 + jpg(pos + 8)
-                        channelCount = jpg(pos + 9)
-                        res = New Size(width, height)
-                        Return res 'Данные о размере изображения считаны
-                    Else
-                        pos += 2 'Перешагиваем через маркер блока...
-                        blockLength = jpg(pos) * 256 + jpg(pos + 1) '...и переходим к следующему
-                    End If
-                Loop
-                Return res 'Ошибка - исчерпали данные для поиска
-            Else
-                Return res 'Ошибка - не найден стартовый маркер
-            End If
+            'Начальная позиция в файле
+            Dim pos = 0
+
+            'Ошибка - не найден стартовый маркер
+            If jpg(pos) <> &HFF OrElse jpg(pos + 1) <> &HD8 Then Return res
+
+            pos += 2 'Перешагиваем через маркер
+            Dim blockLength = 0 'Длина блока пока неизвестна...
+
+            'Работа в пределах допустимой области файла
+            Do While pos < Math.Min(maxBytesInSearch, jpg.Length)
+                'Переходим к следующему блоку
+                pos += blockLength
+
+                'Выход за пределы массива: "jpg(pos + 1)"; Ошибка - вышли за пределы области данных для поиска
+                If pos > jpg.Length - 2 Then Return res
+
+                'Проверка на то, действительно ли мы перешли на заголовок блока (если нет - ошибка); Ошибка - не обнаружен признак маркера блока
+                If jpg(pos) <> &HFF Then Return res
+
+                '0xFFC0 - маркер начала кадра, далее можно узнать размеры изображения
+                If jpg(pos + 1) = &HC0 Then
+                    'Структура блока 0xFFC0: [0xFFC0][ushort length][uchar precision][ushort x][ushort y]
+                    Dim height = jpg(pos + 5) * 256 + jpg(pos + 6)
+                    Dim width = jpg(pos + 7) * 256 + jpg(pos + 8)
+                    channelCount = jpg(pos + 9)
+                    res = New Size(width, height)
+                    Return res 'Данные о размере изображения считаны
+                Else
+                    pos += 2 'Перешагиваем через маркер блока...
+                    blockLength = jpg(pos) * 256 + jpg(pos + 1) '...и переходим к следующему
+                End If
+            Loop
+            Return res 'Ошибка - исчерпали данные для поиска
         Catch ex As Exception
-            res = New Size(-1, -1)
             channelCount = -1
+            res = New Size(-1, -1)
         End Try
         Return res
     End Function
