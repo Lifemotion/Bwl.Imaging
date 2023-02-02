@@ -394,10 +394,10 @@ Public Class BitmapInfo
     ''' </summary>
     ''' <param name="bitmapKeepTimeS">Время доступности декомпрессированного битмапа.</param>
     Private Sub BitmapDisposeWithDelay(target As Bitmap, bitmapKeepTimeS As Single)
-        If bitmapKeepTimeS >= 0 AndAlso bitmapKeepTimeS <> Single.MaxValue Then
+        If bitmapKeepTimeS >= 0 Then
             Dim thr = New Thread(Sub()
                                      Thread.Sleep(TimeSpan.FromSeconds(bitmapKeepTimeS))
-                                     BmpLock()
+                                     BmpLock(-1) 'Бесконечное ожидание, т.к. нужно высвободить ресурс
                                      Try
                                          EliminateBmpInternal(target)
                                      Finally
