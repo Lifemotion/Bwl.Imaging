@@ -69,7 +69,7 @@ Public Class BitmapInfoTests
         Thread.Sleep(3000) 'за 3 секунды должен отработать/не отработать отложенный Dispose() - ОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2
         Assert.IsTrue(bi.CompressedCount = 1)
         Assert.IsTrue(bi.DecompressedCount = 1)
-        Assert.IsTrue(bi.BitmapEliminatedCount = 2)
+        Assert.IsTrue(bi.DisposeCount = 2)
     End Sub
 
     <TestMethod>
