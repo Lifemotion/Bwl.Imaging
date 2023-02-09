@@ -11,31 +11,11 @@ Public Class BitmapInfo
     Implements IDisposable
     Implements ICloneable
 
-    Private Shared _safeCloneMode As Boolean = False
-
-    Private Shared _globalAllocatedDataCount As Long
-    Private Shared _globalCompressedCount As Long
-    Private Shared _globalDecompressedCount As Long
-    Private Shared _globalDisposeCount As Long
-    Private Shared _globalDisposeErrorCount As Long
-    Private Shared _globalCloneErrorCount As Long
-
-    Private _compressedCount As Long
-    Private _decompressedCount As Long
-    Private _disposeCount As Long
-    Private _disposeErrorCount As Long
-    Private _cloneErrorCount As Long
-
-    Private _jpg As Byte()
-    Private _bmp As Bitmap
-    Private _bmpSize As Nullable(Of Size)
-    Private _bmpPixelFormat As Nullable(Of PixelFormat)
-
-    Private ReadOnly _bmpSemaphore As New Semaphore(1, 1)
-
+#Region "Shared"
     ''' <summary>
     ''' Глобальный режим клонирования Bitmap-ов.
     ''' </summary>
+    Private Shared _safeCloneMode As Boolean = False
     Public Shared Property SafeCloneMode As Boolean
         Get
             Return _safeCloneMode
@@ -46,8 +26,55 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Глобальный счетчик количества активных байт Bitmap-ов.
+    ''' Клонирование Bitnap-а в соотв. с выбранным режимом.
     ''' </summary>
+    Public Shared Function BitmapCloneManaged(bmp As Bitmap) As Bitmap
+        Dim result As Bitmap = Nothing
+        Dim safeCloneMode = _safeCloneMode
+        If bmp IsNot Nothing Then
+            Try
+                Dim clonedBmp = If(safeCloneMode, New Bitmap(bmp), UnsafeFunctions.BitmapClone(bmp))
+                If CheckBitmap(clonedBmp) Then
+                    result = clonedBmp 'Bitmap прошел проверку
+                Else
+                    Throw New Exception("Not CheckBitmap(clonedBmp)")
+                End If
+            Catch ex As Exception
+                Interlocked.Increment(_globalCloneErrorCount)
+                Throw New Exception($"BitmapInfo.BitmapCloneManaged(safeCloneMode:{safeCloneMode}) failed: {ex.Message}")
+            End Try
+        End If
+        Return result
+    End Function
+
+    ''' <summary>
+    ''' Проверка Bitmap-а на рабочее состояние.
+    ''' </summary>
+    Public Shared Function CheckBitmap(bmp As Bitmap) As Boolean
+        Dim result As Boolean
+        Try
+            result = bmp IsNot Nothing AndAlso bmp.PixelFormat <> PixelFormat.DontCare AndAlso bmp.Width * bmp.Height > 0
+        Catch
+            result = False
+        End Try
+        Return result
+    End Function
+#End Region
+
+#Region "Data"
+    Private _jpg As Byte()
+    Private _bmp As Bitmap
+    Private _bmpSize As Nullable(Of Size)
+    Private _bmpPixelFormat As Nullable(Of PixelFormat)
+
+    Private ReadOnly _bmpSemaphore As New Semaphore(1, 1)
+#End Region
+
+#Region "Statistic Properties"
+    ''' <summary>
+    ''' Глобальный счетчик количества выделенных байт Bitmap-ов.
+    ''' </summary>
+    Private Shared _globalAllocatedDataCount As Long
     Public Shared ReadOnly Property GlobalAllocatedDataCount As Long
         Get
             Return Interlocked.Read(_globalAllocatedDataCount)
@@ -57,6 +84,7 @@ Public Class BitmapInfo
     ''' <summary>
     ''' Глобальный счетчик осуществленных компрессий JPEG (а не переприсваиваний).
     ''' </summary>
+    Private Shared _globalCompressedCount As Long
     Public Shared ReadOnly Property GlobalCompressedCount As Long
         Get
             Return Interlocked.Read(_globalCompressedCount)
@@ -64,8 +92,9 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Глобальный счетчик декомпрессий JPEG.
+    ''' Глобальный счетчик декомпрессий JPEG (с формированием Bitmap-ов).
     ''' </summary>
+    Private Shared _globalDecompressedCount As Long
     Public Shared ReadOnly Property GlobalDecompressedCount As Long
         Get
             Return Interlocked.Read(_globalDecompressedCount)
@@ -73,8 +102,19 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Глобальный счетчик количества элиминирований Bitmap-а.
+    ''' Глобальный счетчик количества ошибок декомпресии.
     ''' </summary>
+    Private Shared _globalDecompressedErrorCount As Long
+    Public Shared ReadOnly Property GlobalDecompressedErrorCount As Long
+        Get
+            Return Interlocked.Read(_globalDecompressedErrorCount)
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Глобальный счетчик количества элиминирований Bitmap-ов (Dispose).
+    ''' </summary>
+    Private Shared _globalDisposeCount As Long
     Public Shared ReadOnly Property GlobalDisposeCount As Long
         Get
             Return Interlocked.Read(_globalDisposeCount)
@@ -82,17 +122,19 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Глобальный Счетчик количества ошибок высвобождения Bitmap-а.
+    ''' Глобальный счетчик количества ошибок высвобождения Bitmap-ов.
     ''' </summary>
-    Public ReadOnly Property GlobalDisposeErrorCount As Long
+    Private Shared _globalDisposeErrorCount As Long
+    Public Shared ReadOnly Property GlobalDisposeErrorCount As Long
         Get
             Return Interlocked.Read(_globalDisposeErrorCount)
         End Get
     End Property
 
     ''' <summary>
-    ''' Глобальный счетчик количества ошибок клонирований Bitmap-а.
+    ''' Глобальный счетчик количества ошибок клонирований Bitmap-ов.
     ''' </summary>
+    Private Shared _globalCloneErrorCount As Long
     Public Shared ReadOnly Property GlobalCloneErrorCount As Long
         Get
             Return Interlocked.Read(_globalCloneErrorCount)
@@ -102,6 +144,7 @@ Public Class BitmapInfo
     ''' <summary>
     ''' Счетчик осуществленных компрессий JPEG (а не переприсваиваний).
     ''' </summary>
+    Private _compressedCount As Long
     Public ReadOnly Property CompressedCount As Long
         Get
             Return Interlocked.Read(_compressedCount)
@@ -109,8 +152,9 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Счетчик декомпрессий JPEG.
+    ''' Счетчик декомпрессий JPEG (с формированием Bitmap-ов).
     ''' </summary>
+    Private _decompressedCount As Long
     Public ReadOnly Property DecompressedCount As Long
         Get
             Return Interlocked.Read(_decompressedCount)
@@ -118,8 +162,19 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Счетчик количества элиминирований Bitmap-а.
+    ''' Счетчик количества ошибок декомпресии.
     ''' </summary>
+    Private _decompressedErrorCount As Long
+    Public ReadOnly Property DecompressedErrorCount As Long
+        Get
+            Return Interlocked.Read(_decompressedErrorCount)
+        End Get
+    End Property
+
+    ''' <summary>
+    ''' Счетчик количества элиминирований Bitmap-ов (Dispose).
+    ''' </summary>
+    Private _disposeCount As Long
     Public ReadOnly Property DisposeCount As Long
         Get
             Return Interlocked.Read(_disposeCount)
@@ -127,8 +182,9 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Счетчик количества ошибок высвобождения Bitmap-а.
+    ''' Счетчик количества ошибок высвобождения Bitmap-ов.
     ''' </summary>
+    Private _disposeErrorCount As Long
     Public ReadOnly Property DisposeErrorCount As Long
         Get
             Return Interlocked.Read(_disposeErrorCount)
@@ -136,14 +192,17 @@ Public Class BitmapInfo
     End Property
 
     ''' <summary>
-    ''' Cчетчик количества ошибок клонирований Bitmap-а.
+    ''' Счетчик количества ошибок клонирований Bitmap-ов.
     ''' </summary>
+    Private _cloneErrorCount As Long
     Public ReadOnly Property CloneErrorCount As Long
         Get
             Return Interlocked.Read(_cloneErrorCount)
         End Get
     End Property
+#End Region
 
+#Region "Properties"
     ''' <summary>
     ''' Время хранения декомпрессированного битмапа (если доступны JPEG-данные для экономии ОЗУ).
     ''' </summary>
@@ -231,7 +290,9 @@ Public Class BitmapInfo
             End If
         End Get
     End Property
+#End Region
 
+#Region "Public Methods"
     Public Sub New()
     End Sub
 
@@ -321,7 +382,7 @@ Public Class BitmapInfo
     ''' <summary>
     ''' Возвращает JPEG-данные.
     ''' </summary>
-    ''' <param name="ifEmptyCreateFromBitmap">Сформировать JPEG на основе Bitmap-а (если JPEG-потока нет).</param>
+    ''' <param name="createFromBitmapIfEmpty">Сформировать JPEG на основе Bitmap-а (если JPEG-потока нет).</param>
     ''' <param name="quality">Уровень качества JPEG.</param>
     ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
     ''' <remarks>
@@ -329,13 +390,13 @@ Public Class BitmapInfo
     ''' не приводит к установке внутреннего JPEG-потока или элиминированию исходного Bitmap-а.
     ''' Если требуется сжать Bitmap, установить JPEG-поток и затем освободить память от Bitmap-а - используйте метод Compress().
     ''' </remarks>
-    Public Function GetJpg(Optional ifEmptyCreateFromBitmap As Boolean = True,
+    Public Function GetJpg(Optional createFromBitmapIfEmpty As Boolean = True,
                            Optional quality As Integer = 80,
                            Optional timeoutMs As Integer = 10000) As Byte()
         BmpLock(timeoutMs)
         Try
             Dim jpg = _jpg?.ToArray()
-            If jpg Is Nothing AndAlso ifEmptyCreateFromBitmap AndAlso _bmp IsNot Nothing Then
+            If jpg Is Nothing AndAlso _bmp IsNot Nothing AndAlso createFromBitmapIfEmpty Then
                 Try
                     jpg = JpegCodec.Encode(_bmp, quality).ToArray()
                 Catch ex As Exception
@@ -470,23 +531,6 @@ Public Class BitmapInfo
     End Function
 
     ''' <summary>
-    ''' Клонирование Bitnap-а в соотв. с выбранным режимом.
-    ''' </summary>
-    Public Shared Function BitmapCloneManaged(bmp As Bitmap) As Bitmap
-        Dim result As Bitmap = Nothing
-        Dim safeCloneMode = _safeCloneMode
-        If bmp IsNot Nothing Then
-            Try
-                result = If(safeCloneMode, New Bitmap(bmp), UnsafeFunctions.BitmapClone(bmp))
-            Catch ex As Exception
-                Interlocked.Increment(_globalCloneErrorCount)
-                Throw New Exception($"BitmapInfo.BitmapCloneManaged(safeCloneMode:{safeCloneMode}) failed: {ex.Message}")
-            End Try
-        End If
-        Return result
-    End Function
-
-    ''' <summary>
     ''' Очистка изображений Bitmap/JPEG.
     ''' </summary>
     ''' <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
@@ -501,15 +545,20 @@ Public Class BitmapInfo
             BmpUnlock()
         End Try
     End Sub
+#End Region
 
-#Region "Bitmap"
+#Region "Private Methods"
     ''' <summary>
     ''' Установка Bitmap-а.
     ''' </summary>
     Private Sub SetBmpInternal(bmp As Bitmap)
-        _bmp = bmp
-        _bmpSize = _bmp?.Size
-        _bmpPixelFormat = _bmp?.PixelFormat
+        If CheckBitmap(bmp) Then
+            _bmp = bmp
+            _bmpSize = _bmp?.Size
+            _bmpPixelFormat = _bmp?.PixelFormat
+        Else
+            Throw New Exception($"BitmapInfo.SetBmpInternal() failed: Not CheckBitmap(bmp)")
+        End If
     End Sub
 
     ''' <summary>
@@ -518,8 +567,10 @@ Public Class BitmapInfo
     Private Function GetBitmapDecodedInternal() As Bitmap
         If _bmp Is Nothing AndAlso _jpg IsNot Nothing Then
             Dim bmp = DecodeJpegInternal(_jpg)
-            SetBmpInternal(bmp)
-            BitmapDisposeWithDelay(bmp, Me.BitmapKeepTimeS) 'Отложенная очистка битмапа (именного этого, контроль по ссылке)
+            If bmp IsNot Nothing Then
+                SetBmpInternal(bmp)
+                BitmapDisposeWithDelay(bmp, Me.BitmapKeepTimeS) 'Отложенная очистка битмапа (именного этого, контроль по ссылке)
+            End If
         End If
         Return _bmp
     End Function
@@ -537,9 +588,7 @@ Public Class BitmapInfo
         End Try
         Return result
     End Function
-#End Region
 
-#Region "JPEG"
     ''' <summary>
     ''' Декодирование JPEG-потока.
     ''' </summary>
@@ -549,13 +598,20 @@ Public Class BitmapInfo
         Dim result As Bitmap = Nothing
         Try
             If jpg Is Nothing Then
-                Throw New Exception("JPEG is Nothing")
+                Throw New Exception("JPEG data is Nothing")
             Else
                 Try
-                    result = New Bitmap(New IO.MemoryStream(jpg))
-                    Interlocked.Add(_globalAllocatedDataCount, GetBitmapAllocatedSize(result))
-                    Interlocked.Increment(_globalDecompressedCount)
-                    Interlocked.Increment(_decompressedCount)
+                    Dim bmp = New Bitmap(New IO.MemoryStream(jpg))
+                    If CheckBitmap(bmp) Then
+                        result = bmp 'Bitmap прошел проверку
+                        Interlocked.Add(_globalAllocatedDataCount, GetBitmapAllocatedSize(result.Size, result.PixelFormat))
+                        Interlocked.Increment(_globalDecompressedCount)
+                        Interlocked.Increment(_decompressedCount)
+                    Else
+                        Interlocked.Increment(_globalDecompressedErrorCount)
+                        Interlocked.Increment(_decompressedErrorCount)
+                        Throw New Exception($"Not CheckBitmap(bmp)")
+                    End If
                 Catch ex As Exception
                     Throw New Exception($"New Bitmap(New IO.MemoryStream(jpg[{jpg.Length} bytes]) failed: {ex.Message}")
                 End Try
@@ -617,7 +673,7 @@ Public Class BitmapInfo
     ''' </summary>
     ''' <param name="bitmapKeepTimeS">Время доступности декомпрессированного битмапа.</param>
     Private Sub BitmapDisposeWithDelay(target As Bitmap, bitmapKeepTimeS As Single)
-        If bitmapKeepTimeS >= 0 Then
+        If target IsNot Nothing AndAlso bitmapKeepTimeS >= 0 Then
             Dim thr = New Thread(Sub()
                                      Thread.Sleep(TimeSpan.FromSeconds(bitmapKeepTimeS))
                                      BmpLock(-1) 'Бесконечное ожидание, т.к. нужно высвободить ресурс
@@ -642,31 +698,28 @@ Public Class BitmapInfo
     ''' отложенным Dispose()-ом. При отслеживании ссылки-цели элиминируется в точности
     ''' тот Bitmap, что и планировалось.</remarks>
     Private Sub DisposeBmpInternal(target As Bitmap)
-        Try
-            If target IsNot Nothing Then
+        If CheckBitmap(target) Then
+            Try
+                If Object.ReferenceEquals(_bmp, target) Then _bmp = Nothing
+                Dim bitmapAllocatedSize = GetBitmapAllocatedSize(target.Size, target.PixelFormat)
                 target.Dispose()
-                Interlocked.Add(_globalAllocatedDataCount, -1L * GetBitmapAllocatedSize(target))
+                Interlocked.Add(_globalAllocatedDataCount, -1L * bitmapAllocatedSize)
                 Interlocked.Increment(_globalDisposeCount)
                 Interlocked.Increment(_disposeCount)
-            End If
-        Catch ex As Exception
-            Interlocked.Increment(_globalDisposeErrorCount)
-            Interlocked.Increment(_disposeErrorCount)
-            Throw New Exception($"BitmapInfo.DisposeBmpInternal() failed: {ex.Message}")
-        Finally
-            'При нескольких декомпрессиях элиминирование _bmp должно произойти на крайнем по времени экземпляре
-            If Object.ReferenceEquals(_bmp, target) Then
-                _bmp = Nothing
-            End If
-        End Try
+            Catch ex As Exception
+                Interlocked.Increment(_globalDisposeErrorCount)
+                Interlocked.Increment(_disposeErrorCount)
+                Throw New Exception($"BitmapInfo.DisposeBmpInternal() failed: {ex.Message}")
+            End Try
+        End If
     End Sub
 
     ''' <summary>
     ''' Получение количества выделенных байт под Bitmap.
     ''' </summary>
-    Private Function GetBitmapAllocatedSize(bmp As Bitmap) As Long
+    Private Function GetBitmapAllocatedSize(bmpSize As Size, bmpPixelFormat As PixelFormat) As Long
         Dim bytesPerPixel = 1
-        Select Case bmp.PixelFormat
+        Select Case bmpPixelFormat
             Case PixelFormat.Format32bppArgb
                 bytesPerPixel = 4
             Case PixelFormat.Format32bppRgb
@@ -676,10 +729,10 @@ Public Class BitmapInfo
             Case PixelFormat.Format8bppIndexed
                 bytesPerPixel = 1
             Case Else
-                Throw New Exception($"BitmapInfo.GetBitmapAllocatedSize(): Unsupported pixel format {[Enum].GetName(GetType(PixelFormat), bmp.PixelFormat)}")
+                Throw New Exception($"BitmapInfo.GetBitmapAllocatedSize(): Unsupported pixel format {[Enum].GetName(GetType(PixelFormat), Bmp.PixelFormat)}")
         End Select
-        Dim stride = 4 * ((bmp.Width * bytesPerPixel + 3) \ 4) '4 - DWORD
-        Return (stride * bmp.Height * bytesPerPixel) 'Количество байт, занятых изображением
+        Dim stride = 4 * ((bmpSize.Width * bytesPerPixel + 3) \ 4) '4 - DWORD
+        Return (stride * bmpSize.Height * bytesPerPixel) 'Количество байт, занятых изображением
     End Function
 #End Region
 
@@ -689,7 +742,7 @@ Public Class BitmapInfo
     Protected Overridable Sub Dispose(disposing As Boolean)
         If Not _disposed Then
             If disposing Then
-                Clear()
+                Clear(-1) 'Бесконечное ожидание, т.к. нужно высвободить ресурс
             End If
         End If
         _disposed = True
