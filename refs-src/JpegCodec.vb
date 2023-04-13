@@ -1,23 +1,32 @@
-﻿Imports System.IO
+﻿'   Copyright 2023 Artem Drobanov (artem.drobanov@gmail.com)
+
+'   Licensed under the Apache License, Version 2.0 (the "License");
+'   you may Not use this file except In compliance With the License.
+'   You may obtain a copy Of the License at
+
+'     http://www.apache.org/licenses/LICENSE-2.0
+
+'   Unless required by applicable law Or agreed To In writing, software
+'   distributed under the License Is distributed On an "AS IS" BASIS,
+'   WITHOUT WARRANTIES Or CONDITIONS Of ANY KIND, either express Or implied.
+'   See the License For the specific language governing permissions And
+'   limitations under the License.
+
+Imports System.IO
 Imports System.Drawing
 Imports System.Drawing.Imaging
 
 Public Module JpegCodec
-    Public Function Encode(bmp As Bitmap, Optional frameQuality As Integer = 50) As MemoryStream
+    Public Function Encode(bmp As Bitmap, Optional frameQuality As Integer = 60) As MemoryStream
+        Dim jpegStream As New MemoryStream()
         If bmp IsNot Nothing Then
             SyncLock bmp
-                Dim jpegStream As New MemoryStream()
-                Dim jpegEncoderParameters As New EncoderParameters(1)
-                Dim qualityEncoderParameter As New EncoderParameter(Encoder.Quality, frameQuality)
-                Dim jpegCodecInfo As ImageCodecInfo = GetCodecInfo(ImageFormat.Jpeg)
-                jpegEncoderParameters.Param(0) = qualityEncoderParameter
-                bmp.Save(jpegStream, jpegCodecInfo, jpegEncoderParameters)
+                bmp.Save(jpegStream, GetCodecInfo(ImageFormat.Jpeg), GetEncoderParameters(frameQuality))
                 jpegStream.Seek(0, SeekOrigin.Begin)
                 Return jpegStream
             End SyncLock
-        Else
-            Return New MemoryStream()
         End If
+        Return jpegStream
     End Function
 
     Public Function Decode(jpegBytes As Byte()) As Bitmap
@@ -33,13 +42,12 @@ Public Module JpegCodec
     End Function
 
     Private Function GetCodecInfo(ByVal format As ImageFormat) As ImageCodecInfo
-        Dim codecs As ImageCodecInfo() = ImageCodecInfo.GetImageDecoders()
-        Dim codec As ImageCodecInfo
-        For Each codec In codecs
-            If codec.FormatID = format.Guid Then
-                Return codec
-            End If
-        Next codec
-        Return Nothing
+        Return ImageCodecInfo.GetImageDecoders().FirstOrDefault(Function(codec) codec.FormatID = format.Guid)
+    End Function
+
+    Private Function GetEncoderParameters(frameQuality As Integer) As EncoderParameters
+        Dim jpegEncoderParameters As New EncoderParameters(1)
+        jpegEncoderParameters.Param(0) = New EncoderParameter(Encoder.Quality, frameQuality)
+        Return jpegEncoderParameters
     End Function
 End Module
