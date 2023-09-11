@@ -297,11 +297,11 @@ Public Class BitmapInfo
     End Sub
 
     Public Sub New(jpg As Byte())
-        SetJpg(jpg)
+        SetJpg(jpg, -1) 'Создается новая сущность, без ожидания
     End Sub
 
     Public Sub New(bmp As Bitmap)
-        SetBmp(bmp)
+        SetBmp(bmp, -1) 'Создается новая сущность, без ожидания
     End Sub
 
     ''' <summary>
@@ -452,14 +452,18 @@ Public Class BitmapInfo
     ''' "висящий" отложенный Dispose для Bitmap-а, у каждого такого вызова
     ''' своя цель, и ложного элиминирования не будет.</remarks>
     Public Sub SetBmp(bmp As Bitmap, Optional timeoutMs As Integer = 10000)
-        BmpLock(timeoutMs)
+        If timeoutMs >= 0 Then
+            BmpLock(timeoutMs)
+        End If
         Try
             EliminateJpgInternal() 'При установке Bmp чистим Jpeg
             SetBmpInternal(bmp)
         Catch ex As Exception
             Throw New Exception($"BitmapInfo.SetBmp() failed: {ex.Message}")
         Finally
-            BmpUnlock()
+            If timeoutMs >= 0 Then
+                BmpUnlock()
+            End If
         End Try
     End Sub
 
