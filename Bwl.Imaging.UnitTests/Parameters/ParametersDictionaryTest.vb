@@ -45,6 +45,21 @@
         Assert.AreEqual(paramsJson1, paramsJson2)
     End Sub
 
+    <TestMethod()> Public Sub ParametersDictionaryEqualityTest4()
+        Dim params1 = New ParametersDictionaryList() 'Словарь первой версии (на основе списка)
+        Dim params2 = New ParametersDictionary() 'Словарь второй версии (на основе словаря)
+
+        'Заполнение словарей идентичными данными
+        Dim param = New Parameter($"ParameterKey{1}", $"ParameterKey{1}")
+        params1.Add(param)
+        params2.Add(param)
+
+        'Сравнение идентичности сериализации
+        Dim paramsJson1 = Serializer.SaveObjectToJsonString(params1)
+        Dim paramsJson2 = Serializer.SaveObjectToJsonString(params2)
+        Assert.AreEqual(paramsJson1, paramsJson2)
+    End Sub
+
     <TestMethod()> Public Sub ParametersDictionaryPerfomanceTest()
         Dim NItems = 20
         Dim NIters = 10000

@@ -11,8 +11,12 @@
         Me.AddRange(values)
     End Sub
 
-    Public Function GetEnumerator() As IEnumerator(Of Parameter) Implements IEnumerable(Of Parameter).GetEnumerator
-        Return _data.Select(Function(item) item.Value).GetEnumerator()
+    Public Overridable Function GetEnumerator() As IEnumerator(Of Parameter) Implements IEnumerable(Of Parameter).GetEnumerator
+        Dim values As IEnumerable(Of Parameter) = Nothing
+        SyncLock _syncRoot
+            values = _data.Values.ToArray()
+        End SyncLock
+        Return values.GetEnumerator()
     End Function
 
     Private Function IEnumerable_GetEnumerator() As IEnumerator Implements IEnumerable.GetEnumerator

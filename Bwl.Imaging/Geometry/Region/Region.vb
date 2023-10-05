@@ -4,22 +4,19 @@ Public Class Region
     Inherits Polygon
     Implements ICloneable
 
-    Public Const ParameterKey = "{RegionParameterKey}"
-
     Protected Const _lineWidth = 2
+
     Protected _parameters As New ParametersDictionary
     Protected _syncRoot As New Object
 
+    Public Const ParameterKey = "{RegionParameterKey}"
+
     Public Overloads Property Parameters As ParametersDictionary
         Get
-            SyncLock _syncRoot
-                Return _parameters
-            End SyncLock
+            Return _parameters
         End Get
         Set(value As ParametersDictionary)
-            SyncLock _syncRoot
-                _parameters = value
-            End SyncLock
+            _parameters = value
         End Set
     End Property
 
@@ -31,12 +28,12 @@ Public Class Region
 
     Public Sub New()
         MyBase.New(True, {New PointF(), New PointF(), New PointF(), New PointF()}) 'Как Tetragon
-        Me.ID = Guid.NewGuid.ToString()
+        Me.ID = Guid.NewGuid().ToString()
     End Sub
 
     Public Sub New(points As PointF())
         MyBase.New(True, points)
-        Me.ID = Guid.NewGuid.ToString()
+        Me.ID = Guid.NewGuid().ToString()
     End Sub
 
     Public Sub New(id As String)
