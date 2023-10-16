@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="Image\BitmapInfoTests.vb" />
     <Compile Include="Parameters\ParametersDictionaryTest.vb" />
+    <Compile Include="RawFrames\RawFrameTests.vb" />
     <Compile Include="VectorTools\VectorToolsTest.vb" />
     <Compile Include="Image\MatrixTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
@@ -199,6 +200,7 @@
   <ItemGroup>
     <Content Include="Resources\638067000726558653.jpg" />
   </ItemGroup>
+  <ItemGroup />
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>

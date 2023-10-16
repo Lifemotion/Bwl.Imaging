@@ -1145,7 +1145,7 @@ namespace Bwl.Imaging.Unsafe
                 }
             }
         }
-
+        
         public static ulong BitmapHashGray(Bitmap srcBmp, int step)
         {
             if (srcBmp == null)
