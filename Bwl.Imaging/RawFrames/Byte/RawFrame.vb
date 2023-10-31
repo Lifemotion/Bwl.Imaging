@@ -1,8 +1,10 @@
-﻿Imports System.Transactions
+﻿
 ''' <summary>
 ''' Универсальный формат сырого кадра.
 ''' </summary>
 Public Class RawFrame
+    Implements ICloneable
+
     Public ReadOnly Property Width As Integer
     Public ReadOnly Property Height As Integer
     Public ReadOnly Property BytesPerPixel As Integer
@@ -48,4 +50,8 @@ Public Class RawFrame
         _PixelData = New Byte(pixelDataLength - 1) {}
         Array.Copy(bytes, 5, _PixelData, 0, pixelDataLength)
     End Sub
+
+    Public Function Clone() As Object Implements ICloneable.Clone
+        Return New RawFrame(Width, Height, BytesPerPixel, PixelData, True)
+    End Function
 End Class

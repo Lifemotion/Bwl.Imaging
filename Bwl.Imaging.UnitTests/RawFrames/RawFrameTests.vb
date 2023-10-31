@@ -16,6 +16,8 @@
                     CompareData(pixelDataOrig, rawFrame1.PixelData)
                     CompareData(pixelDataOrig, rawFrame2.PixelData)
                     CompareData(rawFrame1Bytes, rawFrame2Bytes)
+                    Dim rawFrameCloned = rawFrame1.Clone()
+                    CompareData(pixelDataOrig, rawFrameCloned.PixelData)
                 Next
             Next
         Next
