@@ -51,7 +51,11 @@ Public Class RawFrame
         Array.Copy(bytes, 5, _PixelData, 0, pixelDataLength)
     End Sub
 
-    Public Function Clone() As Object Implements ICloneable.Clone
+    Public Function Copy() As RawFrame
         Return New RawFrame(Width, Height, BytesPerPixel, PixelData, True)
+    End Function
+
+    Public Function Clone() As Object Implements ICloneable.Clone
+        Return Copy()
     End Function
 End Class

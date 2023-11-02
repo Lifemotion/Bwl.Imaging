@@ -898,16 +898,16 @@ namespace Bwl.Imaging.Unsafe
                 {
                     fixed (byte* trgtDataFixed = trgtData)
                     {
-                        memcpy(trgtDataFixed, (byte*)srcBmd.Scan0, (ulong)(pixelAreaSize));
+                        memcpy(trgtDataFixed + 5, (byte*)srcBmd.Scan0, (ulong)pixelAreaSize);
                     }
                 }
                 srcBmp.UnlockBits(srcBmd);
                 
-                trgtData[pixelAreaSize + 0] = (byte)pixelSize;
-                trgtData[pixelAreaSize + 1] = (byte)((srcBmd.Width >> 0) & 0xFF);
-                trgtData[pixelAreaSize + 2] = (byte)((srcBmd.Width >> 8) & 0xFF);
-                trgtData[pixelAreaSize + 3] = (byte)((srcBmd.Height >> 0) & 0xFF);
-                trgtData[pixelAreaSize + 4] = (byte)((srcBmd.Height >> 8) & 0xFF);
+                trgtData[0] = (byte)pixelSize;
+                trgtData[1] = (byte)((srcBmd.Width >> 0) & 0xFF);
+                trgtData[2] = (byte)((srcBmd.Width >> 8) & 0xFF);
+                trgtData[3] = (byte)((srcBmd.Height >> 0) & 0xFF);
+                trgtData[4] = (byte)((srcBmd.Height >> 8) & 0xFF);
                 
                 return trgtData;
             }
@@ -920,9 +920,9 @@ namespace Bwl.Imaging.Unsafe
                 throw new Exception("srcData == null");
             }
             int pixelAreaSize = srcData.Length - 5;
-            int pixelSize = srcData[pixelAreaSize + 0];
-            int w = (int)(srcData[pixelAreaSize + 1] | (srcData[pixelAreaSize + 2] << 8));
-            int h = (int)(srcData[pixelAreaSize + 3] | (srcData[pixelAreaSize + 4] << 8));
+            int pixelSize = srcData[0];
+            int w = (int)(srcData[1] | (srcData[2] << 8));
+            int h = (int)(srcData[3] | (srcData[4] << 8));
 
             PixelFormat pixelFormat;
             switch (pixelSize)
@@ -958,7 +958,7 @@ namespace Bwl.Imaging.Unsafe
             {
                 fixed (byte* srcDataFixed = srcData)
                 {
-                    memcpy((byte*)trgtBmd.Scan0, (byte*)srcDataFixed, (ulong)(trgtBmd.Stride * trgtBmd.Height));
+                    memcpy((byte*)trgtBmd.Scan0, (byte*)srcDataFixed + 5, (ulong)(trgtBmd.Stride * trgtBmd.Height));
                 }
             }
             trgtBmp.UnlockBits(trgtBmd);
