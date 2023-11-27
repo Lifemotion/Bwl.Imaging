@@ -348,11 +348,36 @@ Imports Bwl.Imaging.Unsafe
     End Sub
 
     Private Sub BitmapToArrayTest(bmp1 As Bitmap)
-        Dim array1 = UnsafeFunctions.BitmapToArray(bmp1)
-        Dim bmp2 = UnsafeFunctions.ArrayToBitmap(array1)
-        Dim array2 = UnsafeFunctions.BitmapToArray(bmp2)
-        Assert.IsTrue(array1.SequenceEqual(array2))
-        CompareBitmaps(bmp1, bmp2)
+        For Each headerFirst In {False, True}
+            Dim array1 = UnsafeFunctions.BitmapToArray(bmp1, headerFirst)
+            Dim bmp2 = UnsafeFunctions.ArrayToBitmap(array1, headerFirst)
+            Dim array2 = UnsafeFunctions.BitmapToArray(bmp2, headerFirst)
+            Dim bmp3 = UnsafeFunctions.ArrayToBitmap(array2, headerFirst)
+            Assert.IsTrue(array1.SequenceEqual(array2))
+            CompareBitmaps(bmp1, bmp2)
+            CompareBitmaps(bmp1, bmp3)
+            CompareBitmaps(bmp2, bmp3)
+        Next
+    End Sub
+
+    <TestMethod()> Public Sub BitmapToRawFrameTesGray24()
+        BitmapToRawFrameTest(My.Resources.gray24)
+    End Sub
+
+    <TestMethod()> Public Sub BitmapToRawFrameTestRgb24()
+        BitmapToRawFrameTest(My.Resources.rgbw24)
+    End Sub
+
+    Private Sub BitmapToRawFrameTest(bmp1 As Bitmap)
+        For Each headerFirst In {False, True}
+            Dim array1 = UnsafeFunctions.BitmapToArray(bmp1, headerFirst)
+            Dim rawFrame1 = New RawFrame(array1, headerFirst)
+            Dim rawFrame1Bytes = rawFrame1.Serialize(headerFirst)
+            Dim bmp2 = UnsafeFunctions.ArrayToBitmap(rawFrame1Bytes, headerFirst)
+            Dim array2 = UnsafeFunctions.BitmapToArray(bmp2, headerFirst)
+            Assert.IsTrue(array1.SequenceEqual(array2))
+            CompareBitmaps(bmp1, bmp2)
+        Next
     End Sub
 
     Private Sub CompareBitmaps(bmp1 As Bitmap, bmp2 As Bitmap)

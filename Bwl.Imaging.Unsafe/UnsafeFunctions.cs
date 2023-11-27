@@ -882,7 +882,7 @@ namespace Bwl.Imaging.Unsafe
             trgtBmp.UnlockBits(trgtBmd);
         }
 
-        public static byte[] BitmapToArray(Bitmap srcBmp)
+        public static byte[] BitmapToArray(Bitmap srcBmp, bool headerFirst = false)
         {
             if (srcBmp == null)
             {
@@ -892,37 +892,41 @@ namespace Bwl.Imaging.Unsafe
             {
                 BitmapData srcBmd = srcBmp.LockBits(new Rectangle(0, 0, srcBmp.Width, srcBmp.Height), ImageLockMode.ReadOnly, srcBmp.PixelFormat);
                 int pixelSize = GetPixelSize(srcBmp.PixelFormat);
-                var pixelAreaSize = srcBmd.Stride * srcBmd.Height;
-                byte[] trgtData = new byte[pixelAreaSize + 5];
+                int pixelDataLength = srcBmd.Stride * srcBmd.Height;
+                int headerOffset = headerFirst ? 0 : pixelDataLength;
+                int dataOffset = headerFirst ? 5 : 0;
+                byte[] trgtData = new byte[pixelDataLength + 5];
                 unsafe
                 {
                     fixed (byte* trgtDataFixed = trgtData)
                     {
-                        memcpy(trgtDataFixed + 5, (byte*)srcBmd.Scan0, (ulong)pixelAreaSize);
+                        memcpy(trgtDataFixed + dataOffset, (byte*)srcBmd.Scan0, (ulong)pixelDataLength);
                     }
                 }
                 srcBmp.UnlockBits(srcBmd);
                 
-                trgtData[0] = (byte)pixelSize;
-                trgtData[1] = (byte)((srcBmd.Width >> 0) & 0xFF);
-                trgtData[2] = (byte)((srcBmd.Width >> 8) & 0xFF);
-                trgtData[3] = (byte)((srcBmd.Height >> 0) & 0xFF);
-                trgtData[4] = (byte)((srcBmd.Height >> 8) & 0xFF);
+                trgtData[0 + headerOffset] = (byte)pixelSize;
+                trgtData[1 + headerOffset] = (byte)((srcBmd.Width >> 0) & 0xFF);
+                trgtData[2 + headerOffset] = (byte)((srcBmd.Width >> 8) & 0xFF);
+                trgtData[3 + headerOffset] = (byte)((srcBmd.Height >> 0) & 0xFF);
+                trgtData[4 + headerOffset] = (byte)((srcBmd.Height >> 8) & 0xFF);
                 
                 return trgtData;
             }
         }
 
-        public static Bitmap ArrayToBitmap(byte[] srcData)
+        public static Bitmap ArrayToBitmap(byte[] srcData, bool headerFirst = false)
         {
             if (srcData == null)
             {
                 throw new Exception("srcData == null");
             }
-            int pixelAreaSize = srcData.Length - 5;
-            int pixelSize = srcData[0];
-            int w = (int)(srcData[1] | (srcData[2] << 8));
-            int h = (int)(srcData[3] | (srcData[4] << 8));
+            int pixelDataLength = srcData.Length - 5;
+            int headerOffset = headerFirst ? 0 : pixelDataLength;
+            int dataOffset = headerFirst ? 5 : 0;
+            int pixelSize = srcData[0 + headerOffset];
+            int w = (int)(srcData[1 + headerOffset] | (srcData[2 + headerOffset] << 8));
+            int h = (int)(srcData[3 + headerOffset] | (srcData[4 + headerOffset] << 8));
 
             PixelFormat pixelFormat;
             switch (pixelSize)
@@ -958,7 +962,7 @@ namespace Bwl.Imaging.Unsafe
             {
                 fixed (byte* srcDataFixed = srcData)
                 {
-                    memcpy((byte*)trgtBmd.Scan0, (byte*)srcDataFixed + 5, (ulong)(trgtBmd.Stride * trgtBmd.Height));
+                    memcpy((byte*)trgtBmd.Scan0, (byte*)srcDataFixed + dataOffset, (ulong)(trgtBmd.Stride * trgtBmd.Height));
                 }
             }
             trgtBmp.UnlockBits(trgtBmd);
