@@ -13,19 +13,13 @@
                     Assert.AreEqual(rawFrame1.Width, rawFrame2.Width)
                     Assert.AreEqual(rawFrame1.Height, rawFrame2.Height)
                     Assert.AreEqual(rawFrame1.BytesPerPixel, rawFrame2.BytesPerPixel)
-                    CompareData(pixelDataOrig, rawFrame1.PixelData)
-                    CompareData(pixelDataOrig, rawFrame2.PixelData)
-                    CompareData(rawFrame1Bytes, rawFrame2Bytes)
+                    Assert.IsTrue(pixelDataOrig.SequenceEqual(rawFrame1.PixelData))
+                    Assert.IsTrue(pixelDataOrig.SequenceEqual(rawFrame2.PixelData))
+                    Assert.IsTrue(rawFrame1Bytes.SequenceEqual(rawFrame2Bytes))
                     Dim rawFrameCloned = rawFrame1.Clone()
-                    CompareData(pixelDataOrig, rawFrameCloned.PixelData)
+                    Assert.IsTrue(pixelDataOrig.SequenceEqual(rawFrameCloned.PixelData))
                 Next
             Next
-        Next
-    End Sub
-
-    Private Sub CompareData(data1 As Byte(), data2 As Byte())
-        For i = 0 To data1.Length - 1
-            Assert.AreEqual(data1(i), data2(i))
         Next
     End Sub
 
