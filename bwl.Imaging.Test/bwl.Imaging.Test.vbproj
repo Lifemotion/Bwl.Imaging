@@ -1,48 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{7BF41D8B-B121-49C3-AF64-6182A227CD78}</ProjectGuid>
+    <TargetFramework>net4.8</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>bwl.Imaging.Test</RootNamespace>
-    <AssemblyName>bwl.Imaging.Test</AssemblyName>
-    <FileAlignment>512</FileAlignment>
     <MyType>WindowsFormsWithCustomSubMain</MyType>
-    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
-    <TargetFrameworkProfile />
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <DefineDebug>true</DefineDebug>
-    <DefineTrace>true</DefineTrace>
-    <OutputPath>bin\Debug\</OutputPath>
     <DocumentationFile>bwl.Imaging.Test.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
     <DefineDebug>false</DefineDebug>
-    <DefineTrace>true</DefineTrace>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
     <DocumentationFile>bwl.Imaging.Test.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-    <Prefer32Bit>true</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionExplicit>On</OptionExplicit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionCompare>Binary</OptionCompare>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionStrict>Off</OptionStrict>
-  </PropertyGroup>
-  <PropertyGroup>
-    <OptionInfer>On</OptionInfer>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>bwl.Imaging.Test.HdrTestForm</StartupObject>
@@ -52,118 +24,50 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\Bwl.Framework.dll</HintPath>
     </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Common, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Drawing.Common.6.0.0\lib\net461\System.Drawing.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
   </ItemGroup>
   <ItemGroup>
-    <Import Include="Microsoft.VisualBasic" />
-    <Import Include="System" />
-    <Import Include="System.Collections" />
-    <Import Include="System.Collections.Generic" />
-    <Import Include="System.Data" />
-    <Import Include="System.Diagnostics" />
     <Import Include="System.Drawing" />
-    <Import Include="System.Linq" />
     <Import Include="System.Windows.Forms" />
-    <Import Include="System.Xml.Linq" />
-    <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\refs-src\Serializer.vb">
       <Link>refs-src\Serializer.vb</Link>
     </Compile>
-    <Compile Include="ColorTest.vb" />
-    <Compile Include="HdrTestForm.designer.vb">
+    <Compile Update="HdrTestForm.designer.vb">
       <DependentUpon>HdrTestForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="HdrTestForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="MoveDetectorTest.Designer.vb">
+    <Compile Update="MoveDetectorTest.Designer.vb">
       <DependentUpon>MoveDetectorTest.vb</DependentUpon>
     </Compile>
-    <Compile Include="MoveDetectorTest.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TestForm.designer.vb">
+    <Compile Update="TestForm.designer.vb">
       <DependentUpon>TestForm.vb</DependentUpon>
     </Compile>
-    <Compile Include="TestForm.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="My Project\Application.Designer.vb">
+    <Compile Update="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="My Project\Resources.Designer.vb">
+    <Compile Update="My Project\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="My Project\Settings.Designer.vb">
+    <Compile Update="My Project\Settings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="TestForm2.Designer.vb">
+    <Compile Update="TestForm2.Designer.vb">
       <DependentUpon>TestForm2.vb</DependentUpon>
     </Compile>
-    <Compile Include="TestForm2.vb">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="UnsafeTestForm.Designer.vb">
+    <Compile Update="UnsafeTestForm.Designer.vb">
       <DependentUpon>UnsafeTestForm.vb</DependentUpon>
-    </Compile>
-    <Compile Include="UnsafeTestForm.vb">
-      <SubType>Form</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="HdrTestForm.resx">
-      <DependentUpon>HdrTestForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MoveDetectorTest.resx">
-      <DependentUpon>MoveDetectorTest.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TestForm.resx">
-      <DependentUpon>TestForm.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="My Project\Resources.resx">
-      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
-      <CustomToolNamespace>My.Resources</CustomToolNamespace>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TestForm2.resx">
-      <DependentUpon>TestForm2.vb</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="UnsafeTestForm.resx">
-      <DependentUpon>UnsafeTestForm.vb</DependentUpon>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="app.config" />
-    <None Include="My Project\Application.myapp">
+    <None Update="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
-    </None>
-    <None Include="My Project\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <CustomToolNamespace>My</CustomToolNamespace>
-      <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -172,32 +76,15 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="rapp-client-gui.exe" />
-    <None Include="packages.config" />
-    <None Include="Resources\YellowBlock.bmp" />
-    <None Include="Resources\RedBlock.bmp" />
-    <None Include="Resources\GreenBlock.bmp" />
-    <None Include="Resources\BlueBlock.bmp" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.vbproj">
-      <Project>{9887cecf-3314-4e2c-9110-0de24070d08a}</Project>
-      <Name>Bwl.Imaging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj">
-      <Project>{4f6149e2-3b5c-4f08-a0ad-8a44c1a7ca40}</Project>
-      <Name>Bwl.Imaging.Unsafe</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj">
-      <Project>{cf1ba304-7402-46b4-9d06-ab226bc72293}</Project>
-      <Name>Bwl.Imaging.WinForms</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.vbproj" />
+    <ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj" />
+    <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
 </Project>
