@@ -2,22 +2,37 @@
 
 <TestClass()> Public Class RawFrameTests
     <TestMethod()> Public Sub RawFrameTest()
-        For bytesPerPixel = 1 To 3
+        For channels = 1 To 3
             For width = 1 To 1024 Step 127
                 For height = 1 To 1024 Step 127
-                    Dim pixelDataOrig = GetRandomBytes(width * height * bytesPerPixel)
-                    Dim rawFrame1 = New RawFrame(width, height, bytesPerPixel, pixelDataOrig)
-                    Dim rawFrame1Bytes = rawFrame1.Serialize()
-                    Dim rawFrame2 = New RawFrame(rawFrame1Bytes)
-                    Dim rawFrame2Bytes = rawFrame2.Serialize()
-                    Assert.AreEqual(rawFrame1.Width, rawFrame2.Width)
-                    Assert.AreEqual(rawFrame1.Height, rawFrame2.Height)
-                    Assert.AreEqual(rawFrame1.BytesPerPixel, rawFrame2.BytesPerPixel)
-                    Assert.IsTrue(pixelDataOrig.SequenceEqual(rawFrame1.PixelData))
-                    Assert.IsTrue(pixelDataOrig.SequenceEqual(rawFrame2.PixelData))
-                    Assert.IsTrue(rawFrame1Bytes.SequenceEqual(rawFrame2Bytes))
-                    Dim rawFrameCloned = rawFrame1.Clone()
-                    Assert.IsTrue(pixelDataOrig.SequenceEqual(rawFrameCloned.PixelData))
+                    'Формируем кадр на основе случайных данных
+                    Dim pixelDataOrig = GetRandomBytes(width * height * channels)
+                    Dim rawFrameOrig = New RawFrame(width, height, channels, pixelDataOrig)
+
+                    'Тест сериализации
+                    Dim rawFrameOrigBytes = rawFrameOrig.Serialize()
+                    Dim rawFrameDeserial = New RawFrame(rawFrameOrigBytes)
+                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameDeserial))
+                    '...в том числе по массивам сериализации
+                    Dim rawFrameDeserialBytes = rawFrameDeserial.Serialize()
+                    Assert.IsTrue(rawFrameOrigBytes.SequenceEqual(rawFrameDeserialBytes))
+
+                    'Тест экспорта в массив (размерность 1)
+                    Dim rawFrameOrig2 = New RawFrame(rawFrameOrig.Width, rawFrameOrig.Height, rawFrameOrig.Channels, rawFrameOrig.PixelData)
+                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameOrig))
+
+                    'Тест экспорта в массив (размерность 3)
+                    Dim rawFrameArray3 = rawFrameOrig.Export()
+                    Dim rawFrameFromExport = New RawFrame(rawFrameArray3)
+                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameFromExport))
+
+                    'Тест копии
+                    Dim rawFrameOrigCopy = rawFrameOrig.Copy()
+                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameOrigCopy))
+
+                    'Тест клонирования
+                    Dim rawFrameOrigCloned = DirectCast(rawFrameOrig.Clone(), RawFrame)
+                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameOrigCloned))
                 Next
             Next
         Next
