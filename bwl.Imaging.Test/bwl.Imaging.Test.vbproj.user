@@ -6,4 +6,21 @@
     <StartAction>Project</StartAction>
     <StartProgram>C:\Users\Igor\Dropbox\Programming\NET\SingleProjects\Bwl.RemoteApp\RemoteApp\rapp-client-gui.exe</StartProgram>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Update="HdrTestForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="MoveDetectorTest.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="TestForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="TestForm2.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="UnsafeTestForm.vb">
+      <SubType>Form</SubType>
+    </Compile>
+  </ItemGroup>
 </Project>

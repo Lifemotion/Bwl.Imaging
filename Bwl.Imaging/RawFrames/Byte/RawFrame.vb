@@ -107,7 +107,7 @@ Public Class RawFrame
         Dim width = serialized(1 + headerOffset) Or (CInt(serialized(2 + headerOffset)) << 8)
         Dim height = serialized(3 + headerOffset) Or (CInt(serialized(4 + headerOffset)) << 8)
         If width * height * channels <> pixelDataLength Then
-            Throw New Exception($"{Me.GetType().Name}.Deserialize(): width * height * bytesPerPixel <> pixelDataLength")
+            Throw New Exception($"{Me.GetType().Name}.Deserialize(): width * height * channels <> pixelDataLength")
         End If
         Dim pixelData = New Byte(pixelDataLength - 1) {}
         Array.Copy(serialized, dataOffset, pixelData, 0, pixelDataLength)
