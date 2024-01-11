@@ -1,5 +1,6 @@
 ﻿Imports System.Drawing
 Imports System.Drawing.Imaging
+Imports System.Runtime.CompilerServices
 Imports System.Threading
 Imports Bwl.Imaging.Unsafe
 
@@ -395,7 +396,7 @@ Public Class BitmapInfo
                            Optional timeoutMs As Integer = 10000) As Byte()
         BmpLock(timeoutMs)
         Try
-            Dim jpg = _jpg?.ToArray()
+            Dim jpg = ArrayCopy(_jpg)
             If jpg Is Nothing AndAlso _bmp IsNot Nothing AndAlso createFromBitmapIfEmpty Then
                 Try
                     jpg = JpegCodec.Encode(_bmp, quality).ToArray()
@@ -409,6 +410,35 @@ Public Class BitmapInfo
         Finally
             BmpUnlock()
         End Try
+    End Function
+
+    ''' <summary>
+    ''' Быстрый метод получения JPEG-данных.
+    ''' </summary>
+    ''' <param name="clone">Клонировать массив байт?</param>
+    Public Function GetJpgFast(Optional clone As Boolean = True) As Byte()
+        Return If(clone, ArrayCopy(_jpg), _jpg)
+    End Function
+
+    ''' <summary>
+    ''' Быстрый метод сравнения двух JPEG-потоков.
+    ''' </summary>
+    ''' <param name="obj">Объект для сравнения.</param>
+    Public Function CompareJpgFast(obj As BitmapInfo) As Boolean
+        Dim jpgMe = Me.GetJpgFast(False) 'Без клонирования
+        Dim jpgObj = obj.GetJpgFast(False) 'Без клонирования
+        'Две последовательности байт отличаются, если...
+        If jpgMe.Length <> jpgObj.Length Then '...их длины не равны
+            Return False
+        Else
+            'Начинаем сравнивать байты в обратном порядке
+            For i = jpgMe.Length - 1 To 0 Step -1
+                If jpgMe(i) <> jpgObj(i) Then
+                    Return False
+                End If
+            Next
+        End If
+        Return True 'Потоки 100% идентичны
     End Function
 
     ''' <summary>
@@ -522,7 +552,7 @@ Public Class BitmapInfo
         BmpLock(timeoutMs)
         Try
             If _jpg IsNot Nothing Then
-                result = New BitmapInfo(_jpg.ToArray())
+                result = New BitmapInfo(ArrayCopy(_jpg))
             ElseIf _bmp IsNot Nothing Then
                 result = New BitmapInfo(BmpCloneInternal(_bmp))
             End If
@@ -669,6 +699,16 @@ Public Class BitmapInfo
     Private Sub EliminateJpgInternal()
         _jpg = Nothing
     End Sub
+
+    ''' <summary>
+    ''' Получение копии массива байт.
+    ''' </summary>
+    Private Function ArrayCopy(src As Byte()) As Byte()
+        If src Is Nothing Then Return Nothing
+        Dim res = New Byte(src.Length - 1) {}
+        Array.Copy(src, res, src.Length)
+        Return res
+    End Function
 #End Region
 
 #Region "DisposeWithDelay"

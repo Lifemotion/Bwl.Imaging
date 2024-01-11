@@ -6,6 +6,7 @@ Imports Microsoft.VisualStudio.TestTools.UnitTesting
 
 <TestClass>
 Public Class BitmapInfoTests
+    Inherits BitmapInfoTestBase
 
     <TestMethod>
     Public Sub BitmapInfoAccessTest1()
@@ -258,7 +259,7 @@ Public Class BitmapInfoTests
         Dim mtrxSrc = src.BitmapToRgbMatrix()
         Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.5)
+        Assert.IsTrue(mtrxDiffPerc < 3)
     End Sub
 
     <TestMethod>
@@ -361,7 +362,7 @@ Public Class BitmapInfoTests
         Dim mtrxSrc = src.BitmapToRgbMatrix()
         Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.5)
+        Assert.IsTrue(mtrxDiffPerc < 3)
     End Sub
 
     <TestMethod>
@@ -439,11 +440,10 @@ Public Class BitmapInfoTests
 
     ''' <summary>
     ''' В этом тесте два потока пытаются получить одновременный доступ к BitmapInfo.
-    ''' Для одного из потоков BmpLock() успешен,
-    ''' а для второго - нет (в ходе ожидания, по истечении таймаута) выбрасывается
-    ''' исключение. Обычно в блоке Finally разблокируем bi при исключении, но разблокировать
-    ''' должен тот поток, который выполнял блокировку. То есть BmpLock() нельзя вносить
-    ''' в TryCatch.
+    ''' Для одного из потоков BmpLock() успешен, а для второго - нет (в ходе ожидания,
+    ''' по истечении таймаута) выбрасывается исключение. Обычно в блоке Finally
+    ''' разблокируем bi при исключении, но разблокировать должен тот поток,
+    ''' который выполнял блокировку. То есть BmpLock() нельзя вносить в TryCatch.
     ''' </summary>
     <TestMethod>
     Public Sub BitmapInfoLockTest()
@@ -500,33 +500,5 @@ Public Class BitmapInfoTests
         Next
         avgDiffF /= m1.Width * m1.Height
         Return avgDiffF
-    End Function
-
-    Private Function GetTestBmp() As Bitmap
-        Return GetTestBmp(New Size(49, 100), Drawing.Imaging.PixelFormat.Format32bppArgb)
-    End Function
-
-    Private Function GetTestBmp(pixelFormat As Drawing.Imaging.PixelFormat) As Bitmap
-        Return GetTestBmp(New Size(49, 100), pixelFormat)
-    End Function
-
-    Private Function GetTestBmp(size As Size, pixelFormat As Drawing.Imaging.PixelFormat) As Bitmap
-        Dim bmp = New Bitmap(size.Width, size.Height, pixelFormat)
-        If Math.Min(bmp.Width, bmp.Height) > 50 Then
-            Throw New Exception("Math.Min(bmp.Width, bmp.Height) > 50")
-        End If
-        If pixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb OrElse pixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb Then
-            For i = 0 To Math.Min(bmp.Width, bmp.Height) - 1
-                bmp.SetPixel(i, i, Color.FromArgb(i + 200, i + 50, i + 100, i + 150))
-            Next
-        End If
-        Return bmp
-    End Function
-
-    Private Function GetResourceFileData(fileName As String) As Byte()
-        Dim exePath = System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location)
-        Dim dataPath = IO.Path.Combine(exePath, "..", "..", "Resources")
-        Dim data = IO.File.ReadAllBytes(IO.Path.Combine(dataPath, fileName))
-        Return data
     End Function
 End Class

@@ -93,7 +93,9 @@
     <Compile Include="..\refs-src\Serializer.vb">
       <Link>refs-src\Serializer.vb</Link>
     </Compile>
-    <Compile Include="Image\BitmapInfoTests.vb" />
+    <Compile Include="Image\BitmapInfo\BitmapInfoTests.vb" />
+    <Compile Include="Image\BitmapInfo\CompareJpgTest.vb" />
+    <Compile Include="Image\BitmapInfo\BitmapInfoTestBase.vb" />
     <Compile Include="Parameters\ParametersDictionaryTest.vb" />
     <Compile Include="RawFrames\RawFrameTests.vb" />
     <Compile Include="VectorTools\VectorToolsTest.vb" />
