@@ -98,6 +98,7 @@
     <Compile Include="Image\BitmapInfo\BitmapInfoTestBase.vb" />
     <Compile Include="Parameters\ParametersDictionaryTest.vb" />
     <Compile Include="RawFrames\RawFrameTests.vb" />
+    <Compile Include="Tools\SimpleLsbTest.vb" />
     <Compile Include="VectorTools\VectorToolsTest.vb" />
     <Compile Include="Image\MatrixTests.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />

@@ -1,6 +1,4 @@
-﻿Imports System.Drawing
-
-<TestClass()> Public Class RawFrameTests
+﻿<TestClass()> Public Class RawFrameTests
     <TestMethod()> Public Sub RawFrameTest()
         For channels = 1 To 3
             For width = 1 To 1024 Step 127
