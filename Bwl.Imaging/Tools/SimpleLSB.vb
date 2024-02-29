@@ -20,7 +20,7 @@
     End Function
 
     Private Function GetBits(host As Byte(), hostOffset As Integer, payloadCount As Integer) As Byte()
-        Dim lsbMask As Byte = &H1
+        Dim lsbMask As Integer = &H1
         Dim payload = New Byte(payloadCount - 1) {}
         Dim payloadIdx = 0
         Dim offset = hostOffset
