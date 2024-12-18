@@ -1,13 +1,20 @@
 ﻿Imports System.Drawing
 Imports Bwl.Imaging.Unsafe
+Imports NUnit.Framework
 
-<TestClass()> Public Class UnsafeTests
+<TestFixture>
+<Parallelizable(ParallelScope.Self)>
+Public Class UnsafeTests
 
-    <TestMethod()> Public Sub UnsafeCropGray24Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeCropGray24Test()
         UnsafeCropGrayTest(My.Resources.gray24)
     End Sub
 
-    <TestMethod()> Public Sub UnsafeCropGray25Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeCropGray25Test()
         UnsafeCropGrayTest(My.Resources.gray25)
     End Sub
 
@@ -46,24 +53,28 @@ Imports Bwl.Imaging.Unsafe
 
         For row = 0 To S - 1
             For col = 0 To S - 1
-                Assert.AreEqual(redMatrixFromRow1.GrayPixel(row, col), 77)
-                Assert.AreEqual(greenMatrixFromRow1.GrayPixel(row, col), 151)
-                Assert.AreEqual(blueMatrixFromRow1.GrayPixel(row, col), 29)
-                Assert.AreEqual(whiteMatrixFromRow1.GrayPixel(row, col), 255)
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.GrayPixel(row, col), 77)
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.GrayPixel(row, col), 151)
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.GrayPixel(row, col), 29)
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.GrayPixel(row, col), 255)
 
-                Assert.AreEqual(whiteMatrixFromRow2.GrayPixel(row, col), 255)
-                Assert.AreEqual(blueMatrixFromRow2.GrayPixel(row, col), 29)
-                Assert.AreEqual(greenMatrixFromRow2.GrayPixel(row, col), 151)
-                Assert.AreEqual(redMatrixFromRow2.GrayPixel(row, col), 77)
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.GrayPixel(row, col), 255)
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.GrayPixel(row, col), 29)
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.GrayPixel(row, col), 151)
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.GrayPixel(row, col), 77)
             Next
         Next
     End Sub
 
-    <TestMethod()> Public Sub UnsafePatchGray24Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafePatchGray24Test()
         UnsafePatchGrayTest(My.Resources.gray24)
     End Sub
 
-    <TestMethod()> Public Sub UnsafePatchGray25Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafePatchGray25Test()
         UnsafePatchGrayTest(My.Resources.gray25)
     End Sub
 
@@ -106,11 +117,15 @@ Imports Bwl.Imaging.Unsafe
         UnsafeCropGrayTest(bmpGray)
     End Sub
 
-    <TestMethod()> Public Sub UnsafeCropRgb24Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeCropRgb24Test()
         UnsafeCropRgbTest(My.Resources.rgbw24)
     End Sub
 
-    <TestMethod()> Public Sub UnsafeCropRgb25Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeCropRgb25Test()
         UnsafeCropRgbTest(My.Resources.rgbw25)
     End Sub
 
@@ -149,46 +164,50 @@ Imports Bwl.Imaging.Unsafe
 
         For row = 0 To S - 1
             For col = 0 To S - 1
-                Assert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).R, CByte(255))
-                Assert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).G, CByte(0))
-                Assert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).B, CByte(0))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).R, CByte(255))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).G, CByte(0))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).B, CByte(0))
 
-                Assert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).R, CByte(0))
-                Assert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).G, CByte(255))
-                Assert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).B, CByte(0))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).R, CByte(0))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).G, CByte(255))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).B, CByte(0))
 
-                Assert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).R, CByte(0))
-                Assert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).G, CByte(0))
-                Assert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).R, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).G, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).B, CByte(255))
 
-                Assert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).R, CByte(255))
-                Assert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).G, CByte(255))
-                Assert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).R, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).G, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).B, CByte(255))
 
-                Assert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).R, CByte(255))
-                Assert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).G, CByte(255))
-                Assert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).R, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).G, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).B, CByte(255))
 
-                Assert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).R, CByte(255))
-                Assert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).G, CByte(0))
-                Assert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).B, CByte(0))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).R, CByte(255))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).G, CByte(0))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).B, CByte(0))
 
-                Assert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).R, CByte(0))
-                Assert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).G, CByte(255))
-                Assert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).B, CByte(0))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).R, CByte(0))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).G, CByte(255))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).B, CByte(0))
 
-                Assert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).R, CByte(0))
-                Assert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).G, CByte(0))
-                Assert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).R, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).G, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).B, CByte(255))
             Next
         Next
     End Sub
 
-    <TestMethod()> Public Sub UnsafePatchRgb24Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafePatchRgb24Test()
         UnsafePatchRgbTest(My.Resources.rgbw24)
     End Sub
 
-    <TestMethod()> Public Sub UnsafePatchRgb25Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafePatchRgb25Test()
         UnsafePatchRgbTest(My.Resources.rgbw25)
     End Sub
 
@@ -231,7 +250,8 @@ Imports Bwl.Imaging.Unsafe
         UnsafeCropRgbTest(bmpRgb)
     End Sub
 
-    <TestMethod()>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub UnsafeNormalizeRGBTest()
         Dim bmpRgb = My.Resources.rgb
         Dim bmp2 = New Bitmap(bmpRgb.Width, bmpRgb.Height, bmpRgb.PixelFormat)
@@ -240,55 +260,67 @@ Imports Bwl.Imaging.Unsafe
         'bmp2.Save("D:\2.bmp")
     End Sub
 
-    <TestMethod()> Public Sub UnsafeRgbToGray24Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeRgbToGray24Test()
         Dim bmpRgb = My.Resources.rgbw24
         Dim matrixGray = BitmapConverter.BitmapToGrayMatrix(bmpRgb)
         Dim bmpGray2 = UnsafeFunctions.RgbToGray(bmpRgb)
         Dim matrixGray2 = BitmapConverter.BitmapToGrayMatrix(bmpGray2)
-        Assert.AreEqual(matrixGray.Width, matrixGray2.Width)
-        Assert.AreEqual(matrixGray.Height, matrixGray2.Height)
+        Legacy.ClassicAssert.AreEqual(matrixGray.Width, matrixGray2.Width)
+        Legacy.ClassicAssert.AreEqual(matrixGray.Height, matrixGray2.Height)
         For i = 0 To matrixGray.Gray.Length - 1
-            Assert.IsTrue(Math.Abs(matrixGray.Gray(i) - matrixGray2.Gray(i)) <= 1) 'Внешний редактор может рассчитывать переход RGB -> Gray немного иначе
+            Legacy.ClassicAssert.IsTrue(Math.Abs(matrixGray.Gray(i) - matrixGray2.Gray(i)) <= 1) 'Внешний редактор может рассчитывать переход RGB -> Gray немного иначе
         Next
     End Sub
 
-    <TestMethod()> Public Sub UnsafeBitmapProbeGrayS4Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeBitmapProbeGrayS4Test()
         Dim bmpGray = My.Resources.grayProbeS4
         Dim probe = UnsafeFunctions.BitmapProbeGray(bmpGray, 4)
         For Each p In probe
-            Assert.AreEqual(CInt(p), 1) 'Графический редактор при конвертировании в grayscale черный цвет преобразовал в "1"
+            Legacy.ClassicAssert.AreEqual(CInt(p), 1) 'Графический редактор при конвертировании в grayscale черный цвет преобразовал в "1"
         Next
     End Sub
 
-    <TestMethod()> Public Sub UnsafeBitmapProbeRgbS4Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeBitmapProbeRgbS4Test()
         Dim bmpRgb = My.Resources.rgbProbeS4
         Dim probe = UnsafeFunctions.BitmapProbeRgb(bmpRgb, 4)
         For Each p In probe
-            Assert.AreEqual(CInt(p), 0) 'А в оригинале черный цвет нормальный
+            Legacy.ClassicAssert.AreEqual(CInt(p), 0) 'А в оригинале черный цвет нормальный
         Next
     End Sub
 
-    <TestMethod()> Public Sub UnsafeBitmapHashGrayS4Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeBitmapHashGrayS4Test()
         Dim bmpGray = My.Resources.grayProbeS4
         Dim hash = UnsafeFunctions.BitmapHashGray(bmpGray, 4)
-        Assert.AreEqual(CInt(hash), 338) 'Графический редактор при конвертировании в grayscale черный цвет преобразовал в "1"
+        Legacy.ClassicAssert.AreEqual(CInt(hash), 338) 'Графический редактор при конвертировании в grayscale черный цвет преобразовал в "1"
     End Sub
 
-    <TestMethod()> Public Sub UnsafeBitmapHashRgbS4Test()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub UnsafeBitmapHashRgbS4Test()
         Dim bmpRgb = My.Resources.rgbProbeS4
         Dim hash = UnsafeFunctions.BitmapHashRgb(bmpRgb, 4)
-        Assert.AreEqual(CInt(hash), 0) 'А в оригинале черный цвет нормальный
+        Legacy.ClassicAssert.AreEqual(CInt(hash), 0) 'А в оригинале черный цвет нормальный
     End Sub
 
-    <TestMethod()> Public Sub UnsafeBitmapHashRgbAccessViolationTestGray()
+    <Test>
+    <Parallelizable(ParallelScope.None)>
+    Public Sub UnsafeBitmapHashRgbAccessViolationTestGray()
         Dim stp, w, h As Integer
         Try
             For stp = 1 To 100
                 For w = 8 To 100
                     For h = 8 To 100
-                        Dim bmp = New Bitmap(w, h, Drawing.Imaging.PixelFormat.Format8bppIndexed)
-                        Dim hash = UnsafeFunctions.BitmapHashGray(bmp, stp)
-                        bmp.Dispose()
+                        Using bmp = New Bitmap(w, h, Drawing.Imaging.PixelFormat.Format8bppIndexed)
+                            Dim hash = UnsafeFunctions.BitmapHashGray(bmp, stp)
+                        End Using
                     Next
                 Next
             Next
@@ -297,15 +329,17 @@ Imports Bwl.Imaging.Unsafe
         End Try
     End Sub
 
-    <TestMethod()> Public Sub UnsafeBitmapHashRgbAccessViolationTest24bpp()
+    <Test>
+    <Parallelizable(ParallelScope.None)>
+    Public Sub UnsafeBitmapHashRgbAccessViolationTest24bpp()
         Dim stp, w, h As Integer
         Try
             For stp = 1 To 100
                 For w = 8 To 100
                     For h = 8 To 100
-                        Dim bmp = New Bitmap(w, h, Drawing.Imaging.PixelFormat.Format24bppRgb)
-                        Dim hash = UnsafeFunctions.BitmapHashRgb(bmp, stp)
-                        bmp.Dispose()
+                        Using bmp = New Bitmap(w, h, Drawing.Imaging.PixelFormat.Format24bppRgb)
+                            Dim hash = UnsafeFunctions.BitmapHashRgb(bmp, stp)
+                        End Using
                     Next
                 Next
             Next
@@ -314,15 +348,17 @@ Imports Bwl.Imaging.Unsafe
         End Try
     End Sub
 
-    <TestMethod()> Public Sub UnsafeBitmapHashRgbAccessViolationTest32bpp()
+    <Test>
+    <Parallelizable(ParallelScope.None)>
+    Public Sub UnsafeBitmapHashRgbAccessViolationTest32bpp()
         Dim stp, w, h As Integer
         Try
             For stp = 1 To 100
                 For w = 8 To 100
                     For h = 8 To 100
-                        Dim bmp = New Bitmap(w, h)
-                        Dim hash = UnsafeFunctions.BitmapHashRgb(bmp, stp)
-                        bmp.Dispose()
+                        Using bmp = New Bitmap(w, h)
+                            Dim hash = UnsafeFunctions.BitmapHashRgb(bmp, stp)
+                        End Using
                     Next
                 Next
             Next
@@ -331,19 +367,27 @@ Imports Bwl.Imaging.Unsafe
         End Try
     End Sub
 
-    <TestMethod()> Public Sub BitmapToArrayTestGray24()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub BitmapToArrayTestGray24()
         BitmapToArrayTest(My.Resources.gray24)
     End Sub
 
-    <TestMethod()> Public Sub BitmapToArrayTestGray25()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub BitmapToArrayTestGray25()
         BitmapToArrayTest(My.Resources.gray25)
     End Sub
 
-    <TestMethod()> Public Sub BitmapToArrayTestRgb24()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub BitmapToArrayTestRgb24()
         BitmapToArrayTest(My.Resources.rgbw24)
     End Sub
 
-    <TestMethod()> Public Sub BitmapToArrayTestRgb25()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub BitmapToArrayTestRgb25()
         BitmapToArrayTest(My.Resources.rgbw25)
     End Sub
 
@@ -353,18 +397,22 @@ Imports Bwl.Imaging.Unsafe
             Dim bmp2 = UnsafeFunctions.ArrayToBitmap(array1, headerFirst)
             Dim array2 = UnsafeFunctions.BitmapToArray(bmp2, headerFirst)
             Dim bmp3 = UnsafeFunctions.ArrayToBitmap(array2, headerFirst)
-            Assert.IsTrue(array1.SequenceEqual(array2))
+            Legacy.ClassicAssert.IsTrue(array1.SequenceEqual(array2))
             CompareBitmaps(bmp1, bmp2)
             CompareBitmaps(bmp1, bmp3)
             CompareBitmaps(bmp2, bmp3)
         Next
     End Sub
 
-    <TestMethod()> Public Sub BitmapToRawFrameTesGray24()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub BitmapToRawFrameTesGray24()
         BitmapToRawFrameTest(My.Resources.gray24)
     End Sub
 
-    <TestMethod()> Public Sub BitmapToRawFrameTestRgb24()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub BitmapToRawFrameTestRgb24()
         BitmapToRawFrameTest(My.Resources.rgbw24)
     End Sub
 
@@ -375,7 +423,7 @@ Imports Bwl.Imaging.Unsafe
             Dim rawFrame1Bytes = rawFrame1.Serialize(headerFirst)
             Dim bmp2 = UnsafeFunctions.ArrayToBitmap(rawFrame1Bytes, headerFirst)
             Dim array2 = UnsafeFunctions.BitmapToArray(bmp2, headerFirst)
-            Assert.IsTrue(array1.SequenceEqual(array2))
+            Legacy.ClassicAssert.IsTrue(array1.SequenceEqual(array2))
             CompareBitmaps(bmp1, bmp2)
         Next
     End Sub

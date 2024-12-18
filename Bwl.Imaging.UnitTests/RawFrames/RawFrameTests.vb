@@ -1,5 +1,10 @@
-﻿<TestClass()> Public Class RawFrameTests
-    <TestMethod()> Public Sub RawFrameTest()
+﻿Imports NUnit.Framework
+<TestFixture>
+<Parallelizable(ParallelScope.Self)>
+Public Class RawFrameTests
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub RawFrameTest()
         For channels = 1 To 3
             For width = 1 To 1024 Step 127
                 For height = 1 To 1024 Step 127
@@ -10,27 +15,27 @@
                     'Тест сериализации
                     Dim rawFrameOrigBytes = rawFrameOrig.Serialize()
                     Dim rawFrameDeserial = New RawFrame(rawFrameOrigBytes)
-                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameDeserial))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrig.Equals(rawFrameDeserial))
                     '...в том числе по массивам сериализации
                     Dim rawFrameDeserialBytes = rawFrameDeserial.Serialize()
-                    Assert.IsTrue(rawFrameOrigBytes.SequenceEqual(rawFrameDeserialBytes))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrigBytes.SequenceEqual(rawFrameDeserialBytes))
 
                     'Тест экспорта в массив (размерность 1)
                     Dim rawFrameOrig2 = New RawFrame(rawFrameOrig.Width, rawFrameOrig.Height, rawFrameOrig.Channels, rawFrameOrig.PixelData)
-                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameOrig))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrig.Equals(rawFrameOrig))
 
                     'Тест экспорта в массив (размерность 3)
                     Dim rawFrameArray3 = rawFrameOrig.Export()
                     Dim rawFrameFromExport = New RawFrame(rawFrameArray3)
-                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameFromExport))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrig.Equals(rawFrameFromExport))
 
                     'Тест копии
                     Dim rawFrameOrigCopy = rawFrameOrig.Copy()
-                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameOrigCopy))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrig.Equals(rawFrameOrigCopy))
 
                     'Тест клонирования
                     Dim rawFrameOrigCloned = DirectCast(rawFrameOrig.Clone(), RawFrame)
-                    Assert.IsTrue(rawFrameOrig.Equals(rawFrameOrigCloned))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrig.Equals(rawFrameOrigCloned))
                 Next
             Next
         Next

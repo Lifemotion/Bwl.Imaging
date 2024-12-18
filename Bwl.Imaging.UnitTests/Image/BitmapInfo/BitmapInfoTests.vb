@@ -2,13 +2,15 @@
 Imports System.IO
 Imports System.Threading
 Imports Bwl.Imaging.Unsafe
-Imports Microsoft.VisualStudio.TestTools.UnitTesting
+Imports NUnit.Framework
 
-<TestClass>
+<TestFixture>
+<Parallelizable(ParallelScope.Self)>
 Public Class BitmapInfoTests
     Inherits BitmapInfoTestBase
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoAccessTest1()
         Dim src = GetTestBmp()
         Dim bi = New BitmapInfo(src)
@@ -18,10 +20,11 @@ Public Class BitmapInfoTests
         Catch ex As Exception
             exceptionDetected = True
         End Try
-        Assert.AreEqual(True, exceptionDetected)
+        Legacy.ClassicAssert.AreEqual(True, exceptionDetected)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoAccessTest2()
         Dim src = GetTestBmp()
         Dim bi = New BitmapInfo(src)
@@ -34,10 +37,11 @@ Public Class BitmapInfoTests
         Finally
             bi.BmpUnlock()
         End Try
-        Assert.AreEqual(False, exceptionDetected)
+        Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoSetBmpTest1()
         Dim src1 = GetTestBmp()
         Dim src2 = GetTestBmp()
@@ -50,16 +54,17 @@ Public Class BitmapInfoTests
             bi.SetBmp(src2)
             bi.BmpLock()
             For i = 0 To Math.Min(src2.Width, src2.Height) - 1
-                Assert.AreEqual(src2.GetPixel(i, i).R, bi.Bmp.GetPixel(i, i).R)
+                Legacy.ClassicAssert.AreEqual(src2.GetPixel(i, i).R, bi.Bmp.GetPixel(i, i).R)
             Next
             bi.BmpUnlock()
         Catch ex As Exception
             exceptionDetected = True
         End Try
-        Assert.AreEqual(False, exceptionDetected)
+        Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoSetBmpTest2()
         Dim src1 = GetTestBmp()
         Dim src2 = GetTestBmp()
@@ -68,12 +73,13 @@ Public Class BitmapInfoTests
         Dim bmpJpg = bi.GetClonedBmp() '...была декомпрессия из JPEG в Bmp (затем клонирование внутреннего _bmp) и запустился отложенный Dispose для Bitmap-а ОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2
         bi.SetBmp(src2) '...и тут мы ставим второй Bmp, в то же время НЕОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2 готовится сработать
         Thread.Sleep(3000) 'за 3 секунды должен отработать/не отработать отложенный Dispose() - ОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2
-        Assert.IsTrue(bi.CompressedCount = 1)
-        Assert.IsTrue(bi.DecompressedCount = 1)
-        Assert.IsTrue(bi.DisposeCount = 2)
+        Legacy.ClassicAssert.IsTrue(bi.CompressedCount = 1)
+        Legacy.ClassicAssert.IsTrue(bi.DecompressedCount = 1)
+        Legacy.ClassicAssert.IsTrue(bi.DisposeCount = 2)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetClonedBmpTest()
         For w = 1 To 49
             For h = 1 To 100
@@ -87,16 +93,17 @@ Public Class BitmapInfoTests
                     For j = 0 To Math.Min(src1.Width, src1.Height) - 1
                         Dim src1Px = src1.GetPixel(i, j)
                         Dim src2Px = src2.GetPixel(i, j)
-                        Assert.AreEqual(src1Px.R, src2Px.R)
-                        Assert.AreEqual(src1Px.G, src2Px.G)
-                        Assert.AreEqual(src1Px.B, src2Px.B)
+                        Legacy.ClassicAssert.AreEqual(src1Px.R, src2Px.R)
+                        Legacy.ClassicAssert.AreEqual(src1Px.G, src2Px.G)
+                        Legacy.ClassicAssert.AreEqual(src1Px.B, src2Px.B)
                     Next
                 Next
             Next
         Next
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetRgbMatrixTest1()
         For w = 1 To 49
             For h = 1 To 100
@@ -108,22 +115,23 @@ Public Class BitmapInfoTests
                 Catch ex As Exception
                     exceptionDetected = True
                 End Try
-                Assert.AreEqual(False, exceptionDetected)
+                Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
                 Dim mtx = bi.GetRGBMatrix()
                 For i = 0 To Math.Min(src.Width, src.Height) - 1
                     For j = 0 To Math.Min(src.Width, src.Height) - 1
                         Dim srcPx = src.GetPixel(i, j)
                         Dim mtxPx = mtx.ColorPixel(i, j)
-                        Assert.AreEqual(srcPx.R, mtxPx.R)
-                        Assert.AreEqual(srcPx.G, mtxPx.G)
-                        Assert.AreEqual(srcPx.B, mtxPx.B)
+                        Legacy.ClassicAssert.AreEqual(srcPx.R, mtxPx.R)
+                        Legacy.ClassicAssert.AreEqual(srcPx.G, mtxPx.G)
+                        Legacy.ClassicAssert.AreEqual(srcPx.B, mtxPx.B)
                     Next
                 Next
             Next
         Next
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetRgbMatrixTest2()
         For w = 1 To 49
             For h = 1 To 100
@@ -135,22 +143,23 @@ Public Class BitmapInfoTests
                 Catch ex As Exception
                     exceptionDetected = True
                 End Try
-                Assert.AreEqual(False, exceptionDetected)
+                Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
                 Dim mtx = bi.GetRGBMatrix()
                 For i = 0 To Math.Min(src.Width, src.Height) - 1
                     For j = 0 To Math.Min(src.Width, src.Height) - 1
                         Dim srcPx = src.GetPixel(i, j)
                         Dim mtxPx = mtx.ColorPixel(i, j)
-                        Assert.AreEqual(srcPx.R, mtxPx.R)
-                        Assert.AreEqual(srcPx.G, mtxPx.G)
-                        Assert.AreEqual(srcPx.B, mtxPx.B)
+                        Legacy.ClassicAssert.AreEqual(srcPx.R, mtxPx.R)
+                        Legacy.ClassicAssert.AreEqual(srcPx.G, mtxPx.G)
+                        Legacy.ClassicAssert.AreEqual(srcPx.B, mtxPx.B)
                     Next
                 Next
             Next
         Next
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetRgbMatrixTest3()
         Dim src = GetTestBmp(Drawing.Imaging.PixelFormat.Format8bppIndexed)
         Dim bi = New BitmapInfo(src)
@@ -160,24 +169,26 @@ Public Class BitmapInfoTests
         Catch ex As Exception
             exceptionDetected = True
         End Try
-        Assert.AreEqual(False, exceptionDetected)
+        Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetGrayMatrixTest1()
         Dim src = GetTestBmp(Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim bi = New BitmapInfo(src)
         Dim exceptionDetected = False
         Try
             bi.GetGrayMatrix()
-            Assert.AreEqual(False, exceptionDetected)
+            Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
         Catch ex As Exception
             exceptionDetected = True
         End Try
-        Assert.AreEqual(False, exceptionDetected)
+        Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetGrayMatrixTest2()
         Dim src = GetTestBmp(Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bi = New BitmapInfo(src)
@@ -187,10 +198,11 @@ Public Class BitmapInfoTests
         Catch ex As Exception
             exceptionDetected = True
         End Try
-        Assert.AreEqual(False, exceptionDetected)
+        Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetGrayMatrixTest3()
         Dim src = GetTestBmp(Drawing.Imaging.PixelFormat.Format8bppIndexed)
         Dim bi = New BitmapInfo(src)
@@ -200,10 +212,11 @@ Public Class BitmapInfoTests
         Catch ex As Exception
             exceptionDetected = True
         End Try
-        Assert.AreEqual(False, exceptionDetected)
+        Legacy.ClassicAssert.AreEqual(False, exceptionDetected)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest0()
         Dim jpg = GetResourceFileData("636080817147998076.jpg")
         Dim sw = New Stopwatch()
@@ -211,10 +224,11 @@ Public Class BitmapInfoTests
         Dim bi = New BitmapInfo(jpg)
         sw.Stop()
         Dim jpegParseTimeMs = sw.ElapsedMilliseconds
-        Assert.IsTrue(jpegParseTimeMs < 10)
+        Legacy.ClassicAssert.IsTrue(jpegParseTimeMs < 10)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest1()
         Dim jpg = GetResourceFileData("638067000726558653.jpg")
         Dim sw = New Stopwatch()
@@ -225,32 +239,35 @@ Public Class BitmapInfoTests
         Dim mtrxBnfo = bmpBnfo.BitmapToRgbMatrix() 'JPG
         Dim mtrxBmp = bmp.BitmapToRgbMatrix() 'BMP
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxBnfo, mtrxBmp) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.5)
+        Legacy.ClassicAssert.IsTrue(mtrxDiffPerc < 0.5)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest2()
         Dim jpg = GetResourceFileData("jpeg8bpp.jpg")
         Dim bi = New BitmapInfo(jpg)
         Dim bmpSize = bi.BmpSize
         Dim bmpPixelFormat = bi.BmpPixelFormat
-        Assert.IsTrue(bmpSize.Width = 48)
-        Assert.IsTrue(bmpSize.Height = 96)
-        Assert.IsTrue(bmpPixelFormat = Drawing.Imaging.PixelFormat.Format8bppIndexed)
+        Legacy.ClassicAssert.IsTrue(bmpSize.Width = 48)
+        Legacy.ClassicAssert.IsTrue(bmpSize.Height = 96)
+        Legacy.ClassicAssert.IsTrue(bmpPixelFormat = Drawing.Imaging.PixelFormat.Format8bppIndexed)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest3()
         Dim jpg = GetResourceFileData("jpeg24bpp.jpg")
         Dim bi = New BitmapInfo(jpg)
         Dim bmpSize = bi.BmpSize
         Dim bmpPixelFormat = bi.BmpPixelFormat
-        Assert.IsTrue(bmpSize.Width = 48)
-        Assert.IsTrue(bmpSize.Height = 96)
-        Assert.IsTrue(bmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb)
+        Legacy.ClassicAssert.IsTrue(bmpSize.Width = 48)
+        Legacy.ClassicAssert.IsTrue(bmpSize.Height = 96)
+        Legacy.ClassicAssert.IsTrue(bmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest4()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
@@ -259,130 +276,138 @@ Public Class BitmapInfoTests
         Dim mtrxSrc = src.BitmapToRgbMatrix()
         Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
-        Assert.IsTrue(mtrxDiffPerc < 3)
+        Legacy.ClassicAssert.IsTrue(mtrxDiffPerc < 3)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest5()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
 
         Dim bi = New BitmapInfo(UnsafeFunctions.BitmapClone(src))
-        Assert.IsFalse(bi.BmpIsNothing)
+        Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing)
         bi.SetJpg(jpg)
-        Assert.IsTrue(bi.BmpIsNothing)
+        Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing)
 
         Dim biJpg = New BitmapInfo(jpg)
-        Assert.IsTrue(bi.BmpIsNothing)
+        Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing)
         bi.SetBmp(UnsafeFunctions.BitmapClone(src))
-        Assert.IsFalse(bi.BmpIsNothing)
+        Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest6()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
         Dim bi = New BitmapInfo(jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем JPEG
-        Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
+        Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
 
         For i = 1 To 4
             Dim bmpJpg1 = bi.GetClonedBmp() '...получаем его, автоматически активируется автоматическое элиминирование битмапа
-            Assert.IsFalse(bi.BmpIsNothing) '...но битмап пока доступен...
-            Assert.IsNotNull(bmpJpg1) '...но битмап пока доступен.
+            Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) '...но битмап пока доступен...
+            Legacy.ClassicAssert.IsNotNull(bmpJpg1) '...но битмап пока доступен.
             System.Threading.Thread.Sleep(2000) 'Ждем достаточное время для автоэлиминирования...
-            Assert.IsTrue(bi.BmpIsNothing) '...теперь битмап должен быть пуст...
+            Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) '...теперь битмап должен быть пуст...
             Dim bmpJpg2 = bi.GetClonedBmp() '...но повторное обращение...
-            Assert.IsFalse(bi.BmpIsNothing) '...указывает что битмап не пуст и по флагу...
-            Assert.IsNotNull(bmpJpg2) '...и по ссылке
+            Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) '...указывает что битмап не пуст и по флагу...
+            Legacy.ClassicAssert.IsNotNull(bmpJpg2) '...и по ссылке
         Next
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest7()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format24bppRgb)
         Dim jpg = JpegCodec.Encode(src).ToArray()
         Dim bi = New BitmapInfo(jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем JPEG
-        Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
+        Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
 
         For i = 1 To 4
             Dim bmpJpg1 = bi.GetClonedBmp() '...получаем его, автоматически активируется автоматическое элиминирование битмапа
-            Assert.IsFalse(bi.BmpIsNothing) '...но битмап пока доступен...
-            Assert.IsNotNull(bmpJpg1) '...но битмап пока доступен.
+            Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) '...но битмап пока доступен...
+            Legacy.ClassicAssert.IsNotNull(bmpJpg1) '...но битмап пока доступен.
             System.Threading.Thread.Sleep(2000) 'Ждем достаточное время для автоэлиминирования...
-            Assert.IsTrue(bi.BmpIsNothing) '...теперь битмап должен быть пуст...
+            Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) '...теперь битмап должен быть пуст...
 
             bi.BmpLock()
             Try
                 Dim bmpJpg2 = bi.Bmp() '...но повторное обращение...
-                Assert.IsFalse(bi.BmpIsNothing) '...указывает что битмап не пуст и по флагу...
-                Assert.IsNotNull(bmpJpg2) '...и по ссылке
+                Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) '...указывает что битмап не пуст и по флагу...
+                Legacy.ClassicAssert.IsNotNull(bmpJpg2) '...и по ссылке
             Finally
                 bi.BmpUnlock()
             End Try
         Next
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest_Formats()
         For Each file In {"CMYK.jpg", "Gray.jpg", "RGB.jpg", "YCbCr.jpg", "YCbCrK.jpg"}
             Dim jpg = GetResourceFileData(file) 'Читаем файл
             Dim bi = New BitmapInfo(jpg) 'Устанавливаем JPEG
-            Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
+            Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
             Dim bmpJpg = bi.GetClonedBmp() '...получаем Bitmap
-            Assert.IsTrue(bmpJpg.Size = bi.BmpSize) 'Проверка
-            Assert.IsTrue(bmpJpg.PixelFormat = bi.BmpPixelFormat) 'Проверка
+            Legacy.ClassicAssert.IsTrue(bmpJpg.Size = bi.BmpSize) 'Проверка
+            Legacy.ClassicAssert.IsTrue(bmpJpg.PixelFormat = bi.BmpPixelFormat) 'Проверка
         Next
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest_CamFormats()
         For Each file In {"26FWD_IZHS.jpg", "No_JFIF.jpg"}
             Dim jpg = GetResourceFileData(file) 'Читаем файл
             Dim bi = New BitmapInfo(jpg) 'Устанавливаем JPEG
-            Assert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
+            Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) 'После установки JPEG битмап еще не развернут...
             Dim bmpJpg = bi.GetClonedBmp() '...получаем Bitmap
-            Assert.IsTrue(bmpJpg.Size = bi.BmpSize) 'Проверка
-            Assert.IsTrue(bmpJpg.PixelFormat = bi.BmpPixelFormat) 'Проверка
+            Legacy.ClassicAssert.IsTrue(bmpJpg.Size = bi.BmpSize) 'Проверка
+            Legacy.ClassicAssert.IsTrue(bmpJpg.PixelFormat = bi.BmpPixelFormat) 'Проверка
         Next
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCompressTest1()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bi = New BitmapInfo(UnsafeFunctions.BitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
-        Assert.IsFalse(bi.BmpIsNothing) 'Bitmap уже есть...
-        Assert.IsTrue(bi.JpgIsNothing) '...а JPEG не развернут
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Исходный Bitmap имеет 32 бита на пиксель
+        Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) 'Bitmap уже есть...
+        Legacy.ClassicAssert.IsTrue(bi.JpgIsNothing) '...а JPEG не развернут
+        Legacy.ClassicAssert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format32bppArgb) 'Исходный Bitmap имеет 32 бита на пиксель
         bi.Compress()
-        Assert.IsTrue(bi.BmpIsNothing) 'Bitmap элиминирован при установке JPEG...
-        Assert.IsFalse(bi.JpgIsNothing) '...а JPEG развернут
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При восстановлении из JPEG пиксель 24 бита
+        Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) 'Bitmap элиминирован при установке JPEG...
+        Legacy.ClassicAssert.IsFalse(bi.JpgIsNothing) '...а JPEG развернут
+        Legacy.ClassicAssert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При восстановлении из JPEG пиксель 24 бита
         'Проверка изображений на соответствие
         Dim bmpJpg = bi.GetClonedBmp() 'Восстановленный из JPEG битмап
         Dim mtrxSrc = src.BitmapToRgbMatrix()
         Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
-        Assert.IsTrue(mtrxDiffPerc < 3)
+        Legacy.ClassicAssert.IsTrue(mtrxDiffPerc < 3)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCompressTest2()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bi = New BitmapInfo(JpegCodec.Encode(src).ToArray()) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
-        Assert.IsTrue(bi.BmpIsNothing) 'Bitmap-а изначально нет
-        Assert.IsFalse(bi.JpgIsNothing) '...а JPEG развернут
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При сжатии JPEG пиксель 24 бита
+        Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) 'Bitmap-а изначально нет
+        Legacy.ClassicAssert.IsFalse(bi.JpgIsNothing) '...а JPEG развернут
+        Legacy.ClassicAssert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При сжатии JPEG пиксель 24 бита
         Dim bmpJpg = bi.GetClonedBmp() 'Заставляем декомпрессировать Bmp
-        Assert.IsFalse(bi.BmpIsNothing) 'Bitmap есть...
-        Assert.IsFalse(bi.JpgIsNothing) '...а также JPEG
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При сжатии JPEG пиксель 24 бита
+        Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) 'Bitmap есть...
+        Legacy.ClassicAssert.IsFalse(bi.JpgIsNothing) '...а также JPEG
+        Legacy.ClassicAssert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При сжатии JPEG пиксель 24 бита
         bi.Compress()
-        Assert.IsTrue(bi.BmpIsNothing) 'Bitmap элиминирован при установке JPEG...
-        Assert.IsFalse(bi.JpgIsNothing) '...а JPEG развернут
-        Assert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При восстановлении из JPEG пиксель 24 бита        
+        Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) 'Bitmap элиминирован при установке JPEG...
+        Legacy.ClassicAssert.IsFalse(bi.JpgIsNothing) '...а JPEG развернут
+        Legacy.ClassicAssert.IsTrue(bi.BmpPixelFormat = Drawing.Imaging.PixelFormat.Format24bppRgb) 'При восстановлении из JPEG пиксель 24 бита        
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCloneTest11()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bi1 = New BitmapInfo(UnsafeFunctions.BitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
@@ -393,10 +418,11 @@ Public Class BitmapInfoTests
         Dim mtrx1 = bmp1.BitmapToRgbMatrix()
         Dim mtrx2 = bmp2.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.5)
+        Legacy.ClassicAssert.IsTrue(mtrxDiffPerc < 0.5)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCloneTest12()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bi1 = New BitmapInfo(UnsafeFunctions.BitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
@@ -407,10 +433,11 @@ Public Class BitmapInfoTests
         Dim mtrx1 = bmp1.BitmapToRgbMatrix()
         Dim mtrx2 = bmp2.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.5)
+        Legacy.ClassicAssert.IsTrue(mtrxDiffPerc < 0.5)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCloneTest21()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bi1 = New BitmapInfo(JpegCodec.Encode(src).ToArray()) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
@@ -421,10 +448,11 @@ Public Class BitmapInfoTests
         Dim mtrx1 = bmp1.BitmapToRgbMatrix()
         Dim mtrx2 = bmp2.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.5)
+        Legacy.ClassicAssert.IsTrue(mtrxDiffPerc < 0.5)
     End Sub
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCloneTest22()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bi1 = New BitmapInfo(JpegCodec.Encode(src).ToArray()) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
@@ -435,7 +463,7 @@ Public Class BitmapInfoTests
         Dim mtrx1 = bmp1.BitmapToRgbMatrix()
         Dim mtrx2 = bmp2.BitmapToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
-        Assert.IsTrue(mtrxDiffPerc < 0.5)
+        Legacy.ClassicAssert.IsTrue(mtrxDiffPerc < 0.5)
     End Sub
 
     ''' <summary>
@@ -445,7 +473,8 @@ Public Class BitmapInfoTests
     ''' разблокируем bi при исключении, но разблокировать должен тот поток,
     ''' который выполнял блокировку. То есть BmpLock() нельзя вносить в TryCatch.
     ''' </summary>
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoLockTest()
         Dim src = GetTestBmp(New Size(48, 96), Drawing.Imaging.PixelFormat.Format32bppArgb)
         Dim bi = New BitmapInfo(src) With {.BitmapKeepTimeS = 1}
@@ -484,7 +513,7 @@ Public Class BitmapInfoTests
 
         Thread.Sleep(10000)
 
-        Assert.IsTrue(Interlocked.Read(lockedCount) = 0)
+        Legacy.ClassicAssert.IsTrue(Interlocked.Read(CLng(lockedCount)) = 0)
     End Sub
 
     Private Function GetAvgMatrixesDiff(m1 As RGBMatrix, m2 As RGBMatrix) As Double

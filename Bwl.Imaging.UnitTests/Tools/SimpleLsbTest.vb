@@ -1,5 +1,10 @@
-﻿<TestClass()> Public Class SimpleLsbTest
-    <TestMethod()> Public Sub SimpleLsbTest1()
+﻿Imports NUnit.Framework
+<TestFixture>
+<Parallelizable(ParallelScope.Self)>
+Public Class SimpleLsbTest
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub SimpleLsbTest1()
         For hostSize = 1024 To 8192
             For hostOffset = 0 To 16
                 Dim host = GetRandomBytes(hostSize)
@@ -7,12 +12,14 @@
                 Dim payload = GetRandomBytes(maxPayloadSize)
                 SimpleLSB.Append(host, hostOffset, payload)
                 Dim payloadExt = SimpleLSB.Extract(host, hostOffset)
-                Assert.IsTrue(payload.SequenceEqual(payloadExt))
+                Legacy.ClassicAssert.IsTrue(payload.SequenceEqual(payloadExt))
             Next
         Next
     End Sub
 
-    <TestMethod()> Public Sub SimpleLsbTest2()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub SimpleLsbTest2()
         Dim MB = 1024 * 1024
         Dim hostSize = 5 * 1000 * 1000 * 3
         Dim payloadSize = SimpleLSB.GetMaxPayloadSize(hostSize)
@@ -37,10 +44,12 @@
         IO.File.WriteAllText($"!SimpleLSB.Extract({payloadSizeShort}).ms.txt", msExtractShort.ToString("F3"))
         'IO.File.WriteAllText($"!SimpleLSB.Extract({payloadSizeShort}).fps.txt", (1000.0 / msExtractShort).ToString("F3"))
 
-        Assert.IsTrue(payload.SequenceEqual(payloadExt))
+        Legacy.ClassicAssert.IsTrue(payload.SequenceEqual(payloadExt))
     End Sub
 
-    <TestMethod()> Public Sub SimpleLsbTest3()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub SimpleLsbTest3()
         Dim N = 1000
         Dim MB = 1024 * 1024
         Dim hostSize = 5 * 1000 * 1000 * 3

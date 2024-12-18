@@ -1,8 +1,12 @@
 ﻿Imports System.Drawing
+Imports NUnit.Framework
+<TestFixture>
+<Parallelizable(ParallelScope.Self)>
+Public Class VectorToolsTests
 
-<TestClass()> Public Class VectorToolsTests
-
-    <TestMethod()> Public Sub PointInPolygonIntegerTest()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub PointInPolygonIntegerTest()
         Dim polygonPoints = {
                                 New PointF(370, 279),
                                 New PointF(160, 106),
@@ -24,7 +28,9 @@
         PointInPolygonTest(polygonPoints)
     End Sub
 
-    <TestMethod()> Public Sub PointInPolygonSingleTest()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub PointInPolygonSingleTest()
         Dim polygonPoints = {
                                 New PointF(370, 279),
                                 New PointF(160, 106),

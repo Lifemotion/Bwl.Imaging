@@ -46,7 +46,7 @@ Public Class BitmapInfoTestBase
 
     Protected Function GetResourceFileData(fileName As String) As Byte()
         Dim exePath = IO.Path.GetDirectoryName(Reflection.Assembly.GetExecutingAssembly().Location)
-        Dim dataPath = IO.Path.Combine(exePath, "..", "..", "Resources")
+        Dim dataPath = IO.Path.Combine(exePath, "Resources")
         Dim data = IO.File.ReadAllBytes(IO.Path.Combine(dataPath, fileName))
         Return data
     End Function

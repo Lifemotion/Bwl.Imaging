@@ -1,11 +1,13 @@
 ﻿Imports System.Drawing
-Imports System.IO
+Imports NUnit.Framework
 
-<TestClass>
+<TestFixture>
+<Parallelizable(ParallelScope.Self)>
 Public Class CompareJpgTest
     Inherits BitmapInfoTestBase
 
-    <TestMethod>
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
     Public Sub CompareJpgTest()
         Dim multX = 1 'Множитель базового размера...
         Dim imgSize = New Size(1920 * multX, 1080 * multX) '...1920 * 1080
@@ -38,20 +40,20 @@ Public Class CompareJpgTest
                               Dim cmp2_time = sw.Elapsed.TotalMilliseconds
 
                               'Анализ результатов сравнения
-                              Assert.IsTrue(cmp1 = cmp2)
+                              Legacy.ClassicAssert.IsTrue(cmp1 = cmp2)
 
                               'Анализ производительности сравнения
-                              Assert.IsTrue(cmp1_time < cmp2_time / 2)
+                              Legacy.ClassicAssert.IsTrue(cmp1_time < cmp2_time / 2)
 
                               'Сравнение полученных потоков Jpg "в-лоб"
                               Dim jp1 = b1.GetJpgFast()
                               Dim jp2 = b2.GetJpgFast()
                               If result Then
-                                  Assert.IsTrue(jp1.Length = jp2.Length)
-                                  Assert.IsTrue(jp1.SequenceEqual(jp2))
+                                  Legacy.ClassicAssert.IsTrue(jp1.Length = jp2.Length)
+                                  Legacy.ClassicAssert.IsTrue(jp1.SequenceEqual(jp2))
                               Else
-                                  Assert.IsFalse(jp1.Length = jp2.Length)
-                                  Assert.IsFalse(jp1.SequenceEqual(jp2))
+                                  Legacy.ClassicAssert.IsFalse(jp1.Length = jp2.Length)
+                                  Legacy.ClassicAssert.IsFalse(jp1.SequenceEqual(jp2))
                               End If
                           End Sub
         compareTest(bi1, bi2, True) 'JPEG-структуры должны быть равны

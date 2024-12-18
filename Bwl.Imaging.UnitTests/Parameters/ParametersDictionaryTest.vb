@@ -1,6 +1,12 @@
-﻿<TestClass()> Public Class ParametersDictionaryTest
+﻿Imports NUnit.Framework
 
-    <TestMethod()> Public Sub ParametersDictionaryEqualityTest1()
+<TestFixture>
+<Parallelizable(ParallelScope.Self)>
+Public Class ParametersDictionaryTest
+
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub ParametersDictionaryEqualityTest1()
         Dim params1 = New ParametersDictionary()
 
         params1.Add(New Parameter("key1", "value1"))
@@ -12,10 +18,12 @@
         Dim params2 = Serializer.LoadObjectFromJsonString(Of ParametersDictionary)(paramsJson1)
         Dim paramsJson2 = Serializer.SaveObjectToJsonString(params2)
 
-        Assert.AreEqual(paramsJson1, paramsJson2)
+        Legacy.ClassicAssert.AreEqual(paramsJson1, paramsJson2)
     End Sub
 
-    <TestMethod()> Public Sub ParametersDictionaryEqualityTest2()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub ParametersDictionaryEqualityTest2()
         Dim params1 = New ParametersDictionary()
 
         params1.Add(New Parameter("key1", "value1"))
@@ -27,10 +35,12 @@
         Dim params2 = Serializer.LoadObjectFromJsonString(Of ParametersDictionaryList)(paramsJson1)
         Dim paramsJson2 = Serializer.SaveObjectToJsonString(params2)
 
-        Assert.AreEqual(paramsJson1, paramsJson2)
+        Legacy.ClassicAssert.AreEqual(paramsJson1, paramsJson2)
     End Sub
 
-    <TestMethod()> Public Sub ParametersDictionaryEqualityTest3()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub ParametersDictionaryEqualityTest3()
         Dim params1 = New ParametersDictionaryList()
 
         params1.Add(New Parameter("key1", "value1"))
@@ -42,10 +52,12 @@
         Dim params2 = Serializer.LoadObjectFromJsonString(Of ParametersDictionary)(paramsJson1)
         Dim paramsJson2 = Serializer.SaveObjectToJsonString(params2)
 
-        Assert.AreEqual(paramsJson1, paramsJson2)
+        Legacy.ClassicAssert.AreEqual(paramsJson1, paramsJson2)
     End Sub
 
-    <TestMethod()> Public Sub ParametersDictionaryEqualityTest4()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub ParametersDictionaryEqualityTest4()
         Dim params1 = New ParametersDictionaryList() 'Словарь первой версии (на основе списка)
         Dim params2 = New ParametersDictionary() 'Словарь второй версии (на основе словаря)
 
@@ -57,10 +69,12 @@
         'Сравнение идентичности сериализации
         Dim paramsJson1 = Serializer.SaveObjectToJsonString(params1)
         Dim paramsJson2 = Serializer.SaveObjectToJsonString(params2)
-        Assert.AreEqual(paramsJson1, paramsJson2)
+        Legacy.ClassicAssert.AreEqual(paramsJson1, paramsJson2)
     End Sub
 
-    <TestMethod()> Public Sub ParametersDictionaryPerfomanceTest()
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub ParametersDictionaryPerfomanceTest()
         Dim NItems = 20
         Dim NIters = 10000
         Dim rnd As New Random(Now.Ticks Mod Integer.MaxValue)
