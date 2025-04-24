@@ -308,7 +308,7 @@ Public Class BitmapInfoTests
             Dim bmpJpg1 = bi.GetClonedBmp() '...получаем его, автоматически активируется автоматическое элиминирование битмапа
             Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) '...но битмап пока доступен...
             Legacy.ClassicAssert.IsNotNull(bmpJpg1) '...но битмап пока доступен.
-            System.Threading.Thread.Sleep(2000) 'Ждем достаточное время для автоэлиминирования...
+            Thread.Sleep(2000) 'Ждем достаточное время для автоэлиминирования...
             Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) '...теперь битмап должен быть пуст...
             Dim bmpJpg2 = bi.GetClonedBmp() '...но повторное обращение...
             Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) '...указывает что битмап не пуст и по флагу...
@@ -328,7 +328,7 @@ Public Class BitmapInfoTests
             Dim bmpJpg1 = bi.GetClonedBmp() '...получаем его, автоматически активируется автоматическое элиминирование битмапа
             Legacy.ClassicAssert.IsFalse(bi.BmpIsNothing) '...но битмап пока доступен...
             Legacy.ClassicAssert.IsNotNull(bmpJpg1) '...но битмап пока доступен.
-            System.Threading.Thread.Sleep(2000) 'Ждем достаточное время для автоэлиминирования...
+            Thread.Sleep(2000) 'Ждем достаточное время для автоэлиминирования...
             Legacy.ClassicAssert.IsTrue(bi.BmpIsNothing) '...теперь битмап должен быть пуст...
 
             bi.BmpLock()
@@ -482,34 +482,32 @@ Public Class BitmapInfoTests
         Dim lockedCount = 0
 
         'Это нормальный поток - он блокирует BitmapInfo, а потом разблокирует
-        Dim thr1 = New Threading.Thread(Sub()
-                                            bi.BmpLock()
-                                            Try
-                                                Interlocked.Increment(lockedCount)
-                                                Thread.Sleep(5000)
-                                            Catch ex As Exception
-                                            Finally
-                                                bi.BmpUnlock()
-                                                Interlocked.Decrement(lockedCount)
-                                            End Try
-                                        End Sub) With {.IsBackground = True}
-        thr1.Start()
+        Task.Run(Async Function()
+                     bi.BmpLock()
+                     Try
+                         Interlocked.Increment(lockedCount)
+                         Await Task.Delay(5000).ConfigureAwait(False)
+                     Catch ex As Exception
+                     Finally
+                         bi.BmpUnlock()
+                         Interlocked.Decrement(lockedCount)
+                     End Try
+                 End Function)
 
         Thread.Sleep(1000)
 
         'Это поток-нарушитель, он пытается заблокировать BitmapInfo, а когда не получается - выполняет разблокировку
         'РАНЬШЕ, чем нормальный поток. Это приводит к ошибке на уровне нормального потока.
-        Dim thr2 = New Threading.Thread(Sub()
-                                            bi.BmpLock(1000)
-                                            Try
-                                                Interlocked.Increment(lockedCount)
-                                            Catch ex As Exception
-                                            Finally
-                                                bi.BmpUnlock()
-                                                Interlocked.Decrement(lockedCount)
-                                            End Try
-                                        End Sub) With {.IsBackground = True}
-        thr2.Start()
+        Task.Run(Sub()
+                     bi.BmpLock(1000)
+                     Try
+                         Interlocked.Increment(lockedCount)
+                     Catch ex As Exception
+                     Finally
+                         bi.BmpUnlock()
+                         Interlocked.Decrement(lockedCount)
+                     End Try
+                 End Sub)
 
         Thread.Sleep(10000)
 

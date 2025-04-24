@@ -718,16 +718,15 @@ Public Class BitmapInfo
     ''' <param name="bitmapKeepTimeS">Время доступности декомпрессированного битмапа.</param>
     Private Sub BitmapDisposeWithDelay(target As Bitmap, bitmapKeepTimeS As Single)
         If target IsNot Nothing AndAlso bitmapKeepTimeS >= 0 Then
-            Dim thr = New Thread(Sub()
-                                     Thread.Sleep(TimeSpan.FromSeconds(bitmapKeepTimeS))
-                                     BmpLock(-1) 'Бесконечное ожидание, т.к. нужно высвободить ресурс
-                                     Try
-                                         DisposeBmpInternal(target)
-                                     Finally
-                                         BmpUnlock()
-                                     End Try
-                                 End Sub) With {.IsBackground = True}
-            thr.Start()
+            Task.Run(Async Function()
+                         Await Task.Delay(TimeSpan.FromSeconds(bitmapKeepTimeS)).ConfigureAwait(False)
+                         BmpLock(-1) 'Бесконечное ожидание, т.к. нужно высвободить ресурс
+                         Try
+                             DisposeBmpInternal(target)
+                         Finally
+                             BmpUnlock()
+                         End Try
+                     End Function)
         End If
     End Sub
 
