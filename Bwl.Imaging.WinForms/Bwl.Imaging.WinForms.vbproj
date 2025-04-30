@@ -68,7 +68,7 @@
     <ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.vbproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.3">
+    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.4">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
