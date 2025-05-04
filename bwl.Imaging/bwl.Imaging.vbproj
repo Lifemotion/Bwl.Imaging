@@ -34,6 +34,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj" />
+    <ProjectReference Include="..\ResourceCollector\ResourceCollector.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

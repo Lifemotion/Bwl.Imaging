@@ -1,6 +1,5 @@
 ﻿Imports System.Drawing
 Imports System.Drawing.Imaging
-Imports System.Runtime.CompilerServices
 Imports System.Threading
 Imports Bwl.Imaging.Unsafe
 
@@ -716,17 +715,9 @@ Public Class BitmapInfo
     ''' Запуск потока отложенного Dispose для битмапа.
     ''' </summary>
     ''' <param name="bitmapKeepTimeS">Время доступности декомпрессированного битмапа.</param>
-    Private Sub BitmapDisposeWithDelay(target As Bitmap, bitmapKeepTimeS As Single)
-        If target IsNot Nothing AndAlso bitmapKeepTimeS >= 0 Then
-            Task.Run(Async Function()
-                         Await Task.Delay(TimeSpan.FromSeconds(bitmapKeepTimeS)).ConfigureAwait(False)
-                         BmpLock(-1) 'Бесконечное ожидание, т.к. нужно высвободить ресурс
-                         Try
-                             DisposeBmpInternal(target)
-                         Finally
-                             BmpUnlock()
-                         End Try
-                     End Function)
+    Private Sub BitmapDisposeWithDelay(bmp As Bitmap, bitmapKeepTimeS As Single)
+        If bmp IsNot Nothing AndAlso bitmapKeepTimeS >= 0 Then
+            ResourceCollector(Of BitmapInfo).Add(New CollectedBitmap(bmp, bitmapKeepTimeS, _bmpSemaphore, AddressOf DisposeBmpInternal))
         End If
     End Sub
 
@@ -779,20 +770,10 @@ Public Class BitmapInfo
     End Function
 #End Region
 
-#Region "IDisposable Support"
-    Private _disposed As Boolean
-
-    Protected Overridable Sub Dispose(disposing As Boolean)
-        If Not _disposed Then
-            If disposing Then
-                Clear(-1) 'Бесконечное ожидание, т.к. нужно высвободить ресурс
-            End If
-        End If
-        _disposed = True
-    End Sub
-
+#Region "IDisposable"
+    Private _disposed As Integer
     Public Sub Dispose() Implements IDisposable.Dispose
-        Dispose(True)
+        If Interlocked.Exchange(_disposed, 1) = 0 Then Clear(-1) 'Бесконечное ожидание, т.к. нужно высвободить ресурс
     End Sub
 #End Region
 
@@ -801,4 +782,39 @@ Public Class BitmapInfo
         Return GetClonedCopy()
     End Function
 #End Region
+End Class
+
+Friend Class CollectedBitmap
+    Implements ICollectedResource
+
+    Private _bmp As Bitmap
+    Private _sema As New Semaphore(1, 1)
+    Private _disposeAction As Action(Of Bitmap)
+
+    Public ReadOnly Property CollectTimeUtc As DateTime Implements ICollectedResource.CollectTimeUtc
+
+    Public Sub New(bmp As Bitmap, bitmapKeepTimeS As Single, sema As Semaphore, disposeAction As Action(Of Bitmap))
+        _bmp = bmp
+        _sema = sema
+        _disposeAction = disposeAction
+        CollectTimeUtc = DateTime.UtcNow.AddSeconds(bitmapKeepTimeS)
+    End Sub
+
+    Public Function TryCollect() As Boolean Implements ICollectedResource.TryCollect
+        If Not BitmapInfo.CheckBitmap(_bmp) Then Return True 'Disposed в другом коде?
+        If _sema.WaitOne(0) Then
+            Try
+                _disposeAction(_bmp)
+            Catch
+            Finally
+                _sema.Release()
+                _bmp = Nothing
+            End Try
+        End If
+        Return _bmp Is Nothing
+    End Function
+
+    Public Function CompareTo(item As ICollectedResource) As Integer Implements ICollectedResource.CompareTo
+        Return Me.CollectTimeUtc.CompareTo(item.CollectTimeUtc)
+    End Function
 End Class
