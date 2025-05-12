@@ -1,4 +1,7 @@
-﻿Public Class DisplayObjectsControl
+﻿Imports System.Drawing
+Imports System.Windows.Forms
+
+Public Class DisplayObjectsControl
     Inherits DisplayBitmapControl
     Private _displayObjects As New List(Of DisplayObject)
 

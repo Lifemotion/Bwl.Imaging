@@ -1,4 +1,7 @@
-﻿Public Class TestForm2
+﻿Imports System.Drawing
+Imports System.Windows.Forms
+
+Public Class TestForm2
     Private Sub _drawBkg64Button_Click(sender As Object, e As EventArgs) Handles _drawBkg64Button.Click
         Dim b = New Bitmap(64, 64)
         Dim g = Graphics.FromImage(b)

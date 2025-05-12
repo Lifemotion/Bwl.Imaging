@@ -1,5 +1,6 @@
 ﻿Imports System.Windows.Forms
 Imports bwl.Imaging.Unsafe
+Imports System.Drawing
 
 Public Class UnsafeTestForm
     Private Sub _btnLoad_Click(sender As Object, e As EventArgs) Handles _btnLoad.Click

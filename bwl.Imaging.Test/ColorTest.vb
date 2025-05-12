@@ -1,4 +1,7 @@
-﻿Public Module ColorTest
+﻿Imports System.Drawing
+Imports System.Windows.Forms
+
+Public Module ColorTest
     Public Sub Main()
         Dim mtr1 As New StructureMatrixRGB(10, 20)
         Dim mtr2 As New StructureMatrixHSV(10, 20)

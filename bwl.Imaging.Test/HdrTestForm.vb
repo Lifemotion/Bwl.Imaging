@@ -1,6 +1,8 @@
 ﻿Imports bwl.Framework
 Imports bwl.Imaging
 Imports bwl.Imaging.Unsafe
+Imports System.Drawing
+Imports System.Windows.Forms
 
 Public Class HdrTestForm
     Inherits FormAppBase

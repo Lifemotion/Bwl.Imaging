@@ -1,43 +1,22 @@
-<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <RootNamespace>Bwl.Imaging</RootNamespace>
-    <TargetFramework>netstandard2.0</TargetFramework>
-  </PropertyGroup>
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>Bwl.Imaging</RootNamespace>
+		<TargetFramework>netstandard2.0</TargetFramework>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <OutputPath>..\debug\dll\</OutputPath>
-    <NoWarn></NoWarn>
-    <WarningsAsErrors>41999,42016,42020,42021,42022</WarningsAsErrors>
-  </PropertyGroup>
+	<ItemGroup>
+		<Compile Include="..\refs-src\JpegCodec.vb" Link="refs-src\JpegCodec.vb" />
+	</ItemGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <OutputPath>..\release\dll\</OutputPath>
-    <DefineTrace>false</DefineTrace>
-    <NoWarn></NoWarn>
-    <WarningsAsErrors>41999,42016,42020,42021,42022</WarningsAsErrors>
-  </PropertyGroup>
+	<ItemGroup>
+		<Folder Include="refs-src\" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Include="..\refs-src\JpegCodec.vb" Link="refs-src\JpegCodec.vb" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="refs-src\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Unclassified.NetRevisionTask" Version="0.4.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj" />
-    <ProjectReference Include="..\ResourceCollector\ResourceCollector.csproj" />
-  </ItemGroup>
-
-  <PropertyGroup>
-    <NrtRevisionFormat>{c:ymd.} {c:hms:} {chash:6}</NrtRevisionFormat>
-  </PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Drawing.Common" Version="9.0.4" />
+	</ItemGroup>
 </Project>

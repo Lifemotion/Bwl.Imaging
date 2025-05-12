@@ -1,5 +1,6 @@
-﻿Imports System.Windows.Forms
-Imports bwl.Imaging
+﻿Imports Bwl.Imaging
+Imports System.Drawing
+Imports System.Windows.Forms
 
 Public Class TestForm
     Dim image As Bitmap

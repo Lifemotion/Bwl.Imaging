@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Bwl.Imaging.ResourceCollectorDemo</name>
+    </assembly>
+    <members>
+        <member name="T:RunLimiter">
+            <summary>
+            Periodic code run limiter with automatic internal memory clean.
+            </summary>
+        </member>
+    </members>
+</doc>

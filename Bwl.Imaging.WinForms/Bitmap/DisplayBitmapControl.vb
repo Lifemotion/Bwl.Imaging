@@ -1,4 +1,6 @@
-﻿Public Class DisplayBitmapControl
+﻿Imports System.Drawing
+Imports System.Windows.Forms
+Public Class DisplayBitmapControl
     Private _display As DisplayBitmap
 
     Public Property Bitmap As Bitmap

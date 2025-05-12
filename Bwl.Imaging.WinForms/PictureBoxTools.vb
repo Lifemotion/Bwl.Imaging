@@ -1,4 +1,6 @@
-﻿Imports System.Runtime.CompilerServices
+﻿Imports System.Drawing
+Imports System.Windows.Forms
+Imports System.Runtime.CompilerServices
 
 Public Module PictureBoxTools
     <Extension()>

@@ -1,4 +1,5 @@
-﻿Imports System.Windows.Forms
+﻿Imports System.Drawing
+Imports System.Windows.Forms
 
 Public Class MoveDetectorTest
     Private md As New MoveDetector
