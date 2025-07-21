@@ -28,6 +28,6 @@
 		<ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.vbproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Resources.Extensions" Version="9.0.4" />
+		<PackageReference Include="System.Resources.Extensions" Version="9.0.7" />
 	</ItemGroup>
 </Project>

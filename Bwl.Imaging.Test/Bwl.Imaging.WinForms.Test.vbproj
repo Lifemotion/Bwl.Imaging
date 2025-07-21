@@ -48,6 +48,6 @@
 		<ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Resources.Extensions" Version="9.0.4" />
+		<PackageReference Include="System.Resources.Extensions" Version="9.0.7" />
 	</ItemGroup>
 </Project>
