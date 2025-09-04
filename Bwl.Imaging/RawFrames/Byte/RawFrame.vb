@@ -1,4 +1,6 @@
-﻿''' <summary>
+﻿Imports System.IO
+
+''' <summary>
 ''' Универсальный формат сырого кадра.
 ''' </summary>
 Public Class RawFrame
@@ -13,6 +15,12 @@ Public Class RawFrame
     End Sub
 
     Public Sub New(serialized As Byte(),
+                   Optional headerFirst As Boolean = False,
+                   Optional loadPixelData As Boolean = True)
+        Deserialize(serialized, headerFirst, loadPixelData)
+    End Sub
+
+    Public Sub New(serialized As Stream,
                    Optional headerFirst As Boolean = False,
                    Optional loadPixelData As Boolean = True)
         Deserialize(serialized, headerFirst, loadPixelData)
@@ -104,12 +112,21 @@ Public Class RawFrame
     Public Sub Deserialize(serialized As Byte(),
                            Optional headerFirst As Boolean = False,
                            Optional loadPixelData As Boolean = True)
+        Using serializedStream = New MemoryStream(serialized)
+            Deserialize(serializedStream, headerFirst, loadPixelData)
+        End Using
+    End Sub
+
+    Public Sub Deserialize(serialized As Stream,
+                           Optional headerFirst As Boolean = False,
+                           Optional loadPixelData As Boolean = True)
         Dim pixelDataLength = serialized.Length - 5
         Dim headerOffset = If(headerFirst, 0, pixelDataLength)
         Dim dataOffset = If(headerFirst, 5, 0)
-        Dim channels = serialized(0 + headerOffset)
-        Dim width = serialized(1 + headerOffset) Or (CInt(serialized(2 + headerOffset)) << 8)
-        Dim height = serialized(3 + headerOffset) Or (CInt(serialized(4 + headerOffset)) << 8)
+        serialized.Seek(headerOffset, SeekOrigin.Begin)
+        Dim channels = serialized.ReadByte()
+        Dim width = serialized.ReadByte() Or (CInt(serialized.ReadByte()) << 8)
+        Dim height = serialized.ReadByte() Or (CInt(serialized.ReadByte()) << 8)
         If width * height * channels <> pixelDataLength Then
             Throw New Exception($"{Me.GetType().Name}.Deserialize(): width * height * channels <> pixelDataLength")
         End If
@@ -118,7 +135,11 @@ Public Class RawFrame
         _Channels = channels
         If loadPixelData Then
             Dim pixelData = New Byte(pixelDataLength - 1) {}
-            Array.Copy(serialized, dataOffset, pixelData, 0, pixelDataLength)
+            serialized.Seek(dataOffset, SeekOrigin.Begin)
+            Dim read = 0
+            While read < pixelDataLength
+                read += serialized.Read(pixelData, read, pixelDataLength - read)
+            End While
             _PixelData = pixelData
         Else
             _PixelData = Nothing

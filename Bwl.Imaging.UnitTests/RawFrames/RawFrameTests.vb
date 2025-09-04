@@ -1,4 +1,6 @@
-﻿Imports NUnit.Framework
+﻿Imports System.IO
+Imports NUnit.Framework
+
 <TestFixture>
 <Parallelizable(ParallelScope.Self)>
 Public Class RawFrameTests
@@ -14,11 +16,17 @@ Public Class RawFrameTests
 
                     'Тест сериализации
                     Dim rawFrameOrigBytes = rawFrameOrig.Serialize()
-                    Dim rawFrameDeserial = New RawFrame(rawFrameOrigBytes)
-                    Legacy.ClassicAssert.IsTrue(rawFrameOrig.Equals(rawFrameDeserial))
+                    Dim rawFrameDeserial1 = New RawFrame(rawFrameOrigBytes)
+                    Dim rawFrameDeserial2 = New RawFrame(New MemoryStream(rawFrameOrigBytes))
+                    Legacy.ClassicAssert.IsTrue(rawFrameDeserial1.Equals(rawFrameDeserial2))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrig.Equals(rawFrameDeserial1))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrig.Equals(rawFrameDeserial2))
                     '...в том числе по массивам сериализации
-                    Dim rawFrameDeserialBytes = rawFrameDeserial.Serialize()
-                    Legacy.ClassicAssert.IsTrue(rawFrameOrigBytes.SequenceEqual(rawFrameDeserialBytes))
+                    Dim rawFrameDeserialBytes1 = rawFrameDeserial1.Serialize()
+                    Dim rawFrameDeserialBytes2 = rawFrameDeserial2.Serialize()
+                    Legacy.ClassicAssert.IsTrue(rawFrameDeserialBytes1.SequenceEqual(rawFrameDeserialBytes2))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrigBytes.SequenceEqual(rawFrameDeserialBytes1))
+                    Legacy.ClassicAssert.IsTrue(rawFrameOrigBytes.SequenceEqual(rawFrameDeserialBytes2))
 
                     'Тест экспорта в массив (размерность 1)
                     Dim rawFrameOrig2 = New RawFrame(rawFrameOrig.Width, rawFrameOrig.Height, rawFrameOrig.Channels, rawFrameOrig.PixelData)
