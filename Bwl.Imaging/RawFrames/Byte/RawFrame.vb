@@ -12,8 +12,10 @@ Public Class RawFrame
     Public Sub New()
     End Sub
 
-    Public Sub New(serialized As Byte(), Optional headerFirst As Boolean = False)
-        Deserialize(serialized, headerFirst)
+    Public Sub New(serialized As Byte(),
+                   Optional headerFirst As Boolean = False,
+                   Optional loadPixelData As Boolean = True)
+        Deserialize(serialized, headerFirst, loadPixelData)
     End Sub
 
     Public Sub New(width As Integer, height As Integer, channels As Integer, pixelData As Byte(),
@@ -99,7 +101,9 @@ Public Class RawFrame
         Return serialized
     End Function
 
-    Public Sub Deserialize(serialized As Byte(), Optional headerFirst As Boolean = False)
+    Public Sub Deserialize(serialized As Byte(),
+                           Optional headerFirst As Boolean = False,
+                           Optional loadPixelData As Boolean = True)
         Dim pixelDataLength = serialized.Length - 5
         Dim headerOffset = If(headerFirst, 0, pixelDataLength)
         Dim dataOffset = If(headerFirst, 5, 0)
@@ -109,12 +113,16 @@ Public Class RawFrame
         If width * height * channels <> pixelDataLength Then
             Throw New Exception($"{Me.GetType().Name}.Deserialize(): width * height * channels <> pixelDataLength")
         End If
-        Dim pixelData = New Byte(pixelDataLength - 1) {}
-        Array.Copy(serialized, dataOffset, pixelData, 0, pixelDataLength)
         _Width = width
         _Height = height
         _Channels = channels
-        _PixelData = pixelData
+        If loadPixelData Then
+            Dim pixelData = New Byte(pixelDataLength - 1) {}
+            Array.Copy(serialized, dataOffset, pixelData, 0, pixelDataLength)
+            _PixelData = pixelData
+        Else
+            _PixelData = Nothing
+        End If
     End Sub
 
     Public Function Copy() As RawFrame
