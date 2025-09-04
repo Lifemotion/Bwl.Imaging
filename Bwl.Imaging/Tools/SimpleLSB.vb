@@ -2,7 +2,7 @@
     Private ReadOnly _bitMask As Byte() = {1, 2, 4, 8, 16, 32, 64, 128}
 
     Public Function GetMaxPayloadSize(hostSize As Integer) As Integer
-        Return (hostSize \ 8) - 32
+        Return (hostSize \ 8) - 4
     End Function
 
     Public Sub Append(host As Byte(), hostOffset As Integer, payload As Byte())

@@ -76,6 +76,13 @@ Public Class SimpleLsbTest
         'IO.File.WriteAllText($"!SimpleLSB.ExtractN({payloadSize}).fps.txt", (1000.0 / msExtract).ToString("F3"))
     End Sub
 
+    <Test>
+    <Parallelizable(ParallelScope.Self)>
+    Public Sub SimpleLsbTest4()
+        Dim payloadSize = SimpleLSB.GetMaxPayloadSize(40)
+        Legacy.ClassicAssert.IsTrue(payloadSize = 1)
+    End Sub
+
     Private Function GetRandomBytes(size As Integer) As Byte()
         Static rnd As New Random(Now.Ticks Mod Integer.MaxValue)
         Dim result = New Byte(size - 1) {}
