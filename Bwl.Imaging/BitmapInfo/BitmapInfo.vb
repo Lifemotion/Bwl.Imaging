@@ -554,6 +554,8 @@ Public Class BitmapInfo
                 result = New BitmapInfo(ArrayCopy(_jpg))
             ElseIf _bmp IsNot Nothing Then
                 result = New BitmapInfo(BmpCloneInternal(_bmp))
+            Else
+                result = New BitmapInfo()
             End If
         Catch ex As Exception
             Throw New Exception($"BitmapInfo.GetClonedCopy() failed: {ex.Message}")
