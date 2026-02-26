@@ -1,0 +1,486 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Bwl.Imaging</name>
+    </assembly>
+    <members>
+        <member name="T:Bwl.Imaging.BitmapInfo">
+            <summary>
+            Потокобезопасная обвязка Bitmap-а, с поддержкой
+            кешированных свойств изображения и JPEG-кеша.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._safeCloneMode">
+            <summary>
+            Глобальный режим клонирования Bitmap-ов.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.BitmapCloneManaged(System.Drawing.Bitmap)">
+            <summary>
+            Клонирование Bitnap-а в соотв. с выбранным режимом.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.CheckBitmap(System.Drawing.Bitmap)">
+            <summary>
+            Проверка Bitmap-а на рабочее состояние.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._globalAllocatedDataCount">
+            <summary>
+            Глобальный счетчик количества выделенных байт Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._globalCompressedCount">
+            <summary>
+            Глобальный счетчик осуществленных компрессий JPEG (а не переприсваиваний).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._globalDecompressedCount">
+            <summary>
+            Глобальный счетчик декомпрессий JPEG (с формированием Bitmap-ов).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._globalDecompressedErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок декомпресии.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._globalDisposeCount">
+            <summary>
+            Глобальный счетчик количества элиминирований Bitmap-ов (Dispose).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._globalDisposeErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок высвобождения Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._globalCloneErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок клонирований Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._compressedCount">
+            <summary>
+            Счетчик осуществленных компрессий JPEG (а не переприсваиваний).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._decompressedCount">
+            <summary>
+            Счетчик декомпрессий JPEG (с формированием Bitmap-ов).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._decompressedErrorCount">
+            <summary>
+            Счетчик количества ошибок декомпресии.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._disposeCount">
+            <summary>
+            Счетчик количества элиминирований Bitmap-ов (Dispose).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._disposeErrorCount">
+            <summary>
+            Счетчик количества ошибок высвобождения Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.BitmapInfo._cloneErrorCount">
+            <summary>
+            Счетчик количества ошибок клонирований Bitmap-ов.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.BitmapInfo.BitmapKeepTimeS">
+            <summary>
+            Время хранения декомпрессированного битмапа (если доступны JPEG-данные для экономии ОЗУ).
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.BitmapInfo.Bmp">
+            <summary>
+            Прямой доступ по ссылке к хранимому Bitmap-у.
+            </summary>
+            <remarks>
+            При обращении к Bmp обязательно использовать методы BmpLock() / BmpUnlock().
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.BitmapInfo.JpgIsNothing">
+            <summary>
+            Данные JPEG пусты?
+            </summary>
+            <remarks>
+            Если данных JPEG нет, это не означает, что изображение отсутствует.
+            Возможно, используется Bitmap.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.BitmapInfo.BmpIsNothing">
+            <summary>
+            Bitmap пуст?
+            </summary>
+            <remarks>
+            Если Bitmap пуст, это не означает, что изображение отсутствует,
+            возможно, используется хранение в JPEG.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.BitmapInfo.BmpAndJpgAreNothing">
+            <summary>
+            Данные изображения пусты?
+            </summary>
+            <remarks>
+            Наличие этого флага означает, что данных изображения нет.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.BitmapInfo.BmpSize">
+            <summary>
+            Кешированный размер сохраненного Bitmap/JPEG.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.BitmapInfo.BmpPixelFormat">
+            <summary>
+            Кешированный формат пикселя сохраненного Bitmap/JPEG.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.BmpLock(System.Int32)">
+            <summary>
+            Блокировка доступа к разделяемому ресурсу (порождает исключение по таймауту).
+            </summary>
+            <remarks>  
+            Типичная схема использования:
+            1: .BmpLock() 'Не оборачиваем Try-Catch: может вызвать исключение таймаута и в Finally вызовет в итоге лишний .BmpUnlock()
+            2: Try
+            3:     ... 'Этот код может вызвать исключения, но если дошли до него - ресурс был получен на .BmpLock() - исключения не было
+            4: Catch ex As Exception
+            5:     ... 'Обработали исключения кода как требуется...
+            6: Finally
+            7:     .BmpUnlock() '...и в итоге освободили доступ к разделяемому ресурсу
+            8: End Try
+            </remarks>
+            <param name="timeoutMs"></param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.BmpUnlock">
+            <summary>
+            Освобождение доступа к разделяемому ресурсу (при попытке выполнить на свободном ресурсе дает исключение).
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.Compress(System.Int32,System.Int32)">
+            <summary>
+            Обеспечивает экономию ОЗУ:
+            1 - При наличии Bitmap-а и отсутствии JPEG-а: формируем JPEG на основе Bitmap-а.
+            2 - При наличии Bitmap-а и наличии JPEG-а: элиминирование Bitmap-а и переустановка JPEG-а.
+            </summary>
+            <remarks>
+            Q=90 - высокое качество с сохранением мелких деталей и цветных градиентов.
+            Q=80 - высокое качество с сохранением мелких деталей.
+            Q=60 - приемлемое качество для технических целей (дальше размер падает медленнее и растут артефакты).
+            Q=50 - качество отладочного канала.
+            </remarks>
+            <param name="quality">Уровень качества JPEG.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.GetJpg(System.Boolean,System.Int32,System.Int32)">
+            <summary>
+            Возвращает JPEG-данные.
+            </summary>
+            <param name="createFromBitmapIfEmpty">Сформировать JPEG на основе Bitmap-а (если JPEG-потока нет).</param>
+            <param name="quality">Уровень качества JPEG.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+            <remarks>
+            Формирование JPEG на основе Bitmap-а при вызове данного метода при активном флаге ifEmptyCreateFromBitmap
+            не приводит к установке внутреннего JPEG-потока или элиминированию исходного Bitmap-а.
+            Если требуется сжать Bitmap, установить JPEG-поток и затем освободить память от Bitmap-а - используйте метод Compress().
+            </remarks>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.GetJpgFast(System.Boolean)">
+            <summary>
+            Быстрый метод получения JPEG-данных.
+            </summary>
+            <param name="clone">Клонировать массив байт?</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.CompareJpgFast(Bwl.Imaging.BitmapInfo)">
+            <summary>
+            Быстрый метод сравнения двух JPEG-потоков.
+            </summary>
+            <param name="obj">Объект для сравнения.</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.SetJpg(System.Byte[],System.Int32)">
+            <summary>
+            Устанавливает JPEG-данные и элиминирует данные Bitmap-а.
+            </summary>
+            <param name="jpg">JPEG-данные.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.SetBmp(System.Drawing.Bitmap,System.Int32)">
+            <summary>
+            Устанавливает Bitmap и элиминирует данные JPEG.
+            </summary>
+            <param name="bmp">Bitmap для установки.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+            <remarks>Несмотря на то, что при вызове этого метода, возможно, есть
+            "висящий" отложенный Dispose для Bitmap-а, у каждого такого вызова
+            своя цель, и ложного элиминирования не будет.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.GetClonedBmp(System.Int32)">
+            <summary>
+            Получение клонированного изображения.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.GetClonedBmpGray(System.Int32)">
+            <summary>
+            Получение клонированного изображения.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.GetClonedCopy(System.Int32)">
+            <summary>
+            Получение клонированной копии.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.Clear(System.Int32)">
+            <summary>
+            Очистка изображений Bitmap/JPEG.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.SetBmpInternal(System.Drawing.Bitmap)">
+            <summary>
+            Установка Bitmap-а.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.GetBitmapDecodedInternal">
+            <summary>
+            Извлечение данных Bitmap-а (если он пуст, и есть JPEG-данные).
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.BmpCloneInternal(System.Drawing.Bitmap)">
+            <summary>
+            Клонирование битмапа с фиксацией ошибок.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.DecodeJpegInternal(System.Byte[])">
+            <summary>
+            Декодирование JPEG-потока.
+            </summary>
+            <param name="jpg">JPEG-поток.</param>
+            <returns>Декомпрессированное изображение.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.GetJpegSize(System.Byte[],System.Int32@,System.Int32)">
+            <summary>
+            Извлечение размера изображения из JPEG-потока без его декодирования.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.EliminateJpgInternal">
+            <summary>
+            Элиминирование JPEG.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.ArrayCopy(System.Byte[])">
+            <summary>
+            Получение копии массива байт.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.BitmapDisposeWithDelay(System.Drawing.Bitmap,System.Single)">
+            <summary>
+            Запуск потока отложенного Dispose для битмапа.
+            </summary>
+            <param name="bitmapKeepTimeS">Время доступности декомпрессированного битмапа.</param>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.DisposeBmpInternal(System.Drawing.Bitmap)">
+            <summary>
+            Метод для элиминирования определенного битмапа.
+            </summary>
+            <param name="target">Целевой Bitmap (элиминирование другой цели невозможно).</param>
+            <remarks>Если не отслеживать цель для элиминирования, может случиться ситуация, когда
+            объект будет инициализирован JPEG-ом, с него будет запрошен Bitmap, запустится
+            отложенные элиминирование после декомпресии, и далее пользователь обработает
+            декомпрессированное изображение, которое будет установлено, а далее стерто
+            отложенным Dispose()-ом. При отслеживании ссылки-цели элиминируется в точности
+            тот Bitmap, что и планировалось.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.BitmapInfo.GetBitmapAllocatedSize(System.Drawing.Size,System.Drawing.Imaging.PixelFormat)">
+            <summary>
+            Получение количества выделенных байт под Bitmap.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.HSV.HueDistance(System.Double,System.Double)">
+            <summary>
+            Вычисление кратчайшего расстояния между двумя тонами
+            </summary>
+            <remarks>Наибольшее возможное расстояние в пространстве Hue - это 0.5 [0..1],
+            которое сооотв. противоположному цвету. Если получили больше 0.5, нужно
+            нормализовывать результат.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.VectorTools.Vector.AngleAB(Bwl.Imaging.VectorTools.Vector,Bwl.Imaging.VectorTools.Vector)">
+            <summary>
+            При вычислении вектора между (1,1) и (1,-1) этот метод дает - Pi/2! Это угловой переход от первого вектора ко второму
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.VectorTools.PolygonIsEmpty(System.Drawing.PointF[])">
+            <summary>
+            Тест: полигон пустой?
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.VectorTools.PointInPolygon(System.Drawing.PointF,System.Drawing.PointF[])">
+            <summary>
+            Тест: точка находится внутри полигона?
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.VectorTools.NormalizeVector(System.Drawing.PointF,System.Single)">
+            <summary>
+            Нормализация длины вектора
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.VectorTools.VectorInBounds(System.Drawing.PointF,System.Drawing.PointF,System.Drawing.PointF,System.Double)">
+            <summary>
+            Проверка на нахождение вектора между векторами-границами
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.VectorTools.AngleBetweenVectors(System.Drawing.PointF,System.Drawing.PointF)">
+            <summary>
+            Вычисление модуля угла между векторами №1
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.VectorTools.AnglePathBetweenVectors(System.Drawing.PointF,System.Drawing.PointF)">
+            <summary>
+            Вычисление углового перехода между двумя векторами
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Filters.Sharpen5Gray(Bwl.Imaging.GrayMatrix)">
+            <summary>
+            Фильтр повышения резкости полутонового изображения разреженной маской 5*5
+            </summary>
+            <param name="img">Исходное изображение.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Filters.MedianFilter2D(Bwl.Imaging.GrayMatrix,System.Int32)">
+            <summary>
+            2D-медианный фильтр
+            </summary>    
+            <param name="img">Исходные данные.</param>
+            <param name="N">Размер фильтра (нечетное значение).</param>
+        </member>
+        <member name="M:Bwl.Imaging.ImagingMath.Limit(System.Int32,System.Int32)">
+            <summary>
+            Ограничение значения диапазоном Byte.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.ImagingMath.Limit(System.Double,System.Double)">
+            <summary>
+            Ограничение значения диапазоном Byte.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.ImagingMath.GetBrightnessStats(Bwl.Imaging.GrayMatrix)">
+            <summary>
+            Статистика по яркости
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.ImagingMath.Bilinear(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Билинейная интерполяция между двумя значениями
+            </summary>
+            <param name="value1">Значение 1.</param>
+            <param name="value2">Значение 2.</param>
+            <param name="weight1">Вес для значения 1.</param>
+            <param name="weight2">Вес для значения 2.</param>
+        </member>
+        <member name="M:Bwl.Imaging.ImagingMath.Bilinear(System.Drawing.PointF,System.Drawing.PointF,System.Double,System.Double)">
+            <summary>
+            Билинейная интерполяция между двумя точками
+            </summary>
+            <param name="point1">Точка 1.</param>
+            <param name="point2">Точка 2.</param>
+            <param name="weight1">Вес для точки 1.</param>
+            <param name="weight2">Вес для точки 2.</param>
+        </member>
+        <member name="M:Bwl.Imaging.ImagingMath.MinMax2D(Bwl.Imaging.GrayMatrix,System.Int32@,System.Int32@)">
+            <summary>
+            Поиск минимального/максимального значения в полутоновой матрице
+            </summary>
+            <param name="img">Исходная матрица.</param>
+            <param name="min">Найденный минимум.</param>
+            <param name="max">Найденный максимум.</param>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.GetGrayMatrix(Bwl.Imaging.BitmapInfo)">
+            <summary>
+            Получение полутоновой матрицы на основе BitmapInfo
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.GetRGBMatrix(Bwl.Imaging.BitmapInfo)">
+            <summary>
+            Получение полноцветной матрицы на основе BitmapInfo
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.GrayMatrixAlign4(Bwl.Imaging.GrayMatrix)">
+            <summary>
+            Выравнивание полутоновой матрицы до ширины кратной 4
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.GrayMatrixAlign(Bwl.Imaging.GrayMatrix,System.Int32)">
+            <summary>
+            Выравнивание полутоновой матрицы до ширины кратной align
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.RGBMatrixAlign4(Bwl.Imaging.RGBMatrix)">
+            <summary>
+            Выравнивание цветной матрицы до ширины кратной 4
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.RGBMatrixAlign(Bwl.Imaging.RGBMatrix,System.Int32)">
+            <summary>
+            Выравнивание цветной матрицы до ширины кратной align
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.RectangleAlign(System.Drawing.Rectangle,System.Int32)">
+            <summary>
+            Установка прямогольника по "выровненным" позициям (каждая позиция становится кратной align)
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.GrayMatrixSubRect(Bwl.Imaging.GrayMatrix,System.Drawing.Rectangle)">
+            <summary>
+            Получение полутоной подматрицы
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.RGBMatrixSubRect(Bwl.Imaging.RGBMatrix,System.Drawing.Rectangle)">
+            <summary>
+            Получение цветной подматрицы
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.InverseGray(Bwl.Imaging.GrayMatrix)">
+            <summary>
+            Инверсия полутонового изображения
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.MatrixTools.InverseRGB(Bwl.Imaging.RGBMatrix)">
+            <summary>
+            Инверсия цветного изображения
+            </summary>
+        </member>
+        <member name="T:Bwl.Imaging.MoveDetector">
+            <summary>
+            Простой детектор движения (изменений в кадре). Для каждого видеоисточника должен быть свой детектор.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.MoveDetector.PointDiffThreshSetting">
+            <summary>
+            Порог разности яркости, при котором точка считается изменившейся. Для фильтрации шумов. Можно не менять.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Bwl.Imaging.MoveDetector.MoveThresholdSetting">
+            <summary>
+            Порог изменений в кадре, после которых обнаруживается движение. Доля изменившихся точек относительно общего количества пикселей кадра.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Bwl.Imaging.MoveDetector.AfterMoveSetting">
+            <summary>
+            В течение какого количества кадров БЕЗ движения после кадра С движением будет выдаваться результат наличия движения.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Bwl.Imaging.RawFrame">
+            <summary>
+            Универсальный формат сырого кадра.
+            </summary>
+        </member>
+    </members>
+</doc>

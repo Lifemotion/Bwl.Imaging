@@ -53,15 +53,15 @@ Public Class UnsafeTests
 
         For row = 0 To S - 1
             For col = 0 To S - 1
-                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.GrayPixel(row, col), 77)
-                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.GrayPixel(row, col), 151)
-                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.GrayPixel(row, col), 29)
-                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.GrayPixel(row, col), 255)
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.GetGrayPixel(row, col), 77)
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.GetGrayPixel(row, col), 151)
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.GetGrayPixel(row, col), 29)
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.GetGrayPixel(row, col), 255)
 
-                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.GrayPixel(row, col), 255)
-                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.GrayPixel(row, col), 29)
-                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.GrayPixel(row, col), 151)
-                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.GrayPixel(row, col), 77)
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.GetGrayPixel(row, col), 255)
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.GetGrayPixel(row, col), 29)
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.GetGrayPixel(row, col), 151)
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.GetGrayPixel(row, col), 77)
             Next
         Next
     End Sub
@@ -164,37 +164,35 @@ Public Class UnsafeTests
 
         For row = 0 To S - 1
             For col = 0 To S - 1
-                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).R, CByte(255))
-                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).G, CByte(0))
-                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.ColorPixel(row, col).B, CByte(0))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.GetColorPixel(row, col).R, CByte(255))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.GetColorPixel(row, col).G, CByte(0))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow1.GetColorPixel(row, col).B, CByte(0))
 
-                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).R, CByte(0))
-                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).G, CByte(255))
-                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.ColorPixel(row, col).B, CByte(0))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.GetColorPixel(row, col).R, CByte(0))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.GetColorPixel(row, col).G, CByte(255))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow1.GetColorPixel(row, col).B, CByte(0))
 
-                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).R, CByte(0))
-                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).G, CByte(0))
-                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.ColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.GetColorPixel(row, col).R, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.GetColorPixel(row, col).G, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow1.GetColorPixel(row, col).B, CByte(255))
 
-                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).R, CByte(255))
-                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).G, CByte(255))
-                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.ColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.GetColorPixel(row, col).R, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.GetColorPixel(row, col).G, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow1.GetColorPixel(row, col).B, CByte(255))
 
-                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).R, CByte(255))
-                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).G, CByte(255))
-                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.ColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.GetColorPixel(row, col).R, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.GetColorPixel(row, col).G, CByte(255))
+                Legacy.ClassicAssert.AreEqual(whiteMatrixFromRow2.GetColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.GetColorPixel(row, col).R, CByte(255))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.GetColorPixel(row, col).G, CByte(0))
+                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.GetColorPixel(row, col).B, CByte(0))
 
-                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).R, CByte(255))
-                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).G, CByte(0))
-                Legacy.ClassicAssert.AreEqual(redMatrixFromRow2.ColorPixel(row, col).B, CByte(0))
-
-                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).R, CByte(0))
-                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).G, CByte(255))
-                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.ColorPixel(row, col).B, CByte(0))
-
-                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).R, CByte(0))
-                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).G, CByte(0))
-                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.ColorPixel(row, col).B, CByte(255))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.GetColorPixel(row, col).R, CByte(0))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.GetColorPixel(row, col).G, CByte(255))
+                Legacy.ClassicAssert.AreEqual(greenMatrixFromRow2.GetColorPixel(row, col).B, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.GetColorPixel(row, col).R, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.GetColorPixel(row, col).G, CByte(0))
+                Legacy.ClassicAssert.AreEqual(blueMatrixFromRow2.GetColorPixel(row, col).B, CByte(255))
             Next
         Next
     End Sub

@@ -23,8 +23,8 @@ Public Class HdrTestForm
 
     Private Sub CompareResults(m1 As RGBMatrix, m2 As RGBMatrix)
         Parallel.For(0, 3, Sub(channel As Integer)
-                               Dim matrix1 = m1.Matrix(channel)
-                               Dim matrix2 = m2.Matrix(channel)
+                               Dim matrix1 = m1.GetMatrix(channel)
+                               Dim matrix2 = m2.GetMatrix(channel)
                                For i = 0 To matrix1.Length - 1
                                    If matrix1(i) <> matrix2(i) Then
                                        Throw New Exception("m1 <> m2")

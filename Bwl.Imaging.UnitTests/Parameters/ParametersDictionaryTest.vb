@@ -97,7 +97,7 @@ Public Class ParametersDictionaryTest
         For i = 1 To NIters
             Dim rndIdx = rnd.Next Mod paramKeys.Count
             Dim rndKey = paramKeys(rndIdx)
-            Dim rndValue = params1.ItemValue(rndKey)
+            Dim rndValue = params1.GetItemValue(rndKey)
         Next
         sw1.Stop()
         Dim t1 = sw1.Elapsed.TotalMilliseconds

@@ -10,7 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.csproj" />
+    <ProjectReference Include="..\Bwl.Imaging\bwl.Imaging.vbproj" />
   </ItemGroup>
 
 </Project>

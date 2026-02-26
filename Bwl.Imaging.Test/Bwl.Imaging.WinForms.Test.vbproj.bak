@@ -43,7 +43,8 @@
 		<Content Include="rapp-client-gui.exe" />
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.csproj" />
+		<ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.vbproj" />
+		<ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj" />
 		<ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj" />
 	</ItemGroup>
 	<ItemGroup>

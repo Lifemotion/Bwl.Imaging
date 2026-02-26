@@ -121,9 +121,9 @@ Public Class TestForm
             Dim redmat = New RGBMatrix(4, 1)
             Dim greenmat = New RGBMatrix(4, 1)
             Dim bluemat = New RGBMatrix(4, 1)
-            redmat.RedPixel(0, 0) = 255
-            greenmat.GreenPixel(0, 0) = 255
-            bluemat.BluePixel(0, 0) = 255
+            redmat.SetRedPixel(0, 0, 255)
+            greenmat.SetGreenPixel(0, 0, 255)
+            bluemat.SetBluePixel(0, 0, 255)
             .DrawBitmap(redmat.ToBitmap, 0.1, 0.9, 0.2, 0.95)
             .DrawBitmap(greenmat.ToBitmap, 0.2, 0.9, 0.3, 0.95)
             .DrawBitmap(bluemat.ToBitmap, 0.3, 0.9, 0.4, 0.95)
@@ -136,9 +136,9 @@ Public Class TestForm
             '-------------------------------------------------------------------------
             For i = 0 To rows - 1
                 For j = 0 To cols - 1
-                    rgbResult.RedPixel(j, i) = 255.0
-                    rgbResult.GreenPixel(j, i) = 0
-                    rgbResult.BluePixel(j, i) = 0
+                    rgbResult.SetRedPixel(j, i, 255.0)
+                    rgbResult.SetGreenPixel(j, i, 0)
+                    rgbResult.SetBluePixel(j, i, 0)
                 Next
             Next
             .DrawBitmap(rgbResult.ToBitmap, 0.6, 0.9, 0.7, 0.95)

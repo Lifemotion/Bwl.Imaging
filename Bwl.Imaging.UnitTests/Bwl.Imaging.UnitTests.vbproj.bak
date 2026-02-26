@@ -18,7 +18,8 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.csproj" />
+		<ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.vbproj" />
+		<ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<Content Include="Resources\26FWD_IZHS.jpg">

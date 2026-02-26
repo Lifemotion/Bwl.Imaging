@@ -25,7 +25,7 @@
 		</Compile>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.csproj" />
+		<ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.vbproj" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="System.Resources.Extensions" Version="9.0.7" />

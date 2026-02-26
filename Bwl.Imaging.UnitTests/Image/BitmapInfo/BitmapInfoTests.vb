@@ -120,7 +120,7 @@ Public Class BitmapInfoTests
                 For i = 0 To Math.Min(src.Width, src.Height) - 1
                     For j = 0 To Math.Min(src.Width, src.Height) - 1
                         Dim srcPx = src.GetPixel(i, j)
-                        Dim mtxPx = mtx.ColorPixel(i, j)
+                        Dim mtxPx = mtx.GetColorPixel(i, j)
                         Legacy.ClassicAssert.AreEqual(srcPx.R, mtxPx.R)
                         Legacy.ClassicAssert.AreEqual(srcPx.G, mtxPx.G)
                         Legacy.ClassicAssert.AreEqual(srcPx.B, mtxPx.B)
@@ -148,7 +148,7 @@ Public Class BitmapInfoTests
                 For i = 0 To Math.Min(src.Width, src.Height) - 1
                     For j = 0 To Math.Min(src.Width, src.Height) - 1
                         Dim srcPx = src.GetPixel(i, j)
-                        Dim mtxPx = mtx.ColorPixel(i, j)
+                        Dim mtxPx = mtx.GetColorPixel(i, j)
                         Legacy.ClassicAssert.AreEqual(srcPx.R, mtxPx.R)
                         Legacy.ClassicAssert.AreEqual(srcPx.G, mtxPx.G)
                         Legacy.ClassicAssert.AreEqual(srcPx.B, mtxPx.B)
@@ -521,7 +521,7 @@ Public Class BitmapInfoTests
         End If
         For x = 0 To m1.Width - 1
             For y = 0 To m2.Height - 1
-                Dim diff = Math.Abs(m1.RedPixel(x, y) - m2.RedPixel(x, y))
+                Dim diff = Math.Abs(m1.GetRedPixel(x, y) - m2.GetRedPixel(x, y))
                 avgDiffF += diff / Byte.MaxValue
             Next
         Next

@@ -12,20 +12,20 @@ Public Class MatrixTests
         Dim rgb = BitmapConverter.BitmapToRGBMatrix(bmp)
         Legacy.ClassicAssert.AreEqual(4, rgb.Width)
         Legacy.ClassicAssert.AreEqual(3, rgb.Height)
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(0, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(0, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(0, 0))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(1, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(1, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(1, 0))
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(2, 0)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(2, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(2, 0))
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(3, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(3, 0)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(3, 0))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(0, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(0, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(0, 0))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(1, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(1, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(1, 0))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(2, 0)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(2, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(2, 0))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(3, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(3, 0)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(3, 0))
 
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(0, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(0, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(0, 1))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(1, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(1, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(1, 1))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(2, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(2, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(2, 1))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(3, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(3, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(3, 1))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(0, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(0, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(0, 1))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(1, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(1, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(1, 1))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(2, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(2, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(2, 1))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(3, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(3, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(3, 1))
 
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(0, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(0, 2)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(0, 2))
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(1, 2)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(1, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(1, 2))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(2, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(2, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(2, 2))
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(3, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(3, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(3, 2))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(0, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(0, 2)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(0, 2))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(1, 2)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(1, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(1, 2))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(2, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(2, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(2, 2))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(3, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(3, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(3, 2))
     End Sub
 
     <Test>
@@ -36,20 +36,20 @@ Public Class MatrixTests
         Dim rgb = BitmapConverter.BitmapToRGBMatrix(bmpArgb)
         Legacy.ClassicAssert.AreEqual(4, rgb.Width)
         Legacy.ClassicAssert.AreEqual(3, rgb.Height)
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(0, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(0, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(0, 0))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(1, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(1, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(1, 0))
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(2, 0)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(2, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(2, 0))
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(3, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(3, 0)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(3, 0))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(0, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(0, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(0, 0))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(1, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(1, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(1, 0))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(2, 0)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(2, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(2, 0))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(3, 0)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(3, 0)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(3, 0))
 
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(0, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(0, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(0, 1))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(1, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(1, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(1, 1))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(2, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(2, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(2, 1))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(3, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(3, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(3, 1))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(0, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(0, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(0, 1))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(1, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(1, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(1, 1))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(2, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(2, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(2, 1))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(3, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(3, 1)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(3, 1))
 
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(0, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(0, 2)) : Legacy.ClassicAssert.AreEqual(255, rgb.BluePixel(0, 2))
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(1, 2)) : Legacy.ClassicAssert.AreEqual(255, rgb.GreenPixel(1, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(1, 2))
-        Legacy.ClassicAssert.AreEqual(255, rgb.RedPixel(2, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(2, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(2, 2))
-        Legacy.ClassicAssert.AreEqual(0, rgb.RedPixel(3, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GreenPixel(3, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.BluePixel(3, 2))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(0, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(0, 2)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetBluePixel(0, 2))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(1, 2)) : Legacy.ClassicAssert.AreEqual(255, rgb.GetGreenPixel(1, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(1, 2))
+        Legacy.ClassicAssert.AreEqual(255, rgb.GetRedPixel(2, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(2, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(2, 2))
+        Legacy.ClassicAssert.AreEqual(0, rgb.GetRedPixel(3, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetGreenPixel(3, 2)) : Legacy.ClassicAssert.AreEqual(0, rgb.GetBluePixel(3, 2))
     End Sub
 
     <Test>
@@ -73,15 +73,15 @@ Public Class MatrixTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub RgbMatrixAccessTest()
         Dim bmp = New RGBMatrix(4, 4)
-        bmp.ColorPixel(1, 1) = Color.Red
-        Legacy.ClassicAssert.AreEqual(255, bmp.RedPixel(1, 1))
-        Legacy.ClassicAssert.AreEqual(0, bmp.GreenPixel(1, 1))
-        Legacy.ClassicAssert.AreEqual(0, bmp.BluePixel(1, 1))
+        bmp.SetColorPixel(1, 1, Color.Red)
+        Legacy.ClassicAssert.AreEqual(255, bmp.GetRedPixel(1, 1))
+        Legacy.ClassicAssert.AreEqual(0, bmp.GetGreenPixel(1, 1))
+        Legacy.ClassicAssert.AreEqual(0, bmp.GetBluePixel(1, 1))
         Legacy.ClassicAssert.AreEqual(255, bmp.Red(1 + 4 * 1))
         Legacy.ClassicAssert.AreEqual(0, bmp.Green(1 + 4 * 1))
         Legacy.ClassicAssert.AreEqual(0, bmp.Blue(1 + 4 * 1))
 
-        Dim clr = bmp.ColorPixel(1, 1)
+        Dim clr = bmp.GetColorPixel(1, 1)
         Legacy.ClassicAssert.AreEqual(CByte(255), clr.R)
         Legacy.ClassicAssert.AreEqual(CByte(0), clr.G)
         Legacy.ClassicAssert.AreEqual(CByte(0), clr.B)
@@ -91,10 +91,10 @@ Public Class MatrixTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub GrayMatrixAccessTest()
         Dim bmp = New GrayMatrix(4, 4)
-        bmp.GrayPixel(1, 1) = Byte.MaxValue
-        Legacy.ClassicAssert.AreEqual(255, bmp.GrayPixel(1, 1))
+        bmp.SetGrayPixel(1, 1, Byte.MaxValue)
+        Legacy.ClassicAssert.AreEqual(255, bmp.GetGrayPixel(1, 1))
         Legacy.ClassicAssert.AreEqual(255, bmp.Gray(1 + 4 * 1))
-        Dim gr = CByte(bmp.GrayPixel(1, 1))
+        Dim gr = CByte(bmp.GetGrayPixel(1, 1))
         Legacy.ClassicAssert.AreEqual(CByte(255), gr)
     End Sub
 
@@ -110,17 +110,17 @@ Public Class MatrixTests
         Dim grayMatrixFromGray_4x4 = New GrayMatrix(7, 3)
         For y = 0 To grayMatrixFromRgb_4x3.Height - 1
             For x = 0 To grayMatrixFromRgb_4x3.Width - 1
-                grayMatrixFromRgb_4x4.GrayPixel(x, y) = grayMatrixFromRgb_4x3.GrayPixel(x, y)
-                grayMatrixFromGray_4x4.GrayPixel(x, y) = grayMatrixFromGray_4x3.GrayPixel(x, y)
+                grayMatrixFromRgb_4x4.SetGrayPixel(x, y, grayMatrixFromRgb_4x3.GetGrayPixel(x, y))
+                grayMatrixFromGray_4x4.SetGrayPixel(x, y, grayMatrixFromGray_4x3.GetGrayPixel(x, y))
             Next
         Next
 
         For y = 0 To grayMatrixFromRgb_4x3.Height - 1
             Dim offset = y * grayMatrixFromRgb_4x3.Width
             For x = 0 To grayMatrixFromRgb_4x3.Width - 1
-                Dim diff_4x3_1 = Math.Abs(grayMatrixFromRgb_4x3.GrayPixel(x, y) - grayMatrixFromGray_4x3.GrayPixel(x, y))
+                Dim diff_4x3_1 = Math.Abs(grayMatrixFromRgb_4x3.GetGrayPixel(x, y) - grayMatrixFromGray_4x3.GetGrayPixel(x, y))
                 Dim diff_4x3_2 = Math.Abs(grayMatrixFromRgb_4x3.Gray(x + offset) - grayMatrixFromGray_4x3.Gray(x + offset))
-                Dim diff_4x4_1 = Math.Abs(grayMatrixFromRgb_4x4.GrayPixel(x, y) - grayMatrixFromGray_4x4.GrayPixel(x, y))
+                Dim diff_4x4_1 = Math.Abs(grayMatrixFromRgb_4x4.GetGrayPixel(x, y) - grayMatrixFromGray_4x4.GetGrayPixel(x, y))
                 Dim diff_4x4_2 = Math.Abs(grayMatrixFromRgb_4x4.Gray(x + offset) - grayMatrixFromGray_4x4.Gray(x + offset))
                 Dim diffs = {diff_4x3_1, diff_4x3_2, diff_4x4_1, diff_4x4_2}
                 Legacy.ClassicAssert.AreEqual(CInt(diffs.Average()), diff_4x3_1)
@@ -132,9 +132,9 @@ Public Class MatrixTests
             Dim offset = y * grayMatrixFromRgb_4x3.Width
             For x = 0 To grayMatrixFromRgb_4x3.Width - 1
                 '<= 1: Внешний редактор может рассчитывать переход RGB -> Gray немного иначе
-                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).R) - grayMatrixFromRgb_4x3.GrayPixel(x, y)) <= 1)
-                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).G) - grayMatrixFromRgb_4x3.GrayPixel(x, y)) <= 1)
-                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).B) - grayMatrixFromRgb_4x3.GrayPixel(x, y)) <= 1)
+                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).R) - grayMatrixFromRgb_4x3.GetGrayPixel(x, y)) <= 1)
+                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).G) - grayMatrixFromRgb_4x3.GetGrayPixel(x, y)) <= 1)
+                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).B) - grayMatrixFromRgb_4x3.GetGrayPixel(x, y)) <= 1)
             Next
         Next
 
@@ -163,7 +163,7 @@ Public Class MatrixTests
         For y = 0 To grayMatrixFromRgb.Height - 1
             Dim offset = y * grayMatrixFromRgb.Width
             For x = 0 To grayMatrixFromRgb.Width - 1
-                Dim diff_1 = Math.Abs(grayMatrixFromRgb.GrayPixel(x, y) - grayMatrixFromGray.GrayPixel(x, y))
+                Dim diff_1 = Math.Abs(grayMatrixFromRgb.GetGrayPixel(x, y) - grayMatrixFromGray.GetGrayPixel(x, y))
                 Dim diff_2 = Math.Abs(grayMatrixFromRgb.Gray(x + offset) - grayMatrixFromGray.Gray(x + offset))
                 Dim diffs = {diff_1, diff_2}
                 Legacy.ClassicAssert.AreEqual(CInt(diffs.Average()), diff_1)
@@ -175,9 +175,9 @@ Public Class MatrixTests
             Dim offset = y * grayMatrixFromRgb.Width
             For x = 0 To grayMatrixFromRgb.Width - 1
                 '<= 1: Внешний редактор может рассчитывать переход RGB -> Gray немного иначе
-                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).R) - grayMatrixFromRgb.GrayPixel(x, y)) <= 1)
-                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).G) - grayMatrixFromRgb.GrayPixel(x, y)) <= 1)
-                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).B) - grayMatrixFromRgb.GrayPixel(x, y)) <= 1)
+                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).R) - grayMatrixFromRgb.GetGrayPixel(x, y)) <= 1)
+                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).G) - grayMatrixFromRgb.GetGrayPixel(x, y)) <= 1)
+                Legacy.ClassicAssert.IsTrue(Math.Abs(CInt(bmpGray.GetPixel(x, y).B) - grayMatrixFromRgb.GetGrayPixel(x, y)) <= 1)
             Next
         Next
     End Sub
@@ -225,7 +225,7 @@ Public Class MatrixTests
 
         For x = 0 To grayMatrixFromGray.Width - 1
             For y = 0 To grayMatrixFromGray.Height - 1
-                Legacy.ClassicAssert.AreEqual(grayMatrixFromGray.GrayPixel(x, y), grayMatrixFromGrayResize.GrayPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(grayMatrixFromGray.GetGrayPixel(x, y), grayMatrixFromGrayResize.GetGrayPixel(x, y))
             Next
         Next
     End Sub
@@ -272,9 +272,9 @@ Public Class MatrixTests
         Legacy.ClassicAssert.AreEqual(grayMatrixFromRgb_4x3.Width, grayMatrixFromGray_4x3_Resize.Width)
         For x = 0 To grayMatrixFromRgb_4x3.Width - 1
             For y = 0 To grayMatrixFromRgb_4x3.Height - 1
-                Legacy.ClassicAssert.AreEqual(grayMatrixFromRgb_4x3.RedPixel(x, y), grayMatrixFromGray_4x3_Resize.RedPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(grayMatrixFromRgb_4x3.GreenPixel(x, y), grayMatrixFromGray_4x3_Resize.GreenPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(grayMatrixFromRgb_4x3.BluePixel(x, y), grayMatrixFromGray_4x3_Resize.BluePixel(x, y))
+                Legacy.ClassicAssert.AreEqual(grayMatrixFromRgb_4x3.GetRedPixel(x, y), grayMatrixFromGray_4x3_Resize.GetRedPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(grayMatrixFromRgb_4x3.GetGreenPixel(x, y), grayMatrixFromGray_4x3_Resize.GetGreenPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(grayMatrixFromRgb_4x3.GetBluePixel(x, y), grayMatrixFromGray_4x3_Resize.GetBluePixel(x, y))
             Next
         Next
     End Sub
@@ -322,7 +322,7 @@ Public Class MatrixTests
         Legacy.ClassicAssert.AreEqual(floatMatrixFromGrayResize.Width, floatMatrixFromGray.Width)
         For x = 0 To floatMatrixFromGray.Width - 1
             For y = 0 To floatMatrixFromGray.Height - 1
-                Legacy.ClassicAssert.AreEqual(floatMatrixFromGray.GrayPixel(x, y), floatMatrixFromGray.GrayPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(floatMatrixFromGray.GetGrayPixel(x, y), floatMatrixFromGrayResize.GetGrayPixel(x, y))
             Next
         Next
     End Sub
@@ -371,9 +371,9 @@ Public Class MatrixTests
         Legacy.ClassicAssert.AreEqual(floatMatrixFromRgbResize.Width, floatMatrixFromRgb.Width)
         For x = 0 To floatMatrixFromRgb.Width - 1
             For y = 0 To floatMatrixFromRgb.Height - 1
-                Legacy.ClassicAssert.AreEqual(floatMatrixFromRgb.RedPixel(x, y), floatMatrixFromRgbResize.RedPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(floatMatrixFromRgb.GreenPixel(x, y), floatMatrixFromRgbResize.GreenPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(floatMatrixFromRgb.BluePixel(x, y), floatMatrixFromRgbResize.BluePixel(x, y))
+                Legacy.ClassicAssert.AreEqual(floatMatrixFromRgb.GetRedPixel(x, y), floatMatrixFromRgbResize.GetRedPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(floatMatrixFromRgb.GetGreenPixel(x, y), floatMatrixFromRgbResize.GetGreenPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(floatMatrixFromRgb.GetBluePixel(x, y), floatMatrixFromRgbResize.GetBluePixel(x, y))
             Next
         Next
     End Sub
@@ -436,7 +436,7 @@ Public Class MatrixTests
         End If
         For y = 0 To matrixGray.Height - 1
             For x = 0 To matrixGray.Width - 1
-                Legacy.ClassicAssert.AreEqual(matrixGray.GrayPixel(x, y), matrixGrayCropped.GrayPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(matrixGray.GetGrayPixel(x, y), matrixGrayCropped.GetGrayPixel(x, y))
             Next
         Next
     End Sub
@@ -499,9 +499,9 @@ Public Class MatrixTests
         End If
         For y = 0 To matrixRgb.Height - 1
             For x = 0 To matrixRgb.Width - 1
-                Legacy.ClassicAssert.AreEqual(matrixRgb.RedPixel(x, y), matrixRGBCropped.RedPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(matrixRgb.GreenPixel(x, y), matrixRGBCropped.GreenPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(matrixRgb.BluePixel(x, y), matrixRGBCropped.BluePixel(x, y))
+                Legacy.ClassicAssert.AreEqual(matrixRgb.GetRedPixel(x, y), matrixRGBCropped.GetRedPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(matrixRgb.GetGreenPixel(x, y), matrixRGBCropped.GetGreenPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(matrixRgb.GetBluePixel(x, y), matrixRGBCropped.GetBluePixel(x, y))
             Next
         Next
     End Sub
@@ -520,7 +520,7 @@ Public Class MatrixTests
         End If
         For y = 0 To matrixGrayCropped.Height - 1
             For x = 0 To matrixGrayCropped.Width - 1
-                Legacy.ClassicAssert.AreEqual(matrixGrayCropped.GrayPixel(x, y), bmpGrayCroppedEthalonMatrix.GrayPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(matrixGrayCropped.GetGrayPixel(x, y), bmpGrayCroppedEthalonMatrix.GetGrayPixel(x, y))
             Next
         Next
     End Sub
@@ -539,9 +539,9 @@ Public Class MatrixTests
         End If
         For y = 0 To matrixRgbCropped.Height - 1
             For x = 0 To matrixRgbCropped.Width - 1
-                Legacy.ClassicAssert.AreEqual(matrixRgbCropped.RedPixel(x, y), bmpRgbCroppedEthalonMatrix.RedPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(matrixRgbCropped.GreenPixel(x, y), bmpRgbCroppedEthalonMatrix.GreenPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(matrixRgbCropped.BluePixel(x, y), bmpRgbCroppedEthalonMatrix.BluePixel(x, y))
+                Legacy.ClassicAssert.AreEqual(matrixRgbCropped.GetRedPixel(x, y), bmpRgbCroppedEthalonMatrix.GetRedPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(matrixRgbCropped.GetGreenPixel(x, y), bmpRgbCroppedEthalonMatrix.GetGreenPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(matrixRgbCropped.GetBluePixel(x, y), bmpRgbCroppedEthalonMatrix.GetBluePixel(x, y))
             Next
         Next
     End Sub
@@ -555,13 +555,13 @@ Public Class MatrixTests
         MatrixTools.InverseGray(grayMatrix2)
         For y = 0 To grayMatrix1.Height - 1
             For x = 0 To grayMatrix1.Width - 1
-                Legacy.ClassicAssert.AreEqual(grayMatrix1.GrayPixel(x, y), Byte.MaxValue - grayMatrix2.GrayPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(grayMatrix1.GetGrayPixel(x, y), Byte.MaxValue - grayMatrix2.GetGrayPixel(x, y))
             Next
         Next
         MatrixTools.InverseGray(grayMatrix2)
         For y = 0 To grayMatrix1.Height - 1
             For x = 0 To grayMatrix1.Width - 1
-                Legacy.ClassicAssert.AreEqual(grayMatrix1.GrayPixel(x, y), grayMatrix2.GrayPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(grayMatrix1.GetGrayPixel(x, y), grayMatrix2.GetGrayPixel(x, y))
             Next
         Next
     End Sub
@@ -575,17 +575,17 @@ Public Class MatrixTests
         MatrixTools.InverseRGB(rgbMatrix2)
         For y = 0 To rgbMatrix1.Height - 1
             For x = 0 To rgbMatrix1.Width - 1
-                Legacy.ClassicAssert.AreEqual(rgbMatrix1.RedPixel(x, y), Byte.MaxValue - rgbMatrix2.RedPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(rgbMatrix1.GreenPixel(x, y), Byte.MaxValue - rgbMatrix2.GreenPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(rgbMatrix1.BluePixel(x, y), Byte.MaxValue - rgbMatrix2.BluePixel(x, y))
+                Legacy.ClassicAssert.AreEqual(rgbMatrix1.GetRedPixel(x, y), Byte.MaxValue - rgbMatrix2.GetRedPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(rgbMatrix1.GetGreenPixel(x, y), Byte.MaxValue - rgbMatrix2.GetGreenPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(rgbMatrix1.GetBluePixel(x, y), Byte.MaxValue - rgbMatrix2.GetBluePixel(x, y))
             Next
         Next
         MatrixTools.InverseRGB(rgbMatrix2)
         For y = 0 To rgbMatrix1.Height - 1
             For x = 0 To rgbMatrix1.Width - 1
-                Legacy.ClassicAssert.AreEqual(rgbMatrix1.RedPixel(x, y), rgbMatrix2.RedPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(rgbMatrix1.GreenPixel(x, y), rgbMatrix2.GreenPixel(x, y))
-                Legacy.ClassicAssert.AreEqual(rgbMatrix1.BluePixel(x, y), rgbMatrix2.BluePixel(x, y))
+                Legacy.ClassicAssert.AreEqual(rgbMatrix1.GetRedPixel(x, y), rgbMatrix2.GetRedPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(rgbMatrix1.GetGreenPixel(x, y), rgbMatrix2.GetGreenPixel(x, y))
+                Legacy.ClassicAssert.AreEqual(rgbMatrix1.GetBluePixel(x, y), rgbMatrix2.GetBluePixel(x, y))
             Next
         Next
     End Sub

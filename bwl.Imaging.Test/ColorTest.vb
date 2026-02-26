@@ -6,8 +6,8 @@ Public Module ColorTest
         Dim mtr1 As New StructureMatrixRGB(10, 20)
         Dim mtr2 As New StructureMatrixHSV(10, 20)
         For i = 0 To 19
-            mtr1.Pixel(0, i) = New RGB(200, 30, 10)
-            mtr2.Pixel(0, i) = New HSV(200, 230, 240)
+            mtr1(0, i) = New RGB(200, 30, 10)
+            mtr2(0, i) = New HSV(200, 230, 240)
         Next
         mtr1.ToRGBMatrix.ToBitmap.Save("rgb1.bmp")
         mtr2.ToRGBMatrix.ToBitmap.Save("hsv1.bmp")

@@ -19,17 +19,17 @@ Public Class BitmapInfoTestBase
             'Reg
             For x = 0 To w3
                 Dim red = If(w3 > 0, (x / w3) * 255, 255)
-                mtrx.RedPixel(x, y) = red
+                mtrx.SetRedPixel(x, y, red)
             Next
             'Green
             For x = w3 To 2 * w3
                 Dim green = If(w3 > 0, ((x - w3) / w3) * 255, 255)
-                mtrx.GreenPixel(x, y) = green
+                mtrx.SetGreenPixel(x, y, green)
             Next
             'Blue
             For x = 2 * w3 + 1 To size.Width - 1
                 Dim blue = If(w3 > 0, ((x - (2 * w3 + 1)) / w3) * 255, 255)
-                mtrx.BluePixel(x, y) = blue
+                mtrx.SetBluePixel(x, y, blue)
             Next
         Next
         'Обеспечение нужного формата Bitmap-а
