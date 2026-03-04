@@ -28,6 +28,6 @@
 		<ProjectReference Include="..\Bwl.Imaging\Bwl.Imaging.csproj" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="System.Resources.Extensions" Version="9.0.7" />
+		<PackageReference Include="System.Resources.Extensions" Version="10.0.3" />
 	</ItemGroup>
 </Project>

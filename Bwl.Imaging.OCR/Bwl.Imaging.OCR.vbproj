@@ -2,55 +2,20 @@
   <PropertyGroup>
     <TargetFramework>net4.8</TargetFramework>
     <OutputType>WinExe</OutputType>
-    <StartupObject>Bwl.Imaging.OCR.My.MyApplication</StartupObject>
+    <StartupObject>Bwl.Imaging.OCR.OCRTest</StartupObject>
     <MyType>WindowsForms</MyType>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
-    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DocumentationFile>Bwl.Imaging.OCR.xml</DocumentationFile>
-    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DefineDebug>false</DefineDebug>
-    <DocumentationFile>Bwl.Imaging.OCR.xml</DocumentationFile>
-    <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Import Include="System.Drawing" />
     <Import Include="System.Windows.Forms" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="My Project\Application.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Application.myapp</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <Compile Update="My Project\Resources.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
-    <Compile Update="My Project\Settings.Designer.vb">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Update="My Project\Application.myapp">
-      <Generator>MyApplicationCodeGenerator</Generator>
-      <LastGenOutput>Application.Designer.vb</LastGenOutput>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="test.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Bwl.Imaging.Unsafe\Bwl.Imaging.Unsafe.csproj" />
     <ProjectReference Include="..\Bwl.Imaging.WinForms\Bwl.Imaging.WinForms.vbproj" />
-    <ProjectReference Include="..\bwl.Imaging\bwl.Imaging.vbproj" />
+    <ProjectReference Include="..\bwl.Imaging\bwl.Imaging.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.DotNet.UpgradeAssistant.Extensions.Default.Analyzers" Version="0.4.421302">

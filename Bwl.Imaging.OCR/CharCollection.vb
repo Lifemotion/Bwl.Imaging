@@ -124,7 +124,7 @@ Public Class CharCollection
         For y = ci.Top To ci.Bottom
             Dim cleanLine As Boolean = True
             For x = ci.Left To ci.Right
-                If mtr.GrayPixel(x, y) < val Then cleanLine = False
+                If mtr.GetGrayPixel(x, y) < val Then cleanLine = False
             Next
             If Not cleanLine Then
                 ci.Top = y
@@ -135,7 +135,7 @@ Public Class CharCollection
         For y = ci.Bottom - 1 To ci.Top Step -1
             Dim cleanLine As Boolean = True
             For x = ci.Left To ci.Right
-                If mtr.GrayPixel(x, y) < val Then cleanLine = False
+                If mtr.GetGrayPixel(x, y) < val Then cleanLine = False
             Next
             If Not cleanLine Then
                 ci.Bottom = y
@@ -146,7 +146,7 @@ Public Class CharCollection
         For x = ci.Left To ci.Right
             Dim cleanLine As Boolean = True
             For y = ci.Top To ci.Bottom
-                If mtr.GrayPixel(x, y) < val Then cleanLine = False
+                If mtr.GetGrayPixel(x, y) < val Then cleanLine = False
             Next
             If Not cleanLine Then
                 ci.Left = x
@@ -157,7 +157,7 @@ Public Class CharCollection
         For x = ci.Right To ci.Left Step -1
             Dim cleanLine As Boolean = True
             For y = ci.Top To ci.Bottom
-                If mtr.GrayPixel(x, y) < val Then cleanLine = False
+                If mtr.GetGrayPixel(x, y) < val Then cleanLine = False
             Next
             If Not cleanLine Then
                 ci.Right = x

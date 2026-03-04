@@ -5,7 +5,7 @@
 	<!-- It's required so that different projects would get different properties-->
 	<PropertyGroup>
 		<BaseIntermediateOutputPath>$(MSBuildThisFileDirectory)/obj/$(MSBuildProjectName)/obj/</BaseIntermediateOutputPath>
-		<IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+		<IntermediateOutputPath>$(BaseIntermediateOutputPath)$(Configuration)/$(TargetFramework)/</IntermediateOutputPath>
 	</PropertyGroup>
 
 	<!--

@@ -12,7 +12,7 @@
 '   See the License For the specific language governing permissions And
 '   limitations under the License.
 
-Imports System.Windows.Forms
+Imports Microsoft.Win32
 
 Public Class RegistryStorage
     Public Class Setting
@@ -33,7 +33,7 @@ Public Class RegistryStorage
         End Property
     End Class
 
-    Private _key As Microsoft.Win32.RegistryKey
+    Private _key As RegistryKey
 
     Public Sub New()
         _key = GetRegistryAppKey()
@@ -43,7 +43,7 @@ Public Class RegistryStorage
         _key = GetRegistryKey(keyName)
     End Sub
 
-    Public ReadOnly Property Key As Microsoft.Win32.RegistryKey
+    Public ReadOnly Property Key As RegistryKey
         Get
             Return _key
         End Get
@@ -55,15 +55,15 @@ Public Class RegistryStorage
         Return setting
     End Function
 
-    Public Shared Function GetRegistryKey(name As String) As Microsoft.Win32.RegistryKey
-        Dim key = My.Computer.Registry.CurrentUser.OpenSubKey(name, True)
+    Public Shared Function GetRegistryKey(name As String) As RegistryKey
+        Dim key = Registry.CurrentUser.OpenSubKey(name, True)
         If key Is Nothing Then
-            key = My.Computer.Registry.CurrentUser.CreateSubKey(name)
+            key = Registry.CurrentUser.CreateSubKey(name)
         End If
         Return key
     End Function
 
-    Public Shared Function GetRegistryAppKey() As Microsoft.Win32.RegistryKey
-        Return GetRegistryKey("Bwl " + Application.ProductName)
+    Public Shared Function GetRegistryAppKey() As RegistryKey
+        Return GetRegistryKey($"Bwl {Application.ProductName}")
     End Function
 End Class

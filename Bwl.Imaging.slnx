@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="Directory.Build.props" />
+  </Folder>
+  <Project Path="Bwl.Imaging.OCR/Bwl.Imaging.OCR.vbproj" />
+  <Project Path="Bwl.Imaging.ResourceCollectorDemo/Bwl.Imaging.ResourceCollectorDemo.csproj" />
+  <Project Path="Bwl.Imaging.Skia.UnitTests/Bwl.Imaging.Skia.UnitTests.vbproj" />
+  <Project Path="Bwl.Imaging.Skia/Bwl.Imaging.Skia.csproj" />
+  <Project Path="Bwl.Imaging.Test/Bwl.Imaging.WinForms.Test.vbproj" />
+  <Project Path="Bwl.Imaging.UnitTests/Bwl.Imaging.UnitTests.vbproj" />
+  <Project Path="Bwl.Imaging.WinForms/Bwl.Imaging.WinForms.vbproj" />
+  <Project Path="Bwl.Imaging/Bwl.Imaging.csproj" />
+</Solution>

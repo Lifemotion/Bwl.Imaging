@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<RootNamespace>Bwl.Imaging.Skia</RootNamespace>
+		<TargetFrameworks>netstandard2.0;net48;net8.0</TargetFrameworks>
+		<DefaultItemExcludes>$(DefaultItemExcludes);$(ProjectDir)**\*.vb</DefaultItemExcludes>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="Fonts\NotoSans-VariableFont_wdth,wght.ttf" />
+		<None Remove="Fonts\NotoSansMono-VariableFont_wdth,wght.ttf" />
+		<None Remove="Fonts\NotoSerif-VariableFont_wdth,wght.ttf" />
+	</ItemGroup>
+	<ItemGroup>
+		<EmbeddedResource Include="Fonts\NotoSans-VariableFont_wdth,wght.ttf" Link="Fonts\NotoSans.ttf" />
+		<EmbeddedResource Include="Fonts\NotoSansMono-VariableFont_wdth,wght.ttf" Link="Fonts\NotoSansMono.ttf" />
+		<EmbeddedResource Include="Fonts\NotoSerif-VariableFont_wdth,wght.ttf" Link="Fonts\NotoSerif.ttf" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="System.Text.Json" Version="10.0.3" />
+		<PackageReference Include="SkiaSharp" Version="3.119.2" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="3.119.2" />
+	</ItemGroup>
+</Project>

@@ -205,8 +205,8 @@ Public Class OCRTest
             For y = segment.Top To segment.Bottom
                 Dim xi = CInt((x - segment.Left) / segment.Width * template.Width) + template.Left
                 Dim yi = CInt((y - segment.Top) / segment.Height * template.Height) + template.Top
-                Dim ps = source.GrayPixel(x, y)
-                Dim pt = templateMatrix.GrayPixel(xi, yi)
+                Dim ps = source.GetGrayPixel(x, y)
+                Dim pt = templateMatrix.GetGrayPixel(xi, yi)
                 If (pt < threshold And ps < threshold) Or (pt > threshold And ps > threshold) Then correct += 1 Else miss += 1
                 ' If (pt > 200 And ps < 200) Then miss += 1 Else correct += 1
             Next
@@ -259,6 +259,6 @@ Public Class OCRTest
     End Sub
 
     Private Sub Button1_Click_1(sender As Object, e As EventArgs) Handles Button1.Click
-        Recog(My.Computer.Clipboard.GetImage)
+        Recog(Clipboard.GetImage())
     End Sub
 End Class

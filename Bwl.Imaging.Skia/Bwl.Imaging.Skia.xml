@@ -1,0 +1,1501 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Bwl.Imaging.Skia</name>
+    </assembly>
+    <members>
+        <member name="T:Bwl.Imaging.Skia.BitmapInfo">
+            <summary>
+            Потокобезопасная обвязка Bitmap-а, с поддержкой
+            кешированных свойств изображения и JPEG-кеша.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BitmapCloneManaged(SkiaSharp.SKBitmap)">
+            <summary>
+            Клонирование Bitnap-а в соотв. с выбранным режимом.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.CheckBitmap(SkiaSharp.SKBitmap)">
+            <summary>
+            Проверка Bitmap-а на рабочее состояние.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalAllocatedDataCount">
+            <summary>
+            Глобальный счетчик количества выделенных байт Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalCompressedCount">
+            <summary>
+            Глобальный счетчик осуществленных компрессий JPEG (а не переприсваиваний).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalDecompressedCount">
+            <summary>
+            Глобальный счетчик декомпрессий JPEG (с формированием Bitmap-ов).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalDecompressedErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок декомпресии.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalDisposeCount">
+            <summary>
+            Глобальный счетчик количества элиминирований Bitmap-ов (Dispose).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalDisposeErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок высвобождения Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalCloneErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок клонирований Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._compressedCount">
+            <summary>
+            Счетчик осуществленных компрессий JPEG (а не переприсваиваний).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._decompressedCount">
+            <summary>
+            Счетчик декомпрессий JPEG (с формированием Bitmap-ов).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._decompressedErrorCount">
+            <summary>
+            Счетчик количества ошибок декомпресии.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._disposeCount">
+            <summary>
+            Счетчик количества элиминирований Bitmap-ов (Dispose).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._disposeErrorCount">
+            <summary>
+            Счетчик количества ошибок высвобождения Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.BitmapInfo._cloneErrorCount">
+            <summary>
+            Счетчик количества ошибок клонирований Bitmap-ов.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.BitmapInfo.BitmapKeepTimeS">
+            <summary>
+            Время хранения декомпрессированного битмапа (если доступны JPEG-данные для экономии ОЗУ).
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.BitmapInfo.Bmp">
+            <summary>
+            Прямой доступ по ссылке к хранимому Bitmap-у.
+            </summary>
+            <remarks>
+            При обращении к Bmp обязательно использовать методы BmpLock() / BmpUnlock().
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.BitmapInfo.JpgIsNothing">
+            <summary>
+            Данные JPEG пусты?
+            </summary>
+            <remarks>
+            Если данных JPEG нет, это не означает, что изображение отсутствует.
+            Возможно, используется Bitmap.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.BitmapInfo.BmpIsNothing">
+            <summary>
+            Bitmap пуст?
+            </summary>
+            <remarks>
+            Если Bitmap пуст, это не означает, что изображение отсутствует,
+            возможно, используется хранение в JPEG.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.BitmapInfo.BmpAndJpgAreNothing">
+            <summary>
+            Данные изображения пусты?
+            </summary>
+            <remarks>
+            Наличие этого флага означает, что данных изображения нет.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.BitmapInfo.BmpSize">
+            <summary>
+            Кешированный размер сохраненного Bitmap/JPEG.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.BitmapInfo.RowBytes">
+            <summary>
+            Кешированный формат пикселя сохраненного Bitmap/JPEG.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BmpLock(System.Int32)">
+            <summary>
+            Блокировка доступа к разделяемому ресурсу (порождает исключение по таймауту).
+            </summary>
+            <remarks>  
+            Типичная схема использования:
+            1: .BmpLock() 'Не оборачиваем Try-Catch: может вызвать исключение таймаута и в Finally вызовет в итоге лишний .BmpUnlock()
+            2: Try
+            3:     ... 'Этот код может вызвать исключения, но если дошли до него - ресурс был получен на .BmpLock() - исключения не было
+            4: Catch ex As Exception
+            5:     ... 'Обработали исключения кода как требуется...
+            6: Finally
+            7:     .BmpUnlock() '...и в итоге освободили доступ к разделяемому ресурсу
+            8: End Try
+            </remarks>
+            <param name="timeoutMs"></param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BmpUnlock">
+            <summary>
+            Освобождение доступа к разделяемому ресурсу (при попытке выполнить на свободном ресурсе дает исключение).
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.Compress(System.Int32,System.Int32)">
+            <summary>
+            Обеспечивает экономию ОЗУ:
+            1 - При наличии Bitmap-а и отсутствии JPEG-а: формируем JPEG на основе Bitmap-а.
+            2 - При наличии Bitmap-а и наличии JPEG-а: элиминирование Bitmap-а и переустановка JPEG-а.
+            </summary>
+            <remarks>
+            Q=90 - высокое качество с сохранением мелких деталей и цветных градиентов.
+            Q=80 - высокое качество с сохранением мелких деталей.
+            Q=60 - приемлемое качество для технических целей (дальше размер падает медленнее и растут артефакты).
+            Q=50 - качество отладочного канала.
+            </remarks>
+            <param name="quality">Уровень качества JPEG.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetJpg(System.Boolean,System.Int32,System.Int32)">
+            <summary>
+            Возвращает JPEG-данные.
+            </summary>
+            <param name="createFromBitmapIfEmpty">Сформировать JPEG на основе Bitmap-а (если JPEG-потока нет).</param>
+            <param name="quality">Уровень качества JPEG.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+            <remarks>
+            Формирование JPEG на основе Bitmap-а при вызове данного метода при активном флаге ifEmptyCreateFromBitmap
+            не приводит к установке внутреннего JPEG-потока или элиминированию исходного Bitmap-а.
+            Если требуется сжать Bitmap, установить JPEG-поток и затем освободить память от Bitmap-а - используйте метод Compress().
+            </remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetJpgFast(System.Boolean)">
+            <summary>
+            Быстрый метод получения JPEG-данных.
+            </summary>
+            <param name="clone">Клонировать массив байт?</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.CompareJpgFast(Bwl.Imaging.Skia.BitmapInfo)">
+            <summary>
+            Быстрый метод сравнения двух JPEG-потоков.
+            </summary>
+            <param name="obj">Объект для сравнения.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.SetJpg(System.Byte[],System.Int32)">
+            <summary>
+            Устанавливает JPEG-данные и элиминирует данные Bitmap-а.
+            </summary>
+            <param name="jpg">JPEG-данные.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.SetBmp(SkiaSharp.SKBitmap,System.Int32)">
+            <summary>
+            Устанавливает Bitmap и элиминирует данные JPEG.
+            </summary>
+            <param name="bmp">Bitmap для установки.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+            <remarks>Несмотря на то, что при вызове этого метода, возможно, есть
+            "висящий" отложенный Dispose для Bitmap-а, у каждого такого вызова
+            своя цель, и ложного элиминирования не будет.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetClonedBmp(System.Int32)">
+            <summary>
+            Получение клонированного изображения.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetClonedBmpGray(System.Int32)">
+            <summary>
+            Получение клонированного изображения.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetClonedCopy(System.Int32)">
+            <summary>
+            Получение клонированной копии.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.Clear(System.Int32)">
+            <summary>
+            Очистка изображений Bitmap/JPEG.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.SetBmpInternal(SkiaSharp.SKBitmap)">
+            <summary>
+            Установка Bitmap-а.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetBitmapDecodedInternal">
+            <summary>
+            Извлечение данных Bitmap-а (если он пуст, и есть JPEG-данные).
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BmpCloneInternal(SkiaSharp.SKBitmap)">
+            <summary>
+            Клонирование битмапа с фиксацией ошибок.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.DecodeJpegInternal(System.Byte[])">
+            <summary>
+            Декодирование JPEG-потока.
+            </summary>
+            <param name="jpg">JPEG-поток.</param>
+            <returns>Декомпрессированное изображение.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetJpegSize(System.Byte[],System.Int32@,System.Int32)">
+            <summary>
+            Извлечение размера изображения из JPEG-потока без его декодирования.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.EliminateJpgInternal">
+            <summary>
+            Элиминирование JPEG.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.ArrayCopy(System.Byte[])">
+            <summary>
+            Получение копии массива байт.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BitmapDisposeWithDelay(SkiaSharp.SKBitmap,System.Single)">
+            <summary>
+            Запуск потока отложенного Dispose для битмапа.
+            </summary>
+            <param name="bitmapKeepTimeS">Время доступности декомпрессированного битмапа.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapInfo.DisposeBmpInternal(SkiaSharp.SKBitmap)">
+            <summary>
+            Метод для элиминирования определенного битмапа.
+            </summary>
+            <param name="target">Целевой Bitmap (элиминирование другой цели невозможно).</param>
+            <remarks>Если не отслеживать цель для элиминирования, может случиться ситуация, когда
+            объект будет инициализирован JPEG-ом, с него будет запрошен Bitmap, запустится
+            отложенные элиминирование после декомпресии, и далее пользователь обработает
+            декомпрессированное изображение, которое будет установлено, а далее стерто
+            отложенным Dispose()-ом. При отслеживании ссылки-цели элиминируется в точности
+            тот Bitmap, что и планировалось.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.HSV.HueDistance(System.Double,System.Double)">
+            <summary>
+            Вычисление кратчайшего расстояния между двумя тонами
+            </summary>
+            <remarks>Наибольшее возможное расстояние в пространстве Hue - это 0.5 [0..1],
+            которое сооотв. противоположному цвету. Если получили больше 0.5, нужно
+            нормализовывать результат.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.VectorTools.Vector.AngleAB(Bwl.Imaging.Skia.VectorTools.Vector,Bwl.Imaging.Skia.VectorTools.Vector)">
+            <summary>
+            При вычислении вектора между (1,1) и (1,-1) этот метод дает - Pi/2! Это угловой переход от первого вектора ко второму
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.VectorTools.PolygonIsEmpty(SkiaSharp.SKPoint[])">
+            <summary>
+            Тест: полигон пустой?
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.VectorTools.PointInPolygon(SkiaSharp.SKPoint,SkiaSharp.SKPoint[])">
+            <summary>
+            Тест: точка находится внутри полигона?
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.VectorTools.NormalizeVector(SkiaSharp.SKPoint,System.Single)">
+            <summary>
+            Нормализация длины вектора
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.VectorTools.VectorInBounds(SkiaSharp.SKPoint,SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Double)">
+            <summary>
+            Проверка на нахождение вектора между векторами-границами
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.VectorTools.AngleBetweenVectors(SkiaSharp.SKPoint,SkiaSharp.SKPoint)">
+            <summary>
+            Вычисление модуля угла между векторами №1
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.VectorTools.AnglePathBetweenVectors(SkiaSharp.SKPoint,SkiaSharp.SKPoint)">
+            <summary>
+            Вычисление углового перехода между двумя векторами
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.Filters.Sharpen5Gray(Bwl.Imaging.Skia.GrayMatrix)">
+            <summary>
+            Фильтр повышения резкости полутонового изображения разреженной маской 5*5
+            </summary>
+            <param name="img">Исходное изображение.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.Filters.MedianFilter2D(Bwl.Imaging.Skia.GrayMatrix,System.Int32)">
+            <summary>
+            2D-медианный фильтр
+            </summary>    
+            <param name="img">Исходные данные.</param>
+            <param name="N">Размер фильтра (нечетное значение).</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.ImagingMath.Limit(System.Int32,System.Int32)">
+            <summary>
+            Ограничение значения диапазоном Byte.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.ImagingMath.Limit(System.Double,System.Double)">
+            <summary>
+            Ограничение значения диапазоном Byte.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.ImagingMath.GetBrightnessStats(Bwl.Imaging.Skia.GrayMatrix)">
+            <summary>
+            Статистика по яркости
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.ImagingMath.Bilinear(System.Double,System.Double,System.Double,System.Double)">
+            <summary>
+            Билинейная интерполяция между двумя значениями
+            </summary>
+            <param name="value1">Значение 1.</param>
+            <param name="value2">Значение 2.</param>
+            <param name="weight1">Вес для значения 1.</param>
+            <param name="weight2">Вес для значения 2.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.ImagingMath.Bilinear(SkiaSharp.SKPoint,SkiaSharp.SKPoint,System.Double,System.Double)">
+            <summary>
+            Билинейная интерполяция между двумя точками
+            </summary>
+            <param name="point1">Точка 1.</param>
+            <param name="point2">Точка 2.</param>
+            <param name="weight1">Вес для точки 1.</param>
+            <param name="weight2">Вес для точки 2.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.ImagingMath.MinMax2D(Bwl.Imaging.Skia.GrayMatrix,System.Int32@,System.Int32@)">
+            <summary>
+            Поиск минимального/максимального значения в полутоновой матрице
+            </summary>
+            <param name="img">Исходная матрица.</param>
+            <param name="min">Найденный минимум.</param>
+            <param name="max">Найденный максимум.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.GetGrayMatrix(Bwl.Imaging.Skia.BitmapInfo)">
+            <summary>
+            Получение полутоновой матрицы на основе BitmapInfo
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.GetRGBMatrix(Bwl.Imaging.Skia.BitmapInfo)">
+            <summary>
+            Получение полноцветной матрицы на основе BitmapInfo
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.GrayMatrixAlign4(Bwl.Imaging.Skia.GrayMatrix)">
+            <summary>
+            Выравнивание полутоновой матрицы до ширины кратной 4
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.GrayMatrixAlign(Bwl.Imaging.Skia.GrayMatrix,System.Int32)">
+            <summary>
+            Выравнивание полутоновой матрицы до ширины кратной align
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.RGBMatrixAlign4(Bwl.Imaging.Skia.RGBMatrix)">
+            <summary>
+            Выравнивание цветной матрицы до ширины кратной 4
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.RGBMatrixAlign(Bwl.Imaging.Skia.RGBMatrix,System.Int32)">
+            <summary>
+            Выравнивание цветной матрицы до ширины кратной align
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.RectangleAlign(SkiaSharp.SKRectI,System.Int32)">
+            <summary>
+            Установка прямогольника по "выровненным" позициям (каждая позиция становится кратной align)
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.GrayMatrixSubRect(Bwl.Imaging.Skia.GrayMatrix,SkiaSharp.SKRectI)">
+            <summary>
+            Получение полутоной подматрицы
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.RGBMatrixSubRect(Bwl.Imaging.Skia.RGBMatrix,SkiaSharp.SKRectI)">
+            <summary>
+            Получение цветной подматрицы
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.InverseGray(Bwl.Imaging.Skia.GrayMatrix)">
+            <summary>
+            Инверсия полутонового изображения
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.InverseRGB(Bwl.Imaging.Skia.RGBMatrix)">
+            <summary>
+            Инверсия цветного изображения
+            </summary>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.MoveDetector">
+            <summary>
+            Простой детектор движения (изменений в кадре). Для каждого видеоисточника должен быть свой детектор.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.MoveDetector.PointDiffThreshSetting">
+            <summary>
+            Порог разности яркости, при котором точка считается изменившейся. Для фильтрации шумов. Можно не менять.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.MoveDetector.MoveThresholdSetting">
+            <summary>
+            Порог изменений в кадре, после которых обнаруживается движение. Доля изменившихся точек относительно общего количества пикселей кадра.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.MoveDetector.AfterMoveSetting">
+            <summary>
+            В течение какого количества кадров БЕЗ движения после кадра С движением будет выдаваться результат наличия движения.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapOperations.LoadBitmap(SkiaSharp.SKBitmap)">
+            <summary>
+            Loads pixel data from an SKBitmap into the internal raw bytes array.
+            </summary>
+            <param name="bitmap">The source SKBitmap to load data from. Supports Gray8, Bgra8888, and Rgba8888 formats.</param>
+            <remarks>
+            For color images (BGRA/RGBA), the alpha channel is stripped and data is stored as 3-channel BGR.
+            For grayscale images (Gray8), data is stored as-is in 1-channel format.
+            </remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.BitmapOperations.GetBitmap">
+            <summary>
+            Creates an SKBitmap from the internal raw bytes array.
+            </summary>
+            <returns>A new SKBitmap containing the pixel data. Grayscale data creates Gray8 format, color data creates Bgra8888 format.</returns>
+            <remarks>
+            For grayscale (1-channel), creates Gray8 bitmap directly.
+            For color (3-channel BGR), creates Bgra8888 bitmap with alpha set to 255 (opaque).
+            </remarks>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.RawFrame">
+            <summary>
+            Универсальный формат сырого кадра.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKEncoder.DecodeJpeg(System.Byte[])">
+            <summary>
+            Decodes a JPEG image from a byte array into an SKBitmap, ensuring the appropriate color format based on the
+            image's channel count.
+            </summary>
+            <remarks>If the JPEG image has a single channel, it is decoded as Gray8; otherwise, it is
+            decoded as Bgra8888. If the channel count cannot be determined, the default decoder is used, and the
+            resulting bitmap is ensured to have a color format.</remarks>
+            <param name="jpegData">The byte array containing the JPEG image data to decode. Cannot be null.</param>
+            <returns>An SKBitmap representing the decoded JPEG image, using either the Bgra8888 or Gray8 color format depending
+            on the image's channel count.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKEncoder.GetJpegSize(System.Byte[],System.Int32@,System.Int32)">
+            <summary>
+            Извлечение размера изображения из JPEG-потока без его декодирования.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKEncoder.GetBitmapSize(System.Byte[],System.Int32@)">
+            <summary>
+            Get size and channel count from a bitmap image for correct decode
+            </summary>
+            <param name="bmpData"></param>
+            <param name="channelCount"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKEncoder.GetPngSize(System.Byte[],System.Int32@)">
+            <summary>
+            Get size and channel count from a png image for correct decode
+            </summary>
+            <param name="pngData"></param>
+            <param name="channelCount"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKEncoder.EnsureColor(SkiaSharp.SKBitmap)">
+            <summary>
+            Ensures that the specified bitmap is in a color format, converting it if necessary.
+            </summary>
+            <remarks>If the source bitmap is detected as grayscale, it is converted to a color format
+            using a new bitmap. If the source is already in the correct color format, it is returned as is. The
+            conversion process uses a canvas to draw the original bitmap onto a new bitmap with the target color
+            type.</remarks>
+            <param name="source">The source bitmap to check and convert if required. Cannot be null.</param>
+            <returns>A bitmap in the appropriate color format. Returns null if the source bitmap is null.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKEncoder.CheckIfGrayscaleFast(SkiaSharp.SKBitmap,System.Int32)">
+            <summary>
+            Determines whether the specified bitmap image is grayscale by analyzing a downscaled version of the image.
+            </summary>
+            <remarks>This method performs a fast analysis by scaling the original image to a smaller size
+            and checking the color channel differences for each pixel. A threshold of 2 is used to account for minor
+            variations introduced by compression or scaling. This approach provides a balance between performance and
+            accuracy for grayscale detection.</remarks>
+            <param name="bitmap">The bitmap image to analyze. This parameter must not be null.</param>
+            <param name="sampleSize">The width and height, in pixels, of the downscaled image used for analysis. Must be a positive integer.</param>
+            <returns>true if the bitmap is determined to be grayscale; otherwise, false.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKExtensions.SKRectFromPointSize(SkiaSharp.SKPoint,SkiaSharp.SKSize)">
+            <summary>
+            Creates a rectangle that is defined by a specified top-left point and size.
+            </summary>
+            <param name="point">The point that specifies the coordinates of the rectangle's top-left corner.</param>
+            <param name="size">The size that specifies the width and height of the rectangle.</param>
+            <returns>An SKRect structure that represents the rectangle defined by the specified point and size.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKExtensions.SKRectFromXYWH(System.Single,System.Single,System.Single,System.Single)">
+            <summary>
+            Creates a rectangle defined by the specified top-left corner and dimensions.
+            </summary>
+            <remarks>The width and height parameters must be non-negative. Supplying negative values may
+            result in an invalid rectangle.</remarks>
+            <param name="x">The x-coordinate of the rectangle's top-left corner.</param>
+            <param name="y">The y-coordinate of the rectangle's top-left corner.</param>
+            <param name="width">The width of the rectangle, in pixels. Must be a non-negative value.</param>
+            <param name="height">The height of the rectangle, in pixels. Must be a non-negative value.</param>
+            <returns>An SKRect that represents the rectangle defined by the specified coordinates and dimensions.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKExtensions.SKRectIFromPointSize(SkiaSharp.SKPointI,SkiaSharp.SKSizeI)">
+            <summary>
+            Creates a rectangle with integer coordinates and size, using the specified top-left point and dimensions.
+            </summary>
+            <param name="point">The point that defines the top-left corner of the rectangle.</param>
+            <param name="siize">The size that specifies the width and height of the rectangle.</param>
+            <returns>An SKRectI structure representing the rectangle defined by the given point and size.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKExtensions.SKRectIFromXYWH(System.Int32,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Creates a new SKRectI structure that represents a rectangle defined by the specified position and
+            dimensions.
+            </summary>
+            <remarks>The width and height parameters must be non-negative; otherwise, the resulting
+            rectangle may not be valid.</remarks>
+            <param name="x">The x-coordinate of the rectangle's top-left corner.</param>
+            <param name="y">The y-coordinate of the rectangle's top-left corner.</param>
+            <param name="width">The width of the rectangle, in pixels. Must be a non-negative value.</param>
+            <param name="height">The height of the rectangle, in pixels. Must be a non-negative value.</param>
+            <returns>An SKRectI structure representing the rectangle defined by the specified coordinates and dimensions.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKExtensions.CloneResized(SkiaSharp.SKBitmap,SkiaSharp.SKSize)">
+            <summary>
+            Creates a new bitmap that is a resized version of the specified bitmap, using the given target size.
+            </summary>
+            <param name="bmp">The original bitmap to resize. This parameter cannot be null.</param>
+            <param name="size">The target size for the new bitmap, specified as an <see cref="T:SkiaSharp.SKSize"/> structure. The width and height
+            must be positive values.</param>
+            <returns>A new <see cref="T:SkiaSharp.SKBitmap"/> instance that represents the resized bitmap.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKExtensions.CloneResized(SkiaSharp.SKBitmap,System.Int32,System.Int32)">
+            <summary>
+            Creates a new bitmap that is a resized version of the specified bitmap using cubic resampling for improved
+            image quality.
+            </summary>
+            <remarks>The resizing operation uses the Mitchell cubic resampling algorithm to enhance the
+            quality of the output image. The original bitmap's color type and alpha type are retained in the resized
+            bitmap.</remarks>
+            <param name="bmp">The source bitmap to resize. This parameter must not be null.</param>
+            <param name="width">The width, in pixels, of the resulting resized bitmap. Must be greater than zero.</param>
+            <param name="height">The height, in pixels, of the resulting resized bitmap. Must be greater than zero.</param>
+            <returns>A new SKBitmap instance that represents the resized version of the original bitmap, preserving the color
+            type and alpha type.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKExtensions.RotateFlip(SkiaSharp.SKBitmap,Bwl.Imaging.Skia.SKRotateFlipType)">
+            <summary>
+            Rotates and flips the specified bitmap according to the given transformation type.
+            </summary>
+            <remarks>This method modifies the bitmap in place. Ensure that the bitmap is properly
+            initialized before calling this method.</remarks>
+            <param name="bmp">The bitmap to transform. This parameter cannot be null.</param>
+            <param name="rotateFlipType">The type of rotation and flip operation to apply to the bitmap.</param>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKFontFamily">
+            <summary>
+            Defines a set of generic font families that can be used for rendering text in SkiaSharp.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKFontFamily.GenericSerif">
+            <summary>
+            Specifies a generic serif font family.
+            </summary>
+            <remarks>
+            A serif font is a typeface that has small lines or decorative strokes (called "serifs") 
+            at the ends of the main strokes of the characters. Examples of serif fonts include 
+            Times New Roman, Georgia, and Garamond.</remarks>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKFontFamily.GenericSansSerif">
+            <summary>
+            Gets the generic sans-serif font family used for rendering text.
+            </summary>
+            <remarks>
+            This font family is typically used for displaying text in a clean and modern style,
+            suitable for various applications.
+            </remarks>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKFontFamily.GenericMonospace">
+            <summary>
+            Represents a generic monospace font style used for displaying text in a fixed-width format.
+            </summary>
+            <remarks>
+            This font style is typically used in code editors and terminal applications to ensure that each
+            character occupies the same amount of horizontal space, aiding in readability and alignment of text.
+            </remarks>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKFontLoader">
+            <summary>
+            Provides methods for loading and retrieving SKTypeface objects associated with specific font families.
+            </summary>
+            <remarks>This class manages a cache of SKTypeface objects for performance, ensuring that font
+            resources are efficiently loaded and accessed throughout the application. It is intended for internal use and is
+            not accessible outside the containing assembly.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKFontLoader.#cctor">
+            <summary>
+            Initializes static resources for the FontLoader class before any static members are accessed or any
+            instances are created.
+            </summary>
+            <remarks>This static constructor ensures that the default font families are loaded into the
+            font cache and are available for use throughout the application. It is invoked automatically by the runtime
+            and does not need to be called directly.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKFontLoader.GetSKTypeface(Bwl.Imaging.Skia.SKFontFamily)">
+            <summary>
+            Retrieves the SKTypeface associated with the specified font family.
+            </summary>
+            <remarks>This method accesses a cached SKTypeface for performance.</remarks>
+            <param name="fontFamily">The font family for which to retrieve the SKTypeface. This parameter must not be null.</param>
+            <returns>The SKTypeface corresponding to the specified font family.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKFontLoader.GetFont(Bwl.Imaging.Skia.SKFontFamily)">
+            <summary>
+            Getting SKTypeface from embedded resources
+            </summary>
+            <param name="fontFamily">Font family to load</param>
+            <returns>SKTypeface loaded from embedded resource</returns>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKRotateFlipType">
+            <summary>
+            Specifies how much an image is rotated and the axis used to flip the image.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.RotateNoneFlipNone">
+            <summary>
+            Specifies no clockwise rotation and no flipping.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate90FlipNone">
+            <summary>
+            Specifies a 90-degree clockwise rotation without flipping.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate180FlipNone">
+            <summary>
+            Specifies a 180-degree clockwise rotation without flipping.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate270FlipNone">
+            <summary>
+            Specifies a 270-degree clockwise rotation without flipping.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.RotateNoneFlipX">
+            <summary>
+            Specifies no clockwise rotation followed by a horizontal flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate90FlipX">
+            <summary>
+            Specifies a 90-degree clockwise rotation followed by a horizontal flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate180FlipX">
+            <summary>
+            Specifies a 180-degree clockwise rotation followed by a horizontal flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate270FlipX">
+            <summary>
+            Specifies a 270-degree clockwise rotation followed by a horizontal flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.RotateNoneFlipY">
+            <summary>
+            Specifies no clockwise rotation followed by a vertical flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate90FlipY">
+            <summary>
+            Specifies a 90-degree clockwise rotation followed by a vertical flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate180FlipY">
+            <summary>
+            Specifies a 180-degree clockwise rotation followed by a vertical flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate270FlipY">
+            <summary>
+            Specifies a 270-degree clockwise rotation followed by a vertical flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.RotateNoneFlipXY">
+            <summary>
+            Specifies no clockwise rotation followed by a horizontal and vertical flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate90FlipXY">
+            <summary>
+            Specifies a 90-degree clockwise rotation followed by a horizontal and vertical flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate180FlipXY">
+            <summary>
+            Specifies a 180-degree clockwise rotation followed by a horizontal and vertical flip.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKRotateFlipType.Rotate270FlipXY">
+            <summary>
+            Specifies a 270-degree clockwise rotation followed by a horizontal and vertical flip.
+            </summary>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKStringAlignment">
+            <summary>
+            Defines the alignment options for text rendering in SkiaSharp.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringAlignment.Near">
+            <summary>
+            Specifies the text be aligned near the layout. In a left-to-right layout, the near position is left. In a
+            right-to-left layout, the near position is right.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringAlignment.Center">
+            <summary>
+            Specifies that text is aligned in the center of the layout rectangle.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringAlignment.Far">
+            <summary>
+            Specifies that text is aligned far from the origin position of the layout rectangle. In a left-to-right
+            layout, the far position is right. In a right-to-left layout, the far position is left.
+            </summary>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKStringFormat">
+            <summary>
+            Represents the formatting options for rendering text, including alignment, line alignment, and trimming behavior.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKStringFormat.Alignment">
+            <summary>
+            Gets or sets the horizontal alignment of the text. The default value is SKStringAlignment.Near, which aligns the text to the left.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKStringFormat.LineAlignment">
+            <summary>
+            Gets or sets the vertical alignment of the text. The default value is SKStringAlignment.Near, which aligns the text to the top.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKStringFormat.Trimming">
+            <summary>
+            Gets or sets the trimming behavior of the text. The default value is SKStringTrimming.None, which means no trimming is applied.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKStringFormat.#ctor">
+            <summary>
+            Initializes a new instance of the SKStringFormat class with default values.
+            </summary>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKStringTrimming">
+            <summary>
+            Defines the trimming options for text rendering in SkiaSharp.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringTrimming.None">
+            <summary>
+            Specifies no trimming
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringTrimming.Character">
+            <summary>
+            Specifies that the text is trimmed to the nearest character
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringTrimming.Word">
+            <summary>
+            Specifies that text is trimmed to the nearest word
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringTrimming.EllipsisCharacter">
+            <summary>
+            Specifies that the text is trimmed to the nearest character, and an ellipsis
+            is inserted at the end of a trimmed line.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringTrimming.EllipsisWord">
+            <summary>
+            Specifies that text is trimmed to the nearest word, and an ellipsis is inserted
+            at the end of a trimmed line.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKStringTrimming.EllipsisPath">
+            <summary>
+            Specifies that the center is removed from trimmed lines and replaced by an ellipsis. The algorithm
+            keeps as much of the last slash-delimited segment of the line as possible.
+            </summary>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKTextExtensions">
+            <summary>
+            Provides extension methods for SKCanvas to facilitate text rendering with various formatting and layout options
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.CreateSKRect(SkiaSharp.SKPoint,SkiaSharp.SKSize)">
+            <summary>
+            Creates an SKRect from a given point and size, where the point represents the top-left corner of the rectangle.
+            </summary>
+            <param name="point">The top-left corner of the rectangle.</param>
+            <param name="size">The size of the rectangle.</param>
+            <returns>A new SKRect instance.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.WrapText(System.String,System.Single,SkiaSharp.SKFont,System.Boolean)">
+            <summary>
+            Wraps text into multiple lines that fit within the specified width.
+            </summary>
+            <param name="text">The text to wrap.</param>
+            <param name="maxWidth">The maximum width for each line.</param>
+            <param name="font">The font object used to measure text.</param>
+            <param name="breakLongWords">If <see langword="true"/>, words longer than <paramref name="maxWidth"/> are split character-by-character; 
+            otherwise they are kept intact (potentially exceeding the width).</param>
+            <returns>A list of text lines.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.CalculateFontSizeToFit(System.String,SkiaSharp.SKTypeface,SkiaSharp.SKSize)">
+            <summary>
+            Finds the largest font size such that <paramref name="text"/> fits within <paramref name="room"/>
+            using binary search. The behavior depends on which dimensions are specified:
+            <list type="bullet">
+            <item><description>Only width specified: fits text as a single line within the width.</description></item>
+            <item><description>Only height specified: fits text as a single line within the height.</description></item>
+            <item><description>Both dimensions specified: fits multi-line wrapped text within both width and height.</description></item>
+            </list>
+            </summary>
+            <param name="text">The text to measure.</param>
+            <param name="typeface">The typeface to use for rendering the text.</param>
+            <param name="room">The area the rendered text must fit within. At least one dimension must be greater than zero.</param>
+            <returns>The largest font size in pixels that fits the text within the specified constraints, or 0 if fitting is impossible.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.SetFontSizePoints(SkiaSharp.SKFont,System.Single)">
+            <summary>
+            Sets the font size of the specified SKFont instance in pixels, converting from the provided points size.
+            </summary>
+            <remarks>The method converts the points size (i.e. System.Drawing.Common way) to pixels using a factor of 96 divided by 72,
+            which aligns with standard font size conversions between points and pixels.</remarks>
+            <param name="font">The SKFont instance whose font size will be updated.</param>
+            <param name="pointsSize">The font size in points to be converted to pixels and applied to the SKFont.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.String,SkiaSharp.SKFont,SkiaSharp.SKColor,System.Single,System.Single)">
+            <summary>
+            Draws the specified text on the canvas at the given coordinates using the provided font and color.
+            </summary>
+            <remarks>The text is drawn starting at the specified (x, y) coordinates. The position corresponds to
+            the origin point for the text layout.</remarks>
+            <param name="canvas">The SKCanvas on which to render the text.</param>
+            <param name="s">The text string to draw. If null, no text is rendered.</param>
+            <param name="font">The SKFont that defines the typeface and size for the text.</param>
+            <param name="color">The SKColor to use when rendering the text.</param>
+            <param name="x">The x-coordinate, in pixels, of the text's starting position.</param>
+            <param name="y">The y-coordinate, in pixels, of the text's starting position.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.ReadOnlySpan{System.Char},SkiaSharp.SKFont,SkiaSharp.SKColor,System.Single,System.Single)">
+            <summary>
+            Draws the specified text on the canvas at the given coordinates using the provided font and color.
+            </summary>
+            <remarks>This method provides a simplified way to draw text at a specific point on the canvas. The
+            text is positioned using the top-left corner of its bounding box at the specified coordinates.</remarks>
+            <param name="canvas">The SKCanvas on which to draw the text. Must be initialized before calling this method.</param>
+            <param name="s">A read-only span of characters representing the text to be drawn.</param>
+            <param name="font">The SKFont that defines the style and size of the text.</param>
+            <param name="color">The SKColor to use when rendering the text.</param>
+            <param name="x">The x-coordinate, in pixels, of the position where the text will be drawn.</param>
+            <param name="y">The y-coordinate, in pixels, of the position where the text will be drawn.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.String,SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKPoint)">
+            <summary>
+            Draws the specified text on the canvas at the given position using the provided font and color.
+            </summary>
+            <remarks>This method provides a simplified way to render text at a specific point by automatically
+            creating a layout rectangle based on the provided position.</remarks>
+            <param name="canvas">The canvas on which to draw the text.</param>
+            <param name="s">The text string to draw. If null, no text is rendered.</param>
+            <param name="font">The font that defines the style and size of the text.</param>
+            <param name="color">The color to use when rendering the text.</param>
+            <param name="point">The position, in canvas coordinates, where the text will be drawn.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.ReadOnlySpan{System.Char},SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKPoint)">
+            <summary>
+            Draws the specified text at the given position on the canvas using the provided font and color.
+            </summary>
+            <remarks>This method provides a simplified way to render text at a specific point without requiring a
+            bounding rectangle. The text is positioned based on the provided point.</remarks>
+            <param name="canvas">The canvas on which to draw the text.</param>
+            <param name="s">A read-only span of characters representing the text to be drawn.</param>
+            <param name="font">The font that defines the style and size of the text.</param>
+            <param name="color">The color to use when rendering the text.</param>
+            <param name="point">The position, in canvas coordinates, where the text will be drawn.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.String,SkiaSharp.SKFont,SkiaSharp.SKColor,System.Single,System.Single,Bwl.Imaging.Skia.SKStringFormat)">
+            <summary>
+            Draws the specified text at the given coordinates on the canvas using the provided font and color.
+            </summary>
+            <remarks>This overload simplifies text drawing by allowing you to specify a position directly, rather
+            than a bounding rectangle. The text is positioned based on the provided coordinates.</remarks>
+            <param name="canvas">The canvas on which to draw the text.</param>
+            <param name="s">The text string to draw. If null, no text is rendered.</param>
+            <param name="font">The font that defines the style and size of the text.</param>
+            <param name="color">The color to use when drawing the text.</param>
+            <param name="x">The x-coordinate of the text's position on the canvas.</param>
+            <param name="y">The y-coordinate of the text's position on the canvas.</param>
+            <param name="format">An optional formatting object that specifies layout and alignment options for the text.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.ReadOnlySpan{System.Char},SkiaSharp.SKFont,SkiaSharp.SKColor,System.Single,System.Single,Bwl.Imaging.Skia.SKStringFormat)">
+            <summary>
+            Draws the specified text at the given coordinates on the canvas using the provided font and color.
+            </summary>
+            <remarks>This method draws text at a specific point on the canvas without specifying a bounding
+            rectangle. Ensure that the canvas is properly initialized before calling this method.</remarks>
+            <param name="canvas">The canvas on which to draw the text.</param>
+            <param name="s">A read-only span of characters representing the text to be drawn.</param>
+            <param name="font">The font that defines the style and size of the text.</param>
+            <param name="color">The color to use when rendering the text.</param>
+            <param name="x">The x-coordinate of the position where the text will be drawn.</param>
+            <param name="y">The y-coordinate of the position where the text will be drawn.</param>
+            <param name="format">An optional formatting object that specifies additional text layout options. May be null.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.String,SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKPoint,Bwl.Imaging.Skia.SKStringFormat)">
+            <summary>
+            Draws the specified text at the given position on the canvas using the provided font and color.
+            </summary>
+            <remarks>If the text string is null, this method does not render any text. The text is drawn with the
+            specified font and color at the provided point on the canvas.</remarks>
+            <param name="canvas">The SKCanvas on which to draw the text.</param>
+            <param name="s">The text string to draw. If null, no text is rendered.</param>
+            <param name="font">The SKFont that defines the typeface and size of the text.</param>
+            <param name="color">The SKColor used to render the text.</param>
+            <param name="point">The SKPoint specifying the position where the text will be drawn.</param>
+            <param name="format">An optional SKStringFormat that specifies text formatting options. Can be null.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.ReadOnlySpan{System.Char},SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKPoint,Bwl.Imaging.Skia.SKStringFormat)">
+            <summary>
+            Draws the specified text at a given point on the canvas using the provided font and color.
+            </summary>
+            <remarks>This method draws text at the specified point without requiring a bounding rectangle. The
+            text will be rendered using the provided font and color. If additional formatting is needed, supply a non-null
+            format parameter.</remarks>
+            <param name="canvas">The canvas on which to draw the text. Cannot be null.</param>
+            <param name="s">A read-only span of characters representing the text to draw.</param>
+            <param name="font">The font that defines the style and size of the text. Cannot be null.</param>
+            <param name="color">The color to use when drawing the text.</param>
+            <param name="point">The location on the canvas where the text will be drawn.</param>
+            <param name="format">An optional formatting object that specifies text layout options. May be null.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.String,SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKRect)">
+            <summary>
+            Draws the specified text onto the given canvas using the provided font and color within the specified layout
+            rectangle.
+            </summary>
+            <remarks>This method provides a simplified interface for drawing text on a canvas. It internally calls
+            an overload that allows for additional customization.</remarks>
+            <param name="canvas">The canvas on which to draw the text.</param>
+            <param name="s">The text string to draw. If null, no text is rendered.</param>
+            <param name="font">The font that defines the style and size of the text.</param>
+            <param name="color">The color to use when drawing the text.</param>
+            <param name="layoutRectangle">The rectangle that defines the area in which the text will be drawn. The text is clipped to this rectangle if it
+            exceeds its bounds.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.ReadOnlySpan{System.Char},SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKRect)">
+            <summary>
+            Draws the specified text onto the canvas using the given font and color, positioning it within the specified
+            layout rectangle.
+            </summary>
+            <remarks>Ensure that the layout rectangle is appropriately sized to contain the rendered text. The
+            method does not perform text wrapping or clipping beyond the bounds of the specified rectangle.</remarks>
+            <param name="canvas">The SKCanvas on which to draw the text.</param>
+            <param name="s">A read-only span of characters representing the text to render.</param>
+            <param name="font">The SKFont that defines the typeface, size, and style for the text.</param>
+            <param name="color">The SKColor to use when rendering the text.</param>
+            <param name="layoutRectangle">The SKRect that specifies the area in which the text will be laid out and drawn.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.String,SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKRect,Bwl.Imaging.Skia.SKStringFormat)">
+            <summary>
+            Draws the specified text onto the given canvas using the provided font and color, constrained within the
+            specified layout rectangle.
+            </summary>
+            <param name="canvas">The SKCanvas on which the text will be drawn.</param>
+            <param name="s">The string to be drawn. If null, no text will be rendered.</param>
+            <param name="font">The SKFont that defines the style and size of the text.</param>
+            <param name="color">The SKColor that specifies the color of the text.</param>
+            <param name="layoutRectangle">The SKRect that defines the area within which the text will be drawn. The text may be clipped if it exceeds this
+            area.</param>
+            <param name="format">An optional SKStringFormat that specifies how the text should be formatted, such as alignment and line spacing.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawText(SkiaSharp.SKCanvas,System.ReadOnlySpan{System.Char},SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKRect,Bwl.Imaging.Skia.SKStringFormat)">
+            <summary>
+            Draws the specified text onto the provided canvas using the given font and color, positioning it within the
+            defined layout rectangle and applying optional formatting.
+            </summary>
+            <remarks>This method enables custom text rendering on a canvas, allowing for precise control over
+            layout and formatting. Use the format parameter to adjust alignment or text direction as needed.</remarks>
+            <param name="canvas">The SKCanvas on which to draw the text.</param>
+            <param name="s">A read-only span of characters representing the text to render.</param>
+            <param name="font">The SKFont that specifies the typeface, size, and style for the text.</param>
+            <param name="color">The SKColor used to paint the text.</param>
+            <param name="layoutRectangle">The SKRect that defines the area in which the text will be laid out and drawn.</param>
+            <param name="format">An optional SKStringFormat that specifies text formatting options such as alignment and direction. If null,
+            default formatting is applied.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.DrawTextInternal(SkiaSharp.SKCanvas,System.ReadOnlySpan{System.Char},SkiaSharp.SKFont,SkiaSharp.SKColor,SkiaSharp.SKRect,Bwl.Imaging.Skia.SKStringFormat)">
+            <summary>
+            Draws the specified text onto the given canvas using the provided font and color, positioning and formatting it
+            within the specified layout rectangle according to the given string format options.
+            </summary>
+            <remarks>This method supports multi-line text, word wrapping, alignment, and trimming within the
+            specified rectangle. If the text exceeds the available space, it is trimmed or wrapped according to the provided
+            format. Subpixel rendering and full hinting are enabled for improved text clarity.</remarks>
+            <param name="canvas">The SKCanvas on which to render the text.</param>
+            <param name="s">A read-only span of characters representing the text to be drawn.</param>
+            <param name="font">The SKFont that defines the typeface, size, and rendering options for the text.</param>
+            <param name="color">The SKColor used to render the text.</param>
+            <param name="layoutRectangle">The SKRect that specifies the area within which the text will be drawn and aligned.</param>
+            <param name="format">An optional SKStringFormat that determines text alignment, line alignment, and trimming behavior. If null,
+            default alignment and no trimming are used.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.ComputeLineX(System.String,SkiaSharp.SKFont,SkiaSharp.SKRect,System.Single,Bwl.Imaging.Skia.SKStringAlignment,System.Boolean)">
+            <summary>
+            Calculates the X-coordinate at which to render the specified text within a layout rectangle, taking into account
+            alignment, padding, and whether the text width should be considered.
+            </summary>
+            <param name="text">The text to be measured and positioned within the layout rectangle.</param>
+            <param name="font">The font used to measure the width of the text.</param>
+            <param name="layoutRectangle">The rectangle that defines the area in which the text will be rendered.</param>
+            <param name="padding">The amount of horizontal padding to apply when positioning the text within the layout rectangle.</param>
+            <param name="alignment">The alignment of the text within the layout rectangle. Determines how the text is positioned horizontally (for
+            example, centered or aligned to the far edge).</param>
+            <param name="hasWidth">A value indicating whether the width of the text should be considered when calculating its position. If false,
+            the calculation does not account for the text width.</param>
+            <returns>The calculated X-coordinate for rendering the text, based on the specified alignment, padding, and layout
+            rectangle.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.ApplyTrimming(System.String,System.Single,SkiaSharp.SKFont,Bwl.Imaging.Skia.SKStringTrimming)">
+            <summary>
+            Trims the specified text to ensure it fits within the given maximum width, using the provided font and trimming
+            style.
+            </summary>
+            <remarks>If the input text does not exceed the specified width, it is returned as-is. The method
+            supports multiple trimming styles, including options that append an ellipsis or trim by word or
+            character.</remarks>
+            <param name="text">The text to be trimmed to fit within the specified width.</param>
+            <param name="maxWidth">The maximum width, in pixels, that the resulting text should occupy.</param>
+            <param name="font">The font used to measure the width of the text and determine how trimming is applied.</param>
+            <param name="trimming">The trimming style to apply, which specifies how the text should be shortened (for example, by character, by
+            word, or with an ellipsis).</param>
+            <returns>A string containing the trimmed version of the input text that fits within the specified maximum width. If the
+            text already fits, it is returned unchanged. The result may include an ellipsis if the trimming style specifies
+            it.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.TrimToCharacter(System.String,System.Single,SkiaSharp.SKFont,System.String)">
+            <summary>
+            Trims the specified text so that its rendered width does not exceed the given maximum width, appending the
+            specified suffix to the result.
+            </summary>
+            <remarks>If the entire text fits within the maximum width, the full text is returned with the suffix
+            appended. The method does not account for the width of the suffix when determining how much of the text can
+            fit.</remarks>
+            <param name="text">The text to be trimmed based on the maximum allowed rendered width.</param>
+            <param name="maxWidth">The maximum width, in pixels, that the rendered text and suffix can occupy.</param>
+            <param name="font">The font used to measure the rendered width of the text.</param>
+            <param name="suffix">The string to append to the trimmed text.</param>
+            <returns>A string containing the longest leading substring of the input text that fits within the specified width when
+            rendered with the given font, followed by the specified suffix.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.TrimToWord(System.String,System.Single,SkiaSharp.SKFont,System.String)">
+            <summary>
+            Trims the specified text to fit within the given maximum width when rendered with the provided font, preserving
+            whole words where possible and appending a suffix if truncation occurs.
+            </summary>
+            <remarks>If no complete words fit within the maximum width, the method falls back to trimming the text
+            at the character level. The result will always fit within the specified width when rendered with the given
+            font.</remarks>
+            <param name="text">The text to be trimmed to fit within the specified width.</param>
+            <param name="maxWidth">The maximum width, in pixels, that the resulting text should occupy when rendered with the specified font. Must
+            be greater than zero.</param>
+            <param name="font">The font used to measure the width of the text. Cannot be null.</param>
+            <param name="suffix">The string to append to the trimmed text if truncation is necessary, such as an ellipsis.</param>
+            <returns>A string containing the trimmed text that fits within the specified width, followed by the suffix if truncation
+            occurs.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKTextExtensions.TrimPath(System.String,System.Single,SkiaSharp.SKFont,System.String)">
+            <summary>
+            Trims a file or directory path to fit within a specified maximum width, appending an ellipsis if necessary to
+            indicate omitted sections.
+            </summary>
+            <remarks>If the path fits within the specified width, it is returned unchanged. Otherwise, the method
+            attempts to preserve the last segment of the path and uses a symmetric middle trim as a fallback to ensure the
+            result fits within the given width.</remarks>
+            <param name="text">The full path string to be trimmed.</param>
+            <param name="maxWidth">The maximum width, in pixels, that the resulting string should occupy.</param>
+            <param name="font">The font used to measure the width of the text and ellipsis.</param>
+            <param name="ellipsis">The string to append to the trimmed path when it exceeds the maximum width.</param>
+            <returns>A string representing the trimmed path that fits within the specified maximum width, including the ellipsis if
+            trimming occurred.</returns>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.RawFrameFunctions">
+            <summary>
+            Provides functions for converting raw HDR (High Dynamic Range) frame data to displayable SKBitmap images.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.RawFrameFunctions.ConvertRawToHDRBitmap1(System.Int32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Converts raw HDR frame data to an SKBitmap with gain adjustment and tone mapping.
+            </summary>
+            <param name="data">Raw pixel data as int array in RGB format (B, G, R triplets).</param>
+            <param name="width">Width of the image in pixels.</param>
+            <param name="height">Height of the image in pixels.</param>
+            <param name="baseGain">Base gain value for exposure adjustment. Values &lt;= 4 reduce exposure, values &gt; 4 increase exposure.</param>
+            <returns>An SKBitmap containing the tone-mapped HDR image.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.RawFrameFunctions.ConvertRawToHDRBitmap1Fast(System.Int32[],System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Optimized version of ConvertRawToHDRBitmap1 with conditional logic moved outside the main loop.
+            </summary>
+            <param name="data">Raw pixel data as int array in RGB format (B, G, R triplets).</param>
+            <param name="width">Width of the image in pixels.</param>
+            <param name="height">Height of the image in pixels.</param>
+            <param name="baseGain">Base gain value for exposure adjustment. Values &lt;= 4 reduce exposure, values &gt; 4 increase exposure.</param>
+            <returns>An SKBitmap containing the tone-mapped HDR image.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.RawFrameFunctions.InitPowTableHDR3">
+            <summary>
+            Initializes the lookup table for HDR tone mapping using a power function.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.RawFrameFunctions.ConvertRawToHDRBitmap3Fast(System.Int32[],System.Int32,System.Int32)">
+            <summary>
+            Fast HDR conversion using a pre-computed power function lookup table with parallel processing.
+            </summary>
+            <param name="data">Raw pixel data as int array in RGB format (B, G, R triplets).</param>
+            <param name="width">Width of the image in pixels.</param>
+            <param name="height">Height of the image in pixels.</param>
+            <returns>An SKBitmap containing the tone-mapped HDR image.</returns>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.UnsafeFunctions">
+            <summary>
+            Provides a set of unsafe functions for performing low-level image processing operations on SKBitmap objects. These functions utilize
+            direct memory access to manipulate pixel data efficiently.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.Crop(SkiaSharp.SKBitmap,SkiaSharp.SKRectI)">
+            <summary>
+            Crops a specified rectangular region from the provided bitmap and returns a new bitmap containing the cropped
+            area.
+            </summary>
+            <remarks>The cropped bitmap will have the same color type and alpha type as the source bitmap. Ensure
+            that the crop rectangle does not exceed the dimensions of the source bitmap to avoid undefined
+            behavior.</remarks>
+            <param name="bmp">The source bitmap from which the region will be cropped. This parameter must not be null.</param>
+            <param name="cropRect">The rectangle, in pixel coordinates, that defines the area to crop from the source bitmap. The rectangle must be
+            fully contained within the bounds of the source bitmap.</param>
+            <returns>A new SKBitmap containing the pixels from the specified rectangular region of the source bitmap.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.Patch(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap,SkiaSharp.SKRectI)">
+            <summary>
+            Copies pixel data from the source bitmap to the specified rectangular region of the target bitmap.
+            </summary>
+            <param name="srcBmp">The source bitmap containing the pixel data to copy. Cannot be null. Must have the same color type and alpha
+            type as the target bitmap.</param>
+            <param name="trgtBmp">The target bitmap to which the pixel data will be copied. Cannot be null. Must have the same color type and
+            alpha type as the source bitmap.</param>
+            <param name="region">The rectangular region within the target bitmap where the pixel data from the source bitmap will be applied. The
+            width and height of this region must match the dimensions of the source bitmap.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="srcBmp"/> or <paramref name="trgtBmp"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the source and target bitmaps do not have the same color type and alpha type, or if the dimensions of
+            the source bitmap do not match the width and height of the specified region.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.Sharpen5(SkiaSharp.SKBitmap)">
+            <summary>
+            Applies a sharpening filter to the specified bitmap image, enhancing its details.
+            </summary>
+            <remarks>The sharpening effect is applied using a predefined algorithm that enhances the edges in the
+            image.</remarks>
+            <param name="srcBmp">The source bitmap image to be sharpened. Must not be null.</param>
+            <returns>A new SKBitmap containing the sharpened version of the source image.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.Sharpen5(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap)">
+            <summary>
+            Applies a sharpening filter to the source bitmap and stores the result in the target bitmap.
+            </summary>
+            <remarks>This method supports grayscale and color bitmaps. Ensure that both bitmaps are locked during
+            processing to avoid concurrency issues.</remarks>
+            <param name="srcBmp">The source bitmap to be sharpened. Must not be null and must have the same color type and dimensions as the
+            target bitmap.</param>
+            <param name="trgtBmp">The target bitmap where the sharpened result will be stored. Must not be null and must have the same color type
+            and dimensions as the source bitmap.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="srcBmp"/> or <paramref name="trgtBmp"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the source and target bitmaps do not have the same color type, alpha type, or dimensions.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.Sharpen5Gray(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap)">
+            <summary>
+            Applies a sharpening filter to a grayscale image using a 5x5 kernel.
+            </summary>
+            <remarks>This method processes the image in parallel for improved performance. It modifies the target
+            bitmap directly based on the pixel values of the source bitmap.</remarks>
+            <param name="srcBmp">The source bitmap from which the grayscale image is read. This bitmap must have a valid pixel format compatible
+            with the sharpening operation.</param>
+            <param name="trgtBmp">The target bitmap where the sharpened grayscale image will be written. This bitmap must be of the same
+            dimensions as the source bitmap.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.Sharpen5Color(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap)">
+            <summary>
+            Applies a sharpening filter to the source bitmap and stores the result in the target bitmap using a 5x5 kernel.
+            </summary>
+            <remarks>This method uses a parallel processing approach to enhance performance. It converts the RGB
+            values to YUV for processing and then back to RGB. Ensure that the target bitmap is properly initialized before
+            calling this method.</remarks>
+            <param name="srcBmp">The source bitmap to be sharpened. This bitmap must be in a format compatible with the sharpening operation.</param>
+            <param name="trgtBmp">The target bitmap where the sharpened result will be stored. It must have the same dimensions and format as the
+            source bitmap.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.Normalize(SkiaSharp.SKBitmap,System.Double)">
+            <summary>
+            Creates a normalized bitmap by adjusting the borders of the source bitmap according to the specified percentage.
+            </summary>
+            <remarks>Normalization modifies the visual appearance of the bitmap by adjusting its borders based on
+            the specified percentage. The original bitmap remains unchanged.</remarks>
+            <param name="srcBmp">The source bitmap to be normalized. Cannot be null.</param>
+            <param name="borderPercent">The percentage of the border to apply during normalization, expressed as a decimal value. The default is 0.1,
+            representing 10%. Must be greater than or equal to 0.</param>
+            <returns>A new SKBitmap instance containing the normalized version of the source bitmap.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.Normalize(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap,System.Double)">
+            <summary>
+            Normalizes the pixel values of the source bitmap and writes the result to the target bitmap, ensuring both
+            bitmaps have the same color type and dimensions.
+            </summary>
+            <remarks>This method supports normalization for bitmaps with Gray8, Bgra8888, and Rgba8888 color
+            types. Both bitmaps must be compatible in terms of color type, alpha type, and dimensions. The borderPercent
+            parameter allows customization of the border area used in normalization, which may affect the result depending
+            on the image content.</remarks>
+            <param name="srcBmp">The source bitmap to normalize. Must not be null and must have the same color type and dimensions as the target
+            bitmap.</param>
+            <param name="trgtBmp">The target bitmap where the normalized pixel values will be written. Must not be null and must have the same
+            color type and dimensions as the source bitmap.</param>
+            <param name="borderPercent">The percentage of the border area to consider during normalization, expressed as a value between 0.0 and 1.0.
+            Defaults to 0.1.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="srcBmp"/> or <paramref name="trgtBmp"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the source and target bitmaps do not have matching color types, alpha types, or dimensions, or if the
+            color type is unsupported.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.NormalizeGray(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap)">
+            <summary>
+            Normalizes the grayscale values of the source bitmap and stores the result in the target bitmap.
+            </summary>
+            <remarks>This method adjusts the grayscale values to fit within the full range of 0 to 255, based on
+            the minimum and maximum values found in the source bitmap. It is important that both source and target bitmaps
+            are of the same size to avoid data corruption.</remarks>
+            <param name="srcBmp">The source bitmap containing the grayscale values to be normalized. The bitmap must not be null and should
+            contain valid pixel data.</param>
+            <param name="trgtBmp">The target bitmap where the normalized grayscale values will be stored. The bitmap must not be null and should
+            have the same dimensions as the source bitmap.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.NormalizeColor(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap,System.Double)">
+            <summary>
+            Normalizes the color values of the source bitmap and writes the result to the target bitmap using luminance
+            thresholds determined by the specified border percentage.
+            </summary>
+            <remarks>This method processes the source bitmap by converting RGB values to luminance, building a
+            histogram, and normalizing the color values based on calculated thresholds. It preserves the alpha channel in
+            the target bitmap if present. Use this method to enhance image contrast while maintaining
+            transparency.</remarks>
+            <param name="srcBmp">The source bitmap containing the original color values to be normalized.</param>
+            <param name="trgtBmp">The target bitmap where the normalized color values will be written.</param>
+            <param name="borderPercent">The percentage of the total pixel count used to determine the minimum and maximum luminance thresholds for
+            normalization. Must be between 0 and 1.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.RgbToGray(SkiaSharp.SKBitmap)">
+            <summary>
+            Converts the specified RGB bitmap to a grayscale bitmap.
+            </summary>
+            <remarks>The method creates a new bitmap with the same dimensions as the source bitmap, using a
+            grayscale color type.</remarks>
+            <param name="srcBmp">The source bitmap to be converted to grayscale. Must not be null.</param>
+            <returns>A new SKBitmap object representing the grayscale version of the source bitmap.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="srcBmp"/> is null.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.RgbToGray(SkiaSharp.SKBitmap,SkiaSharp.SKBitmap)">
+            <summary>
+            Converts a bitmap in BGRA8888 or RGBA8888 color format to its grayscale representation using the CCIR-601
+            formula.
+            </summary>
+            <remarks>The grayscale conversion uses the CCIR-601 formula, which weights the red, green, and blue
+            channels to produce a perceptually accurate grayscale image. The method does not allocate a new bitmap; it
+            writes the result into the provided target bitmap.</remarks>
+            <param name="srcBmp">The source bitmap to convert, which must be in BGRA8888 or RGBA8888 format and have the same dimensions as the
+            target bitmap.</param>
+            <param name="trgtBmp">The target bitmap that receives the grayscale output. Must be in Gray8 format and match the dimensions of the
+            source bitmap.</param>
+            <returns>The target bitmap containing the grayscale version of the source bitmap.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="srcBmp"/> or <paramref name="trgtBmp"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the source bitmap is not in BGRA8888 or RGBA8888 format, the target bitmap is not in Gray8 format, or
+            if the dimensions of the source and target bitmaps do not match.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.RgbReverse(SkiaSharp.SKBitmap)">
+            <summary>
+            Reverses the red and blue color channels of the specified bitmap image in place.
+            </summary>
+            <remarks>This method modifies the pixel data of the provided bitmap directly. The operation is
+            thread-safe as the bitmap is locked during processing.</remarks>
+            <param name="bmp">The bitmap image to process. Must not be null and must have a color type of SKColorType.Bgra8888.</param>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="bmp"/> is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if <paramref name="bmp"/>'s color type is not SKColorType.Bgra8888.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.SKBitmapClone(SkiaSharp.SKBitmap)">
+            <summary>
+            Creates a new SKBitmap that is a copy of the specified source bitmap.
+            </summary>
+            <remarks>The source bitmap is locked during the cloning process to ensure thread safety. The cloned
+            bitmap has the same dimensions and pixel format as the source.</remarks>
+            <param name="srcBmp">The source SKBitmap to clone. Cannot be null.</param>
+            <returns>A new SKBitmap instance that is an exact copy of the source bitmap. Returns null if the source bitmap is null.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.SKBitmapFromIntPtr(System.IntPtr,SkiaSharp.SKSize,SkiaSharp.SKColorType,SkiaSharp.SKAlphaType)">
+            <summary>
+            Creates a new SKBitmap instance from a pointer to pixel data, using the specified size, pixel format, and alpha
+            type.
+            </summary>
+            <remarks>The method copies pixel data directly from unmanaged memory into a new SKBitmap. The caller
+            is responsible for ensuring that the source pointer is valid and that the pixel data matches the specified
+            format and size. Improper use may result in memory access violations.</remarks>
+            <param name="src">A pointer to the source pixel data in memory. The data must be compatible with the specified pixel format and
+            size.</param>
+            <param name="size">The dimensions of the bitmap to create, represented as an SKSize. Both width and height must be positive values.</param>
+            <param name="pixelFormat">The pixel format of the source data, specified as an SKColorType. Determines how the pixel data is interpreted.</param>
+            <param name="alphaType">The alpha type for the bitmap, specified as an SKAlphaType. Indicates how transparency is handled in the bitmap.</param>
+            <returns>An SKBitmap containing the pixel data copied from the specified memory location.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.FillBitmapFromIntPtr(System.IntPtr,SkiaSharp.SKBitmap)">
+            <summary>
+            Copies pixel data from the specified memory location into the provided SKBitmap instance.
+            </summary>
+            <remarks>This method performs a direct memory copy of pixel data into the target bitmap. It is
+            important to ensure that the source data is compatible with the target bitmap's format and size to avoid data
+            corruption or unexpected results.</remarks>
+            <param name="src">A pointer to the source pixel data in unmanaged memory. The data must match the dimensions and pixel format of
+            the target bitmap.</param>
+            <param name="trgtBmp">The SKBitmap object that will be filled with the pixel data from the source pointer.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.SKBitmapToArray(SkiaSharp.SKBitmap,System.Boolean)">
+            <summary>
+            Converts the specified SKBitmap to a byte array, optionally including a header with bitmap metadata.
+            </summary>
+            <remarks>The header consists of 5 bytes: the pixel size (1 byte), the width (2 bytes,
+            little-endian), and the height (2 bytes, little-endian). The position of the header within the array is
+            determined by the value of <paramref name="headerFirst"/>.</remarks>
+            <param name="srcBmp">The source SKBitmap to convert. This parameter must not be null.</param>
+            <param name="headerFirst">A value indicating whether the header containing bitmap metadata is placed at the beginning of the byte
+            array. If set to <see langword="true"/>, the header precedes the pixel data; otherwise, it is appended after
+            the pixel data.</param>
+            <returns>A byte array containing the pixel data of the bitmap, along with a 5-byte header that includes pixel size,
+            width, and height information.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="srcBmp"/> is null.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.ArrayToSKBitmap(System.Byte[],System.Boolean)">
+            <summary>
+            Creates an SKBitmap from a byte array containing image pixel data and header information.
+            </summary>
+            <remarks>The method supports images with pixel formats of 1 byte per pixel (grayscale) and 4
+            bytes per pixel (BGRA). The byte array must be structured so that the header and pixel data are correctly
+            positioned according to the headerFirst parameter. Supplying an unsupported pixel format or an incorrectly
+            structured array will result in an exception.</remarks>
+            <param name="srcData">The byte array that contains both the image header and pixel data. The header must include the pixel size
+            and the width and height of the image, encoded in the first or last five bytes depending on the value of
+            headerFirst.</param>
+            <param name="headerFirst">A value indicating whether the header information is located at the beginning of the byte array. If set to
+            true, the header precedes the pixel data; if false, the header follows the pixel data.</param>
+            <returns>An SKBitmap instance representing the image constructed from the provided byte array.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if srcData is null.</exception>
+            <exception cref="T:System.ArgumentException">Thrown if the pixel format specified in the header is not supported.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.SKBitmapProbeGray(SkiaSharp.SKBitmap,System.Int32)">
+            <summary>
+            Samples a grayscale SKBitmap at regular intervals and returns the luminance values as a byte array.
+            </summary>
+            <param name="srcBmp">The source grayscale bitmap to sample. Must be Gray8 format.</param>
+            <param name="step">The sampling interval in pixels. A step of 2 will sample every other pixel.</param>
+            <returns>A byte array containing sampled luminance values.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.SKBitmapProbeColor(SkiaSharp.SKBitmap,System.Int32)">
+            <summary>
+            Samples a color SKBitmap at regular intervals, converts to grayscale, and returns luminance values as a byte array.
+            </summary>
+            <param name="srcBmp">The source color bitmap to sample. Must be Bgra8888 or Rgba8888 format.</param>
+            <param name="step">The sampling interval in pixels. A step of 2 will sample every other pixel.</param>
+            <returns>A byte array containing sampled luminance values converted using CCIR-601 formula.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.SKBitmapProbeColorRgb(SkiaSharp.SKBitmap,System.Int32)">
+            <summary>
+            Samples a color SKBitmap at regular intervals and returns full RGB color data as a byte array.
+            </summary>
+            <param name="srcBmp">The source color bitmap to sample. Must be Bgra8888 or Rgba8888 format.</param>
+            <param name="step">The sampling interval in pixels. A step of 2 will sample every other pixel.</param>
+            <returns>A byte array containing RGB triplets (3 bytes per sampled pixel) in R,G,B order.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.JpegDecodedOK(SkiaSharp.SKBitmap)">
+            <summary>
+            Determines whether the specified bitmap, presumed to contain a JPEG image, has been decoded correctly by
+            analyzing pixel data consistency across JPEG blocks.
+            </summary>
+            <remarks>This method checks for differences in pixel data across multiple rows within each JPEG block
+            to detect potential decoding errors. It is intended for use with bitmaps that originate from JPEG images and may
+            not be applicable to other image formats.</remarks>
+            <param name="srcBmp">The source bitmap containing the JPEG image to validate. This parameter must not be null.</param>
+            <returns>true if the JPEG image appears to be decoded correctly; otherwise, false.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if srcBmp is null.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.SKBitmapHash(SkiaSharp.SKBitmap,System.Int32)">
+            <summary>
+            Calculates a hash value for the specified bitmap by sampling pixel data at defined intervals.
+            </summary>
+            <remarks>The method locks the bitmap during processing to ensure thread safety. The resulting hash
+            value depends on the sampling interval specified by the <paramref name="step"/> parameter; using a larger step
+            may result in a less precise hash.</remarks>
+            <param name="srcBmp">The source bitmap from which to compute the hash. This parameter must not be null.</param>
+            <param name="step">The interval, in bytes, at which to sample pixel values. Must be a positive integer.</param>
+            <returns>A hash value represented as an unsigned long integer, derived from the sampled pixel data of the bitmap.</returns>
+            <exception cref="T:System.ArgumentNullException">Thrown if <paramref name="srcBmp"/> is null.</exception>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.UnsafeFunctions.SKBitmapHashIntPtr(System.IntPtr,SkiaSharp.SKSize,System.Int32,System.Int32)">
+            <summary>
+            Calculates a hash value for a bitmap represented in unmanaged memory.
+            </summary>
+            <remarks>This method is intended for scenarios where bitmap data is accessed directly in unmanaged
+            memory. The hash is computed by sampling bytes at the specified interval, which can be used for quick
+            comparisons or change detection. The accuracy and uniqueness of the hash depend on the chosen step
+            value.</remarks>
+            <param name="src">A pointer to the bitmap data in unmanaged memory. This must reference a valid memory location containing the
+            bitmap's bytes.</param>
+            <param name="size">The dimensions of the bitmap, specified as an SKSize structure representing the width and height.</param>
+            <param name="rowBytes">The number of bytes in a single row of the bitmap, including any padding. Must be greater than zero.</param>
+            <param name="step">The interval, in bytes, at which to sample the bitmap data when computing the hash. Must be greater than zero.</param>
+            <returns>A 64-bit unsigned integer representing the computed hash value of the bitmap data.</returns>
+        </member>
+    </members>
+</doc>

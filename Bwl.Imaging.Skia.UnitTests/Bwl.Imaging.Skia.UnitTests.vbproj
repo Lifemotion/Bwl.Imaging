@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net48;net8.0</TargetFrameworks>
+		<OutputType>Library</OutputType>
+		<IsTestProject>true</IsTestProject>
+	</PropertyGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Bwl.Imaging.Skia\Bwl.Imaging.Skia.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\26FWD_IZHS.jpg" />
+		<EmbeddedResource Include="Resources\636080817147998076.jpg" />
+		<EmbeddedResource Include="Resources\638067000726558653.jpg" />
+		<EmbeddedResource Include="Resources\CMYK.jpg" />
+		<EmbeddedResource Include="Resources\Gray.jpg" />
+		<EmbeddedResource Include="Resources\gray24.bmp" />
+		<EmbeddedResource Include="Resources\gray25.bmp" />
+		<EmbeddedResource Include="Resources\grayProbeS4.bmp" />
+		<EmbeddedResource Include="Resources\jpeg24bpp.jpg" />
+		<EmbeddedResource Include="Resources\jpeg8bpp.jpg" />
+		<EmbeddedResource Include="Resources\No_JFIF.jpg" />
+		<EmbeddedResource Include="Resources\RGB.jpg" />
+		<EmbeddedResource Include="Resources\rgbProbeS4.bmp" />
+		<EmbeddedResource Include="Resources\rgbw24.png" />
+		<EmbeddedResource Include="Resources\rgbw25.png" />
+		<EmbeddedResource Include="Resources\YCbCr.jpg" />
+		<EmbeddedResource Include="Resources\YCbCrK.jpg" />
+		<EmbeddedResource Include="Resources\_4x3-gray.bmp" />
+		<EmbeddedResource Include="Resources\_4x3-rgb.bmp" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="System.Text.Json" Version="10.0.3" />
+	</ItemGroup>
+	
+</Project>
