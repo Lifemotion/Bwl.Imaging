@@ -30,11 +30,25 @@ public static class ImageTools
 
     public static SKRectI SKRectToSKRectI(SKRect rectF, SKSizeI size)
     {
-        int X = (int)Math.Round(Math.Floor((double)(rectF.Left * size.Width)));
-        int Y = (int)Math.Round(Math.Floor((double)(rectF.Top * size.Height)));
-        int W = (int)Math.Round(Math.Floor((double)(rectF.Width * size.Width)));
-        int H = (int)Math.Round(Math.Floor((double)(rectF.Height * size.Height)));
+        int X = (int)Math.Floor((double)(rectF.Left * size.Width));
+        int Y = (int)Math.Floor((double)(rectF.Top * size.Height));
+        int W = (int)Math.Floor((double)(rectF.Width * size.Width));
+        int H = (int)Math.Floor((double)(rectF.Height * size.Height));
         return SKExtensions.SKRectIFromXYWH(X, Y, W, H);
+    }
+
+    public static SKPoint SKPointIToSKPoint(SKPointI point, SKSize size)
+    {
+        float X = point.X / (float)size.Width;
+        float Y = point.Y / (float)size.Height;
+        return new SKPoint(X, Y);
+    }
+
+    public static SKPointI SKPointToSKPointI(SKPoint point, SKSizeI size)
+    {
+        int X = (int)Math.Floor((double)(point.X * size.Width));
+        int Y = (int)Math.Floor((double)(point.Y * size.Height));
+        return new SKPointI(X, Y);
     }
 
     public static SKRect SKPointsToSKRect(SKPoint[] points)

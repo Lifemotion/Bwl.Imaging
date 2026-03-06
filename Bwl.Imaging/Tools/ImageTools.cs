@@ -37,11 +37,25 @@ namespace Bwl.Imaging
 
         public static Rectangle RectangleFToRectangle(RectangleF rectF, Size size)
         {
-            int X = (int)Math.Round(Math.Floor((double)(rectF.X * size.Width)));
-            int Y = (int)Math.Round(Math.Floor((double)(rectF.Y * size.Height)));
-            int W = (int)Math.Round(Math.Floor((double)(rectF.Width * size.Width)));
-            int H = (int)Math.Round(Math.Floor((double)(rectF.Height * size.Height)));
+            int X = (int)Math.Floor((double)(rectF.X * size.Width));
+            int Y = (int)Math.Floor((double)(rectF.Y * size.Height));
+            int W = (int)Math.Floor((double)(rectF.Width * size.Width));
+            int H = (int)Math.Floor((double)(rectF.Height * size.Height));
             return new Rectangle(X, Y, W, H);
+        }
+
+        public static PointF PointToPointF(Point point, Size size)
+        {
+            float X = point.X / (float)size.Width;
+            float Y = point.Y / (float)size.Height;
+            return new PointF(X, Y);
+        }
+
+        public static Point PointFToPoint(PointF pointF, Size size)
+        {
+            int X = (int)Math.Floor((double)(pointF.X * size.Width));
+            int Y = (int)Math.Floor((double)(pointF.Y * size.Height));
+            return new Point(X, Y);
         }
 
         public static RectangleF PointsToRectangleF(PointF[] points)

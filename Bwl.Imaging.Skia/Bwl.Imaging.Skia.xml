@@ -895,7 +895,8 @@
             <summary>
             Specifies the interpolation modes that can be used for image scaling and rendering operations.
             </summary>
-            <remarks>While it's not used in this library directly, it still might help with migrations in other libraries or applications that rely on similar interpolation concepts.</remarks>
+            <remarks>While it's not used in this library directly, it still might help with migrations in other 
+            libraries or applications that rely on similar interpolation concepts.</remarks>
         </member>
         <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.Invalid">
             <summary>Indicates that the value is invalid.</summary>
