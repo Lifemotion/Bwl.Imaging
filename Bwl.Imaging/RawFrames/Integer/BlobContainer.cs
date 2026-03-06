@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
-
-namespace Bwl.Imaging
+﻿namespace Bwl.Imaging
 {
     public class IntegerBlob
     {
         public string ID;
         public int[] Data;
 
-        public void WriteDataToStream(System.IO.FileStream fs)
+        public void WriteDataToStream(FileStream fs)
         {
             byte[] bytes;
             for (int i = 0, loopTo = Data.Length - 1; i <= loopTo; i++)
@@ -20,7 +15,7 @@ namespace Bwl.Imaging
             }
         }
 
-        public void ReadDataFromStream(System.IO.FileStream fs, int datalength)
+        public void ReadDataFromStream(FileStream fs, int datalength)
         {
             Data = new int[datalength];
             byte[] bytes = BitConverter.GetBytes(0);
@@ -49,17 +44,17 @@ namespace Bwl.Imaging
 
         public void Save(string filename)
         {
-            using (var fs = new System.IO.FileStream(filename, System.IO.FileMode.OpenOrCreate, System.IO.FileAccess.ReadWrite))
+            using (var fs = new FileStream(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             {
                 foreach (var attr in Attributes)
-                    WriteLineToStream(fs, attr.Key + "=" + attr.Value + Constants.vbCrLf);
+                    WriteLineToStream(fs, $"{attr.Key}={attr.Value}\r\n");
                 foreach (var Blob in Blobs)
                 {
-                    WriteLineToStream(fs, "{BlobStart}=" + Blob.ID + "," + Blob.Data.GetType().ToString() + "," + Blob.Data.Length.ToString() + Constants.vbNullChar);
+                    WriteLineToStream(fs, $"{{BlobStart}}={Blob.ID},{Blob.Data.GetType()},{Blob.Data.Length}\r\n");
                     Blob.WriteDataToStream(fs);
-                    WriteLineToStream(fs, "{BlobEnd}=" + Blob.ID + Constants.vbCrLf);
+                    WriteLineToStream(fs, $"{{BlobEnd}}={Blob.ID}\r\n");
                 }
-                WriteLineToStream(fs, "{End}={End}" + Constants.vbCrLf);
+                WriteLineToStream(fs, $"{{End}}={{End}}\r\n");
                 fs.Flush();
                 fs.Close();
             }
@@ -67,7 +62,7 @@ namespace Bwl.Imaging
 
         public static BlobContainer FromFile(string filename)
         {
-            using (var fs = new System.IO.FileStream(filename, System.IO.FileMode.Open, System.IO.FileAccess.Read))
+            using (var fs = new FileStream(filename, FileMode.Open, FileAccess.Read))
             {
                 var @file = new BlobContainer();
                 do
@@ -87,7 +82,7 @@ namespace Bwl.Imaging
                                         throw new Exception("Bad file format");
                                     string id = @params[0];
                                     string typename = @params[1];
-                                    int length = Conversions.ToInteger(@params[2]);
+                                    int length = Convert.ToInt32(@params[2]);
                                     switch (typename ?? "")
                                     {
                                         case "System.Int32[]":
@@ -134,13 +129,13 @@ namespace Bwl.Imaging
             }
         }
 
-        private static void WriteLineToStream(System.IO.FileStream fs, string line)
+        private static void WriteLineToStream(FileStream fs, string line)
         {
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(line);
             fs.Write(bytes, 0, bytes.Length);
         }
 
-        private static string ReadLineFromStream(System.IO.FileStream fs)
+        private static string ReadLineFromStream(FileStream fs)
         {
             var bytes = new List<byte>();
             int read = fs.ReadByte();

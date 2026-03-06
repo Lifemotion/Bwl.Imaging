@@ -1,8 +1,7 @@
 ﻿
-namespace Bwl.Imaging.Skia
+namespace Bwl.Imaging.Skia;
+
+public interface IRGBConvertable
 {
-    public interface IRGBConvertable
-    {
-        RGB ToRGB();
-    }
+    RGB ToRGB();
 }

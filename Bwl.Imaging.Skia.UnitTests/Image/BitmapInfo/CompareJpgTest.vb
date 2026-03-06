@@ -7,6 +7,8 @@ Imports SkiaSharp
 Public Class CompareJpgTest
     Inherits BitmapInfoTestBase
 
+    ' TODO: probably should be removed, stream comparison byte by byte doesn't make much sense in .NET 5+ and gives no advantage over SequenceEqual anymore. 
+    ' Also it randomly might complete or not complete in time, which makes it unreliable for testing.
     <Test>
     <Parallelizable(ParallelScope.Self)>
     Public Sub CompareJpgTest()
@@ -21,12 +23,12 @@ Public Class CompareJpgTest
         bmp3.SetPixel(0, 0, New SKColor(255, 255, 255)) '...на один пиксель
 
         'Формирование тестируемых структур данных
-        Dim bi1 = New BitmapInfo(bmp1) : bi1.Compress()
-        Dim bi2 = New BitmapInfo(bmp2) : bi2.Compress()
-        Dim bi3 = New BitmapInfo(bmp3) : bi3.Compress()
+        Dim bi1 = New SKBitmapInfo(bmp1) : bi1.Compress()
+        Dim bi2 = New SKBitmapInfo(bmp2) : bi2.Compress()
+        Dim bi3 = New SKBitmapInfo(bmp3) : bi3.Compress()
 
         'Тест
-        Dim compareTest = Sub(b1 As BitmapInfo, b2 As BitmapInfo, result As Boolean)
+        Dim compareTest = Sub(b1 As SKBitmapInfo, b2 As SKBitmapInfo, result As Boolean)
                               Dim sw = New Stopwatch()
                               'Оптимизированное сравнение потоков jpg
                               sw.Restart()

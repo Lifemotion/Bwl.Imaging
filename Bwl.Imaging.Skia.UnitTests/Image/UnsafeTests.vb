@@ -41,15 +41,15 @@ Public Class UnsafeTests
         Dim blueFromRow2 = UnsafeFunctions.Crop(bmpGray, rectBlueRow2)
         Dim whiteFromRow2 = UnsafeFunctions.Crop(bmpGray, rectWhiteRow2)
 
-        Dim redMatrixFromRow1 = BitmapConverter.BitmapToGrayMatrix(redFromRow1)
-        Dim greenMatrixFromRow1 = BitmapConverter.BitmapToGrayMatrix(greenFromRow1)
-        Dim blueMatrixFromRow1 = BitmapConverter.BitmapToGrayMatrix(blueFromRow1)
-        Dim whiteMatrixFromRow1 = BitmapConverter.BitmapToGrayMatrix(whiteFromRow1)
+        Dim redMatrixFromRow1 = redFromRow1.ToGrayMatrix()
+        Dim greenMatrixFromRow1 = greenFromRow1.ToGrayMatrix()
+        Dim blueMatrixFromRow1 = blueFromRow1.ToGrayMatrix()
+        Dim whiteMatrixFromRow1 = whiteFromRow1.ToGrayMatrix()
 
-        Dim redMatrixFromRow2 = BitmapConverter.BitmapToGrayMatrix(redFromRow2)
-        Dim greenMatrixFromRow2 = BitmapConverter.BitmapToGrayMatrix(greenFromRow2)
-        Dim blueMatrixFromRow2 = BitmapConverter.BitmapToGrayMatrix(blueFromRow2)
-        Dim whiteMatrixFromRow2 = BitmapConverter.BitmapToGrayMatrix(whiteFromRow2)
+        Dim redMatrixFromRow2 = redFromRow2.ToGrayMatrix()
+        Dim greenMatrixFromRow2 = greenFromRow2.ToGrayMatrix()
+        Dim blueMatrixFromRow2 = blueFromRow2.ToGrayMatrix()
+        Dim whiteMatrixFromRow2 = whiteFromRow2.ToGrayMatrix()
 
         For row = 0 To S - 1
             For col = 0 To S - 1
@@ -152,15 +152,15 @@ Public Class UnsafeTests
         Dim blueFromRow2 = UnsafeFunctions.Crop(bmpRgb, rectBlueRow2)
         Dim whiteFromRow2 = UnsafeFunctions.Crop(bmpRgb, rectWhiteRow2)
 
-        Dim redMatrixFromRow1 = BitmapConverter.BitmapToRGBMatrix(redFromRow1)
-        Dim greenMatrixFromRow1 = BitmapConverter.BitmapToRGBMatrix(greenFromRow1)
-        Dim blueMatrixFromRow1 = BitmapConverter.BitmapToRGBMatrix(blueFromRow1)
-        Dim whiteMatrixFromRow1 = BitmapConverter.BitmapToRGBMatrix(whiteFromRow1)
+        Dim redMatrixFromRow1 = redFromRow1.ToRgbMatrix()
+        Dim greenMatrixFromRow1 = greenFromRow1.ToRgbMatrix()
+        Dim blueMatrixFromRow1 = blueFromRow1.ToRgbMatrix()
+        Dim whiteMatrixFromRow1 = whiteFromRow1.ToRgbMatrix()
 
-        Dim redMatrixFromRow2 = BitmapConverter.BitmapToRGBMatrix(redFromRow2)
-        Dim greenMatrixFromRow2 = BitmapConverter.BitmapToRGBMatrix(greenFromRow2)
-        Dim blueMatrixFromRow2 = BitmapConverter.BitmapToRGBMatrix(blueFromRow2)
-        Dim whiteMatrixFromRow2 = BitmapConverter.BitmapToRGBMatrix(whiteFromRow2)
+        Dim redMatrixFromRow2 = redFromRow2.ToRgbMatrix()
+        Dim greenMatrixFromRow2 = greenFromRow2.ToRgbMatrix()
+        Dim blueMatrixFromRow2 = blueFromRow2.ToRgbMatrix()
+        Dim whiteMatrixFromRow2 = whiteFromRow2.ToRgbMatrix()
 
         For row = 0 To S - 1
             For col = 0 To S - 1
@@ -260,9 +260,9 @@ Public Class UnsafeTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub UnsafeRgbToGray24Test()
         Dim bmpRgb = ResourceLoader.Resrgbw24
-        Dim matrixGray = BitmapConverter.BitmapToGrayMatrix(bmpRgb)
+        Dim matrixGray = bmpRgb.ToGrayMatrix()
         Dim bmpGray2 = UnsafeFunctions.RgbToGray(bmpRgb)
-        Dim matrixGray2 = BitmapConverter.BitmapToGrayMatrix(bmpGray2)
+        Dim matrixGray2 = bmpGray2.ToGrayMatrix()
         Assert.That(matrixGray.Width, [Is].EqualTo(matrixGray2.Width))
         Assert.That(matrixGray.Height, [Is].EqualTo(matrixGray2.Height))
         For i = 0 To matrixGray.Gray.Length - 1

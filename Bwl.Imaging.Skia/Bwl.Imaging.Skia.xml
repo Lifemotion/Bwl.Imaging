@@ -4,294 +4,6 @@
         <name>Bwl.Imaging.Skia</name>
     </assembly>
     <members>
-        <member name="T:Bwl.Imaging.Skia.BitmapInfo">
-            <summary>
-            Потокобезопасная обвязка Bitmap-а, с поддержкой
-            кешированных свойств изображения и JPEG-кеша.
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BitmapCloneManaged(SkiaSharp.SKBitmap)">
-            <summary>
-            Клонирование Bitnap-а в соотв. с выбранным режимом.
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.CheckBitmap(SkiaSharp.SKBitmap)">
-            <summary>
-            Проверка Bitmap-а на рабочее состояние.
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalAllocatedDataCount">
-            <summary>
-            Глобальный счетчик количества выделенных байт Bitmap-ов.
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalCompressedCount">
-            <summary>
-            Глобальный счетчик осуществленных компрессий JPEG (а не переприсваиваний).
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalDecompressedCount">
-            <summary>
-            Глобальный счетчик декомпрессий JPEG (с формированием Bitmap-ов).
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalDecompressedErrorCount">
-            <summary>
-            Глобальный счетчик количества ошибок декомпресии.
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalDisposeCount">
-            <summary>
-            Глобальный счетчик количества элиминирований Bitmap-ов (Dispose).
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalDisposeErrorCount">
-            <summary>
-            Глобальный счетчик количества ошибок высвобождения Bitmap-ов.
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._globalCloneErrorCount">
-            <summary>
-            Глобальный счетчик количества ошибок клонирований Bitmap-ов.
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._compressedCount">
-            <summary>
-            Счетчик осуществленных компрессий JPEG (а не переприсваиваний).
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._decompressedCount">
-            <summary>
-            Счетчик декомпрессий JPEG (с формированием Bitmap-ов).
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._decompressedErrorCount">
-            <summary>
-            Счетчик количества ошибок декомпресии.
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._disposeCount">
-            <summary>
-            Счетчик количества элиминирований Bitmap-ов (Dispose).
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._disposeErrorCount">
-            <summary>
-            Счетчик количества ошибок высвобождения Bitmap-ов.
-            </summary>
-        </member>
-        <member name="F:Bwl.Imaging.Skia.BitmapInfo._cloneErrorCount">
-            <summary>
-            Счетчик количества ошибок клонирований Bitmap-ов.
-            </summary>
-        </member>
-        <member name="P:Bwl.Imaging.Skia.BitmapInfo.BitmapKeepTimeS">
-            <summary>
-            Время хранения декомпрессированного битмапа (если доступны JPEG-данные для экономии ОЗУ).
-            </summary>
-        </member>
-        <member name="P:Bwl.Imaging.Skia.BitmapInfo.Bmp">
-            <summary>
-            Прямой доступ по ссылке к хранимому Bitmap-у.
-            </summary>
-            <remarks>
-            При обращении к Bmp обязательно использовать методы BmpLock() / BmpUnlock().
-            </remarks>
-        </member>
-        <member name="P:Bwl.Imaging.Skia.BitmapInfo.JpgIsNothing">
-            <summary>
-            Данные JPEG пусты?
-            </summary>
-            <remarks>
-            Если данных JPEG нет, это не означает, что изображение отсутствует.
-            Возможно, используется Bitmap.
-            </remarks>
-        </member>
-        <member name="P:Bwl.Imaging.Skia.BitmapInfo.BmpIsNothing">
-            <summary>
-            Bitmap пуст?
-            </summary>
-            <remarks>
-            Если Bitmap пуст, это не означает, что изображение отсутствует,
-            возможно, используется хранение в JPEG.
-            </remarks>
-        </member>
-        <member name="P:Bwl.Imaging.Skia.BitmapInfo.BmpAndJpgAreNothing">
-            <summary>
-            Данные изображения пусты?
-            </summary>
-            <remarks>
-            Наличие этого флага означает, что данных изображения нет.
-            </remarks>
-        </member>
-        <member name="P:Bwl.Imaging.Skia.BitmapInfo.BmpSize">
-            <summary>
-            Кешированный размер сохраненного Bitmap/JPEG.
-            </summary>
-        </member>
-        <member name="P:Bwl.Imaging.Skia.BitmapInfo.RowBytes">
-            <summary>
-            Кешированный формат пикселя сохраненного Bitmap/JPEG.
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BmpLock(System.Int32)">
-            <summary>
-            Блокировка доступа к разделяемому ресурсу (порождает исключение по таймауту).
-            </summary>
-            <remarks>  
-            Типичная схема использования:
-            1: .BmpLock() 'Не оборачиваем Try-Catch: может вызвать исключение таймаута и в Finally вызовет в итоге лишний .BmpUnlock()
-            2: Try
-            3:     ... 'Этот код может вызвать исключения, но если дошли до него - ресурс был получен на .BmpLock() - исключения не было
-            4: Catch ex As Exception
-            5:     ... 'Обработали исключения кода как требуется...
-            6: Finally
-            7:     .BmpUnlock() '...и в итоге освободили доступ к разделяемому ресурсу
-            8: End Try
-            </remarks>
-            <param name="timeoutMs"></param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BmpUnlock">
-            <summary>
-            Освобождение доступа к разделяемому ресурсу (при попытке выполнить на свободном ресурсе дает исключение).
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.Compress(System.Int32,System.Int32)">
-            <summary>
-            Обеспечивает экономию ОЗУ:
-            1 - При наличии Bitmap-а и отсутствии JPEG-а: формируем JPEG на основе Bitmap-а.
-            2 - При наличии Bitmap-а и наличии JPEG-а: элиминирование Bitmap-а и переустановка JPEG-а.
-            </summary>
-            <remarks>
-            Q=90 - высокое качество с сохранением мелких деталей и цветных градиентов.
-            Q=80 - высокое качество с сохранением мелких деталей.
-            Q=60 - приемлемое качество для технических целей (дальше размер падает медленнее и растут артефакты).
-            Q=50 - качество отладочного канала.
-            </remarks>
-            <param name="quality">Уровень качества JPEG.</param>
-            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetJpg(System.Boolean,System.Int32,System.Int32)">
-            <summary>
-            Возвращает JPEG-данные.
-            </summary>
-            <param name="createFromBitmapIfEmpty">Сформировать JPEG на основе Bitmap-а (если JPEG-потока нет).</param>
-            <param name="quality">Уровень качества JPEG.</param>
-            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-            <remarks>
-            Формирование JPEG на основе Bitmap-а при вызове данного метода при активном флаге ifEmptyCreateFromBitmap
-            не приводит к установке внутреннего JPEG-потока или элиминированию исходного Bitmap-а.
-            Если требуется сжать Bitmap, установить JPEG-поток и затем освободить память от Bitmap-а - используйте метод Compress().
-            </remarks>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetJpgFast(System.Boolean)">
-            <summary>
-            Быстрый метод получения JPEG-данных.
-            </summary>
-            <param name="clone">Клонировать массив байт?</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.CompareJpgFast(Bwl.Imaging.Skia.BitmapInfo)">
-            <summary>
-            Быстрый метод сравнения двух JPEG-потоков.
-            </summary>
-            <param name="obj">Объект для сравнения.</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.SetJpg(System.Byte[],System.Int32)">
-            <summary>
-            Устанавливает JPEG-данные и элиминирует данные Bitmap-а.
-            </summary>
-            <param name="jpg">JPEG-данные.</param>
-            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.SetBmp(SkiaSharp.SKBitmap,System.Int32)">
-            <summary>
-            Устанавливает Bitmap и элиминирует данные JPEG.
-            </summary>
-            <param name="bmp">Bitmap для установки.</param>
-            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-            <remarks>Несмотря на то, что при вызове этого метода, возможно, есть
-            "висящий" отложенный Dispose для Bitmap-а, у каждого такого вызова
-            своя цель, и ложного элиминирования не будет.</remarks>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetClonedBmp(System.Int32)">
-            <summary>
-            Получение клонированного изображения.
-            </summary>
-            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetClonedBmpGray(System.Int32)">
-            <summary>
-            Получение клонированного изображения.
-            </summary>
-            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetClonedCopy(System.Int32)">
-            <summary>
-            Получение клонированной копии.
-            </summary>
-            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.Clear(System.Int32)">
-            <summary>
-            Очистка изображений Bitmap/JPEG.
-            </summary>
-            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.SetBmpInternal(SkiaSharp.SKBitmap)">
-            <summary>
-            Установка Bitmap-а.
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetBitmapDecodedInternal">
-            <summary>
-            Извлечение данных Bitmap-а (если он пуст, и есть JPEG-данные).
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BmpCloneInternal(SkiaSharp.SKBitmap)">
-            <summary>
-            Клонирование битмапа с фиксацией ошибок.
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.DecodeJpegInternal(System.Byte[])">
-            <summary>
-            Декодирование JPEG-потока.
-            </summary>
-            <param name="jpg">JPEG-поток.</param>
-            <returns>Декомпрессированное изображение.</returns>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.GetJpegSize(System.Byte[],System.Int32@,System.Int32)">
-            <summary>
-            Извлечение размера изображения из JPEG-потока без его декодирования.
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.EliminateJpgInternal">
-            <summary>
-            Элиминирование JPEG.
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.ArrayCopy(System.Byte[])">
-            <summary>
-            Получение копии массива байт.
-            </summary>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.BitmapDisposeWithDelay(SkiaSharp.SKBitmap,System.Single)">
-            <summary>
-            Запуск потока отложенного Dispose для битмапа.
-            </summary>
-            <param name="bitmapKeepTimeS">Время доступности декомпрессированного битмапа.</param>
-        </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapInfo.DisposeBmpInternal(SkiaSharp.SKBitmap)">
-            <summary>
-            Метод для элиминирования определенного битмапа.
-            </summary>
-            <param name="target">Целевой Bitmap (элиминирование другой цели невозможно).</param>
-            <remarks>Если не отслеживать цель для элиминирования, может случиться ситуация, когда
-            объект будет инициализирован JPEG-ом, с него будет запрошен Bitmap, запустится
-            отложенные элиминирование после декомпресии, и далее пользователь обработает
-            декомпрессированное изображение, которое будет установлено, а далее стерто
-            отложенным Dispose()-ом. При отслеживании ссылки-цели элиминируется в точности
-            тот Bitmap, что и планировалось.</remarks>
-        </member>
         <member name="M:Bwl.Imaging.Skia.HSV.HueDistance(System.Double,System.Double)">
             <summary>
             Вычисление кратчайшего расстояния между двумя тонами
@@ -389,12 +101,12 @@
             <param name="min">Найденный минимум.</param>
             <param name="max">Найденный максимум.</param>
         </member>
-        <member name="M:Bwl.Imaging.Skia.MatrixTools.GetGrayMatrix(Bwl.Imaging.Skia.BitmapInfo)">
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.GetGrayMatrix(Bwl.Imaging.Skia.SKBitmapInfo)">
             <summary>
             Получение полутоновой матрицы на основе BitmapInfo
             </summary>
         </member>
-        <member name="M:Bwl.Imaging.Skia.MatrixTools.GetRGBMatrix(Bwl.Imaging.Skia.BitmapInfo)">
+        <member name="M:Bwl.Imaging.Skia.MatrixTools.GetRGBMatrix(Bwl.Imaging.Skia.SKBitmapInfo)">
             <summary>
             Получение полноцветной матрицы на основе BitmapInfo
             </summary>
@@ -467,7 +179,7 @@
             </summary>
             <returns></returns>
         </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapOperations.LoadBitmap(SkiaSharp.SKBitmap)">
+        <member name="M:Bwl.Imaging.Skia.SKBitmapOperations.LoadSKBitmap(SkiaSharp.SKBitmap)">
             <summary>
             Loads pixel data from an SKBitmap into the internal raw bytes array.
             </summary>
@@ -477,7 +189,7 @@
             For grayscale images (Gray8), data is stored as-is in 1-channel format.
             </remarks>
         </member>
-        <member name="M:Bwl.Imaging.Skia.BitmapOperations.GetBitmap">
+        <member name="M:Bwl.Imaging.Skia.SKBitmapOperations.GetSKBitmap">
             <summary>
             Creates an SKBitmap from the internal raw bytes array.
             </summary>
@@ -491,6 +203,500 @@
             <summary>
             Универсальный формат сырого кадра.
             </summary>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKBitmapInfo">
+            <summary>
+            Потокобезопасная обвязка Bitmap-а, с поддержкой
+            кешированных свойств изображения и JPEG-кеша.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.SKBitmapCloneManaged(SkiaSharp.SKBitmap)">
+            <summary>
+            Клонирование Bitnap-а в соотв. с выбранным режимом.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.CheckBitmap(SkiaSharp.SKBitmap)">
+            <summary>
+            Проверка Bitmap-а на рабочее состояние.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._globalAllocatedDataCount">
+            <summary>
+            Глобальный счетчик количества выделенных байт Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._globalCompressedCount">
+            <summary>
+            Глобальный счетчик осуществленных компрессий JPEG (а не переприсваиваний).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._globalDecompressedCount">
+            <summary>
+            Глобальный счетчик декомпрессий JPEG (с формированием Bitmap-ов).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._globalDecompressedErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок декомпресии.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._globalDisposeCount">
+            <summary>
+            Глобальный счетчик количества элиминирований Bitmap-ов (Dispose).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._globalDisposeErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок высвобождения Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._globalCloneErrorCount">
+            <summary>
+            Глобальный счетчик количества ошибок клонирований Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._compressedCount">
+            <summary>
+            Счетчик осуществленных компрессий JPEG (а не переприсваиваний).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._decompressedCount">
+            <summary>
+            Счетчик декомпрессий JPEG (с формированием Bitmap-ов).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._decompressedErrorCount">
+            <summary>
+            Счетчик количества ошибок декомпресии.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._disposeCount">
+            <summary>
+            Счетчик количества элиминирований Bitmap-ов (Dispose).
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._disposeErrorCount">
+            <summary>
+            Счетчик количества ошибок высвобождения Bitmap-ов.
+            </summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKBitmapInfo._cloneErrorCount">
+            <summary>
+            Счетчик количества ошибок клонирований Bitmap-ов.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKBitmapInfo.SKBitmapKeepTimeS">
+            <summary>
+            Время хранения декомпрессированного битмапа (если доступны JPEG-данные для экономии ОЗУ).
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKBitmapInfo.Bmp">
+            <summary>
+            Прямой доступ по ссылке к хранимому Bitmap-у.
+            </summary>
+            <remarks>
+            При обращении к Bmp обязательно использовать методы BmpLock() / BmpUnlock().
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKBitmapInfo.JpgIsNothing">
+            <summary>
+            Данные JPEG пусты?
+            </summary>
+            <remarks>
+            Если данных JPEG нет, это не означает, что изображение отсутствует.
+            Возможно, используется Bitmap.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKBitmapInfo.BmpIsNothing">
+            <summary>
+            Bitmap пуст?
+            </summary>
+            <remarks>
+            Если Bitmap пуст, это не означает, что изображение отсутствует,
+            возможно, используется хранение в JPEG.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKBitmapInfo.BmpAndJpgAreNothing">
+            <summary>
+            Данные изображения пусты?
+            </summary>
+            <remarks>
+            Наличие этого флага означает, что данных изображения нет.
+            </remarks>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKBitmapInfo.BmpSize">
+            <summary>
+            Кешированный размер сохраненного Bitmap/JPEG.
+            </summary>
+        </member>
+        <member name="P:Bwl.Imaging.Skia.SKBitmapInfo.RowBytes">
+            <summary>
+            Кешированный формат пикселя сохраненного Bitmap/JPEG.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.BmpLock(System.Int32)">
+            <summary>
+            Блокировка доступа к разделяемому ресурсу (порождает исключение по таймауту).
+            </summary>
+            <remarks>  
+            Типичная схема использования:
+            1: .BmpLock() 'Не оборачиваем Try-Catch: может вызвать исключение таймаута и в Finally вызовет в итоге лишний .BmpUnlock()
+            2: Try
+            3:     ... 'Этот код может вызвать исключения, но если дошли до него - ресурс был получен на .BmpLock() - исключения не было
+            4: Catch ex As Exception
+            5:     ... 'Обработали исключения кода как требуется...
+            6: Finally
+            7:     .BmpUnlock() '...и в итоге освободили доступ к разделяемому ресурсу
+            8: End Try
+            </remarks>
+            <param name="timeoutMs"></param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.BmpUnlock">
+            <summary>
+            Освобождение доступа к разделяемому ресурсу (при попытке выполнить на свободном ресурсе дает исключение).
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.Compress(System.Int32,System.Int32)">
+            <summary>
+            Обеспечивает экономию ОЗУ:
+            1 - При наличии Bitmap-а и отсутствии JPEG-а: формируем JPEG на основе Bitmap-а.
+            2 - При наличии Bitmap-а и наличии JPEG-а: элиминирование Bitmap-а и переустановка JPEG-а.
+            </summary>
+            <remarks>
+            Q=90 - высокое качество с сохранением мелких деталей и цветных градиентов.
+            Q=80 - высокое качество с сохранением мелких деталей.
+            Q=60 - приемлемое качество для технических целей (дальше размер падает медленнее и растут артефакты).
+            Q=50 - качество отладочного канала.
+            </remarks>
+            <param name="quality">Уровень качества JPEG.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.GetJpg(System.Boolean,System.Int32,System.Int32)">
+            <summary>
+            Возвращает JPEG-данные.
+            </summary>
+            <param name="createFromBitmapIfEmpty">Сформировать JPEG на основе Bitmap-а (если JPEG-потока нет).</param>
+            <param name="quality">Уровень качества JPEG.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+            <remarks>
+            Формирование JPEG на основе Bitmap-а при вызове данного метода при активном флаге ifEmptyCreateFromBitmap
+            не приводит к установке внутреннего JPEG-потока или элиминированию исходного Bitmap-а.
+            Если требуется сжать Bitmap, установить JPEG-поток и затем освободить память от Bitmap-а - используйте метод Compress().
+            </remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.GetJpgFast(System.Boolean)">
+            <summary>
+            Быстрый метод получения JPEG-данных.
+            </summary>
+            <param name="clone">Клонировать массив байт?</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.CompareJpgFast(Bwl.Imaging.Skia.SKBitmapInfo)">
+            <summary>
+            Быстрый метод сравнения двух JPEG-потоков.
+            </summary>
+            <param name="obj">Объект для сравнения.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.SetJpg(System.Byte[],System.Int32)">
+            <summary>
+            Устанавливает JPEG-данные и элиминирует данные Bitmap-а.
+            </summary>
+            <param name="jpg">JPEG-данные.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.SetBmp(SkiaSharp.SKBitmap,System.Int32)">
+            <summary>
+            Устанавливает Bitmap и элиминирует данные JPEG.
+            </summary>
+            <param name="bmp">Bitmap для установки.</param>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+            <remarks>Несмотря на то, что при вызове этого метода, возможно, есть
+            "висящий" отложенный Dispose для Bitmap-а, у каждого такого вызова
+            своя цель, и ложного элиминирования не будет.</remarks>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.GetClonedBmp(System.Int32)">
+            <summary>
+            Получение клонированного изображения.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.GetClonedBmpGray(System.Int32)">
+            <summary>
+            Получение клонированного изображения.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.GetClonedCopy(System.Int32)">
+            <summary>
+            Получение клонированной копии.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.Clear(System.Int32)">
+            <summary>
+            Очистка изображений Bitmap/JPEG.
+            </summary>
+            <param name="timeoutMs">Таймаут блокировки доступа к разделяемому ресурсу.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.SetBmpInternal(SkiaSharp.SKBitmap)">
+            <summary>
+            Установка Bitmap-а.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.GetBitmapDecodedInternal">
+            <summary>
+            Извлечение данных Bitmap-а (если он пуст, и есть JPEG-данные).
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.BmpCloneInternal(SkiaSharp.SKBitmap)">
+            <summary>
+            Клонирование битмапа с фиксацией ошибок.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.DecodeJpegInternal(System.Byte[])">
+            <summary>
+            Декодирование JPEG-потока.
+            </summary>
+            <param name="jpg">JPEG-поток.</param>
+            <returns>Декомпрессированное изображение.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.GetJpegSize(System.Byte[],System.Int32@,System.Int32)">
+            <summary>
+            Извлечение размера изображения из JPEG-потока без его декодирования.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.EliminateJpgInternal">
+            <summary>
+            Элиминирование JPEG.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.ArrayCopy(System.Byte[])">
+            <summary>
+            Получение копии массива байт.
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.SKBitmapDisposeWithDelay(SkiaSharp.SKBitmap,System.Single)">
+            <summary>
+            Запуск потока отложенного Dispose для битмапа.
+            </summary>
+            <param name="bitmapKeepTimeS">Время доступности декомпрессированного битмапа.</param>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKBitmapInfo.DisposeBmpInternal(SkiaSharp.SKBitmap)">
+            <summary>
+            Метод для элиминирования определенного битмапа.
+            </summary>
+            <param name="target">Целевой Bitmap (элиминирование другой цели невозможно).</param>
+            <remarks>Если не отслеживать цель для элиминирования, может случиться ситуация, когда
+            объект будет инициализирован JPEG-ом, с него будет запрошен Bitmap, запустится
+            отложенные элиминирование после декомпресии, и далее пользователь обработает
+            декомпрессированное изображение, которое будет установлено, а далее стерто
+            отложенным Dispose()-ом. При отслеживании ссылки-цели элиминируется в точности
+            тот Bitmap, что и планировалось.</remarks>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKDrawingCompatibility">
+            <summary>
+            Class that contains extension methods to convert data between SkiaSharp and System.Drawing to ensure compatibility
+            Covers conversion of: colors, points, rectangles, sizes
+            </summary>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKColor(System.Drawing.Color)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.Color"/> structure to an <see cref="T:SkiaSharp.SKColor"/> structure.
+            </summary>
+            <param name="color">The <see cref="T:System.Drawing.Color"/> structure to convert, which represents the color in the RGB color model.</param>
+            <returns>An <see cref="T:SkiaSharp.SKColor"/> structure that represents the same color as the input <see cref="T:System.Drawing.Color"/>, with the same red, green, blue, and alpha values.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToColor(SkiaSharp.SKColor)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKColor"/> structure to a <see cref="T:System.Drawing.Color"/> structure.
+            </summary>
+            <param name="color">The <see cref="T:SkiaSharp.SKColor"/> structure to convert, which contains the color components (alpha, red, green, blue).</param>
+            <returns>A <see cref="T:System.Drawing.Color"/> structure that represents the same color as the provided <see cref="T:SkiaSharp.SKColor"/>, with the corresponding alpha, red,
+            green, and blue values.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKPoint(System.Drawing.PointF)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.PointF"/> structure to an <see cref="T:SkiaSharp.SKPoint"/> structure with
+            equivalent X and Y coordinates.
+            </summary>
+            <param name="point">The <see cref="T:System.Drawing.PointF"/> structure to convert. Represents the X and Y coordinates to be used for
+            the resulting <see cref="T:SkiaSharp.SKPoint"/>.</param>
+            <returns>An <see cref="T:SkiaSharp.SKPoint"/> structure that contains the same X and Y coordinate values as the specified
+            <paramref name="point"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSkPoint(System.Drawing.Point)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.Point"/> structure to an <see cref="T:SkiaSharp.SKPoint"/> structure with the same X and Y coordinates.
+            </summary>
+            <param name="point">The <see cref="T:System.Drawing.Point"/> structure to convert. Represents the X and Y coordinates to be used for the resulting <see cref="T:SkiaSharp.SKPoint"/>.</param>
+            <returns>An <see cref="T:SkiaSharp.SKPoint"/> structure whose X and Y values are set to those of the specified <see cref="T:System.Drawing.Point"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKPointI(System.Drawing.PointF)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.PointF"/> structure to an <see cref="T:SkiaSharp.SKPointI"/> structure by rounding the X and Y coordinates to the nearest
+            integers.
+            </summary>
+            <remarks>The conversion truncates any fractional component of the X and Y coordinates. This may result
+            in a loss of precision if the original values are not whole numbers.</remarks>
+            <param name="point">The <see cref="T:System.Drawing.PointF"/> structure representing the floating-point coordinates to be converted.</param>
+            <returns>An <see cref="T:SkiaSharp.SKPointI"/> structure containing the integer coordinates derived from the provided <see cref="T:System.Drawing.PointF"/> structure.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSkPointI(System.Drawing.Point)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.Point"/> structure to an <see cref="T:SkiaSharp.SKPointI"/> structure with the same X and Y coordinates.
+            </summary>
+            <param name="point">The <see cref="T:System.Drawing.Point"/> structure to convert. Represents the X and Y coordinates to be used for the <see cref="T:SkiaSharp.SKPointI"/>.</param>
+            <returns>An <see cref="T:SkiaSharp.SKPointI"/> structure whose X and Y values correspond to those of the specified <see cref="T:System.Drawing.Point"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToPointF(SkiaSharp.SKPoint)">
+            <summary>
+            Converts the specified <see cref="T:SkiaSharp.SKPoint"/> to an equivalent <see cref="T:System.Drawing.PointF"/> structure.
+            </summary>
+            <param name="point">The <see cref="T:SkiaSharp.SKPoint"/> instance to convert, representing a point in two-dimensional space.</param>
+            <returns>A <see cref="T:System.Drawing.PointF"/> structure that represents the same coordinates as the specified <see cref="T:SkiaSharp.SKPoint"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToPointF(SkiaSharp.SKPointI)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKPointI"/> structure to a <see cref="T:System.Drawing.PointF"/> structure with equivalent coordinates.
+            </summary>
+            <param name="point">The <see cref="T:SkiaSharp.SKPointI"/> instance to convert, representing a point with integer coordinates.</param>
+            <returns>A <see cref="T:System.Drawing.PointF"/> structure that represents the same point as the input, using floating-point coordinates.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToPoint(SkiaSharp.SKPoint)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKPoint"/> structure to a <see cref="T:System.Drawing.Point"/> structure by casting the X and Y
+            coordinates to integers.
+            </summary>
+            <remarks>The conversion truncates any fractional component of the X and Y coordinates. This may result
+            in a loss of precision if the original values are not whole numbers.</remarks>
+            <param name="point">The <see cref="T:SkiaSharp.SKPoint"/> instance to convert. Represents a point in two-dimensional space with floating-point
+            coordinates.</param>
+            <returns>A <see cref="T:System.Drawing.Point"/> whose X and Y values are the integer representations of the corresponding coordinates in
+            <paramref name="point"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToPoint(SkiaSharp.SKPointI)">
+            <summary>
+            Converts an instance of <see cref="T:SkiaSharp.SKPointI"/> to a <see cref="T:System.Drawing.Point"/> structure.
+            </summary>
+            <param name="point">The <see cref="T:SkiaSharp.SKPointI"/> instance to convert, representing a point in integer coordinates.</param>
+            <returns>A <see cref="T:System.Drawing.Point"/> structure that represents the same coordinates as the provided <see cref="T:SkiaSharp.SKPointI"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKRect(System.Drawing.RectangleF)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.RectangleF"/> structure to an <see cref="T:SkiaSharp.SKRect"/> structure with
+            equivalent coordinates.
+            </summary>
+            <param name="rect">The <see cref="T:System.Drawing.RectangleF"/> structure to convert. Represents a rectangle defined by
+            floating-point coordinates.</param>
+            <returns>An <see cref="T:SkiaSharp.SKRect"/> structure that represents the same rectangle as the input <paramref
+            name="rect"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKRect(System.Drawing.Rectangle)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.Rectangle"/> structure to an <see cref="T:SkiaSharp.SKRect"/> structure with
+            equivalent coordinates.
+            </summary>
+            <param name="rect">The <see cref="T:System.Drawing.Rectangle"/> structure to convert. Represents a rectangle defined by
+            integer coordinates.</param>
+            <returns>An <see cref="T:SkiaSharp.SKRect"/> structure that represents the same rectangle as the input <paramref
+            name="rect"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKRectI(System.Drawing.RectangleF)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.RectangleF"/> structure to an <see cref="T:SkiaSharp.SKRectI"/> structure by casting coordinates to integers.
+            </summary>
+            <param name="rect">The <see cref="T:System.Drawing.RectangleF"/> structure representing the floating-point rectangle to be converted.</param>
+            <returns>An <see cref="T:SkiaSharp.SKRectI"/> structure containing integer coordinates derived from the provided <see cref="T:System.Drawing.RectangleF"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKRectI(System.Drawing.Rectangle)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.Rectangle"/> structure to an <see cref="T:SkiaSharp.SKRectI"/> structure with equivalent coordinates.
+            </summary>
+            <param name="rect">The <see cref="T:System.Drawing.Rectangle"/> structure to convert.</param>
+            <returns>An <see cref="T:SkiaSharp.SKRectI"/> structure that represents the same rectangle as the input <see cref="T:System.Drawing.Rectangle"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToRectangleF(SkiaSharp.SKRect)">
+            <summary>
+            Converts the specified <see cref="T:SkiaSharp.SKRect"/> structure to an equivalent <see cref="T:System.Drawing.RectangleF"/> structure.
+            </summary>
+            <param name="rect">The <see cref="T:SkiaSharp.SKRect"/> structure to convert. Represents the rectangle's position and size.</param>
+            <returns>A <see cref="T:System.Drawing.RectangleF"/> structure that has the same position and dimensions as the specified <see cref="T:SkiaSharp.SKRect"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToRectangleF(SkiaSharp.SKRectI)">
+            <summary>
+            Converts the specified <see cref="T:SkiaSharp.SKRectI"/> structure to an equivalent <see cref="T:System.Drawing.RectangleF"/> structure.
+            </summary>
+            <param name="rect">The <see cref="T:SkiaSharp.SKRectI"/> structure to convert. Represents the rectangle's position and size.</param>
+            <returns>A <see cref="T:System.Drawing.RectangleF"/> structure that has the same position and dimensions as the specified <see cref="T:SkiaSharp.SKRectI"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToRectangle(SkiaSharp.SKRect)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKRect"/> structure to a <see cref="T:System.Drawing.Rectangle"/> structure by casting the rectangle coordinates to integers.
+            </summary>
+            <param name="rect">The <see cref="T:SkiaSharp.SKRect"/> structure to convert.</param>
+            <returns>A <see cref="T:System.Drawing.Rectangle"/> structure that represents the same rectangle as the provided <see cref="T:SkiaSharp.SKRect"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToRectangle(SkiaSharp.SKRectI)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKRectI"/> structure to a <see cref="T:System.Drawing.Rectangle"/> structure.
+            </summary>
+            <param name="rect">The <see cref="T:SkiaSharp.SKRectI"/> structure to convert.</param>
+            <returns>A <see cref="T:System.Drawing.Rectangle"/> structure that represents the same rectangle as the provided <see cref="T:SkiaSharp.SKRectI"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKSize(System.Drawing.SizeF)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.SizeF"/> structure to an <see cref="T:SkiaSharp.SKSize"/> structure.
+            </summary>
+            <param name="size">The <see cref="T:System.Drawing.SizeF"/> structure to convert.</param>
+            <returns>An <see cref="T:SkiaSharp.SKSize"/> structure that represents the same dimensions as the specified <see cref="T:System.Drawing.SizeF"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKSize(System.Drawing.Size)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.Size"/> structure to an <see cref="T:SkiaSharp.SKSize"/> structure.
+            </summary>
+            <param name="size">The <see cref="T:System.Drawing.Size"/> structure to convert.</param>
+            <returns>An <see cref="T:SkiaSharp.SKSize"/> structure that represents the same dimensions as the specified <see cref="T:System.Drawing.Size"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKSizeI(System.Drawing.SizeF)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.SizeF"/> structure to an <see cref="T:SkiaSharp.SKSizeI"/> structure by casting dimensions to integers.
+            </summary>
+            <param name="size">The <see cref="T:System.Drawing.SizeF"/> structure to convert.</param>
+            <returns>An <see cref="T:SkiaSharp.SKSizeI"/> structure that represents the integer dimensions derived from the provided <see cref="T:System.Drawing.SizeF"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSKSizeI(System.Drawing.Size)">
+            <summary>
+            Converts a <see cref="T:System.Drawing.Size"/> structure to an <see cref="T:SkiaSharp.SKSizeI"/> structure.
+            </summary>
+            <param name="size">The <see cref="T:System.Drawing.Size"/> structure to convert.</param>
+            <returns>An <see cref="T:SkiaSharp.SKSizeI"/> structure that represents the same dimensions as the specified <see cref="T:System.Drawing.Size"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSizeF(SkiaSharp.SKSize)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKSize"/> structure to a <see cref="T:System.Drawing.SizeF"/> structure.
+            </summary>
+            <param name="size">The <see cref="T:SkiaSharp.SKSize"/> structure to convert.</param>
+            <returns>A <see cref="T:System.Drawing.SizeF"/> structure that represents the same dimensions as the provided <see cref="T:SkiaSharp.SKSize"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSizeF(SkiaSharp.SKSizeI)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKSizeI"/> structure to a <see cref="T:System.Drawing.SizeF"/> structure.
+            </summary>
+            <param name="size">The <see cref="T:SkiaSharp.SKSizeI"/> structure to convert.</param>
+            <returns>A <see cref="T:System.Drawing.SizeF"/> structure that represents the same dimensions as the provided <see cref="T:SkiaSharp.SKSizeI"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSize(SkiaSharp.SKSize)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKSize"/> structure to a <see cref="T:System.Drawing.Size"/> structure by casting dimensions to integers.
+            </summary>
+            <param name="size">The <see cref="T:SkiaSharp.SKSize"/> structure to convert.</param>
+            <returns>A <see cref="T:System.Drawing.Size"/> structure that represents the integer dimensions derived from the provided <see cref="T:SkiaSharp.SKSize"/>.</returns>
+        </member>
+        <member name="M:Bwl.Imaging.Skia.SKDrawingCompatibility.ToSize(SkiaSharp.SKSizeI)">
+            <summary>
+            Converts an <see cref="T:SkiaSharp.SKSizeI"/> structure to a <see cref="T:System.Drawing.Size"/> structure.
+            </summary>
+            <param name="size">The <see cref="T:SkiaSharp.SKSizeI"/> structure to convert.</param>
+            <returns>A <see cref="T:System.Drawing.Size"/> structure that represents the same dimensions as the provided <see cref="T:SkiaSharp.SKSizeI"/>.</returns>
         </member>
         <member name="M:Bwl.Imaging.Skia.SKEncoder.DecodeJpeg(System.Byte[])">
             <summary>
@@ -525,7 +731,7 @@
             <param name="channelCount"></param>
             <returns></returns>
         </member>
-        <member name="M:Bwl.Imaging.Skia.SKEncoder.EnsureColor(SkiaSharp.SKBitmap)">
+        <member name="M:Bwl.Imaging.Skia.SKEncoder.EnsureCorrectColor(SkiaSharp.SKBitmap)">
             <summary>
             Ensures that the specified bitmap is in a color format, converting it if necessary.
             </summary>
@@ -684,6 +890,39 @@
             </summary>
             <param name="fontFamily">Font family to load</param>
             <returns>SKTypeface loaded from embedded resource</returns>
+        </member>
+        <member name="T:Bwl.Imaging.Skia.SKInterpolationMode">
+            <summary>
+            Specifies the interpolation modes that can be used for image scaling and rendering operations.
+            </summary>
+            <remarks>While it's not used in this library directly, it still might help with migrations in other libraries or applications that rely on similar interpolation concepts.</remarks>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.Invalid">
+            <summary>Indicates that the value is invalid.</summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.Default">
+            <summary>Specifies the default interpolation mode.</summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.Low">
+            <summary>Specifies a low-quality interpolation mode.</summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.High">
+            <summary>Specifies a high-quality interpolation mode.</summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.Bilinear">
+            <summary>Specifies a bilinear interpolation mode.</summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.Bicubic">
+            <summary>Specifies a bicubic interpolation mode.</summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.NearestNeighbor">
+            <summary>Specifies a nearest neighbor interpolation mode.</summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.HighQualityBilinear">
+            <summary>Specifies a high-quality bilinear interpolation mode.</summary>
+        </member>
+        <member name="F:Bwl.Imaging.Skia.SKInterpolationMode.HighQualityBicubic">
+            <summary>Specifies a high-quality bicubic interpolation mode.</summary>
         </member>
         <member name="T:Bwl.Imaging.Skia.SKRotateFlipType">
             <summary>

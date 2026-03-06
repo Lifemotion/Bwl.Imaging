@@ -13,7 +13,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoAccessTest1()
         Dim src = GetTestBmp()
-        Dim bi = New BitmapInfo(src)
+        Dim bi = New SKBitmapInfo(src)
         Dim exceptionDetected = False
         Try
             Dim bmp = bi.Bmp
@@ -27,7 +27,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoAccessTest2()
         Dim src = GetTestBmp()
-        Dim bi = New BitmapInfo(src)
+        Dim bi = New SKBitmapInfo(src)
         Dim exceptionDetected = False
         bi.BmpLock()
         Try
@@ -48,7 +48,7 @@ Public Class BitmapInfoTests
         For i = 0 To Math.Min(src2.Width, src2.Height) - 1
             src2.SetPixel(i, i, New SKColor(255, 255, 255, 255))
         Next
-        Dim bi = New BitmapInfo(src1)
+        Dim bi = New SKBitmapInfo(src1)
         Dim exceptionDetected = False
         Try
             bi.SetBmp(src2)
@@ -68,7 +68,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoSetBmpTest2()
         Dim src1 = GetTestBmp()
         Dim src2 = GetTestBmp()
-        Dim bi = New BitmapInfo(src1) With {.BitmapKeepTimeS = 2} 'Исходный битмап загружен...
+        Dim bi = New SKBitmapInfo(src1) With {.SKBitmapKeepTimeS = 2} 'Исходный битмап загружен...
         bi.Compress() '...теперь он сжат в JPEG, а Bitmap элиминирован - ОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №1
         Dim bmpJpg = bi.GetClonedBmp() '...была декомпрессия из JPEG в Bmp (затем клонирование внутреннего _bmp) и запустился отложенный Dispose для Bitmap-а ОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2
         bi.SetBmp(src2) '...и тут мы ставим второй Bmp, в то же время НЕОЖИДАЕМОЕ ЭЛИМИНИРОВАНИЕ, №2 готовится сработать
@@ -84,7 +84,7 @@ Public Class BitmapInfoTests
         For w = 1 To 49
             For h = 1 To 100
                 Dim src1 = GetTestBmp(New SKSizeI(w, h), SKColorType.Bgra8888, SKAlphaType.Premul)
-                Dim bi = New BitmapInfo(src1)
+                Dim bi = New SKBitmapInfo(src1)
                 Dim src2 = bi.GetClonedBmp()
                 If Object.ReferenceEquals(src1, src2) Then
                     Throw New Exception("Object.ReferenceEquals(src1, src2)")
@@ -108,7 +108,7 @@ Public Class BitmapInfoTests
         For w = 1 To 49
             For h = 1 To 100
                 Dim src = GetTestBmp(New SKSizeI(w, h), SKColorType.Bgra8888, SKAlphaType.Premul)
-                Dim bi = New BitmapInfo(src)
+                Dim bi = New SKBitmapInfo(src)
                 Dim exceptionDetected = False
                 Try
                     bi.GetRGBMatrix()
@@ -136,7 +136,7 @@ Public Class BitmapInfoTests
         For w = 1 To 49
             For h = 1 To 100
                 Dim src = GetTestBmp(New SKSizeI(w, h), SKColorType.Bgra8888, SKAlphaType.Premul)
-                Dim bi = New BitmapInfo(src)
+                Dim bi = New SKBitmapInfo(src)
                 Dim exceptionDetected = False
                 Try
                     bi.GetRGBMatrix()
@@ -162,7 +162,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetRgbMatrixTest3()
         Dim src = GetTestBmp(SKColorType.Gray8, SKAlphaType.Opaque)
-        Dim bi = New BitmapInfo(src)
+        Dim bi = New SKBitmapInfo(src)
         Dim exceptionDetected = False
         Try
             bi.GetRGBMatrix()
@@ -176,7 +176,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetGrayMatrixTest1()
         Dim src = GetTestBmp(SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi = New BitmapInfo(src)
+        Dim bi = New SKBitmapInfo(src)
         Dim exceptionDetected = False
         Try
             bi.GetGrayMatrix()
@@ -191,7 +191,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetGrayMatrixTest2()
         Dim src = GetTestBmp(SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi = New BitmapInfo(src)
+        Dim bi = New SKBitmapInfo(src)
         Dim exceptionDetected = False
         Try
             bi.GetGrayMatrix()
@@ -205,7 +205,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoGetGrayMatrixTest3()
         Dim src = GetTestBmp(SKColorType.Gray8, SKAlphaType.Opaque)
-        Dim bi = New BitmapInfo(src)
+        Dim bi = New SKBitmapInfo(src)
         Dim exceptionDetected = False
         Try
             bi.GetGrayMatrix()
@@ -221,7 +221,7 @@ Public Class BitmapInfoTests
         Dim jpg = ResourceLoader.LoadResourceData("636080817147998076.jpg")
         Dim sw = New Stopwatch()
         sw.Start()
-        Dim bi = New BitmapInfo(jpg)
+        Dim bi = New SKBitmapInfo(jpg)
         sw.Stop()
         Dim jpegParseTimeMs = sw.ElapsedMilliseconds
         Assert.That(jpegParseTimeMs, [Is].LessThan(10))
@@ -232,15 +232,15 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest1()
         Dim jpg = ResourceLoader.LoadResourceData("638067000726558653.jpg")
         Dim sw = New Stopwatch()
-        Dim biJpg = New BitmapInfo(jpg)
+        Dim biJpg = New SKBitmapInfo(jpg)
         Dim bmp = New SKBitmap()
         Using stream = New MemoryStream(jpg)
             bmp = SKBitmap.Decode(stream)
         End Using
         'Проверка изображений на соответствие
         Dim bmpBnfo = biJpg.GetClonedBmp()
-        Dim mtrxBnfo = bmpBnfo.BitmapToRgbMatrix() 'JPG
-        Dim mtrxBmp = bmp.BitmapToRgbMatrix() 'BMP
+        Dim mtrxBnfo = bmpBnfo.ToRgbMatrix() 'JPG
+        Dim mtrxBmp = bmp.ToRgbMatrix() 'BMP
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxBnfo, mtrxBmp) * 100
         Assert.That(mtrxDiffPerc, [Is].LessThan(0.5))
     End Sub
@@ -249,7 +249,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest2()
         Dim jpg = ResourceLoader.LoadResourceData("jpeg8bpp.jpg")
-        Dim bi = New BitmapInfo(jpg)
+        Dim bi = New SKBitmapInfo(jpg)
         Dim bmpSize = bi.BmpSize
         Dim bmpPixelFormat = bi.ColorType
         Assert.That(bmpSize.Width, [Is].EqualTo(48))
@@ -261,7 +261,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoJpegTest3()
         Dim jpg = ResourceLoader.LoadResourceData("jpeg24bpp.jpg")
-        Dim bi = New BitmapInfo(jpg)
+        Dim bi = New SKBitmapInfo(jpg)
         Dim bmpSize = bi.BmpSize
         Dim bmpPixelFormat = bi.ColorType
         Assert.That(bmpSize.Width, [Is].EqualTo(48))
@@ -274,10 +274,10 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest4()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
         Dim jpg = src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()
-        Dim bi = New BitmapInfo(jpg)
+        Dim bi = New SKBitmapInfo(jpg)
         Dim bmpJpg = bi.GetClonedBmp()
-        Dim mtrxSrc = src.BitmapToRgbMatrix()
-        Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
+        Dim mtrxSrc = src.ToRgbMatrix()
+        Dim mtrxJpeg = bmpJpg.ToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
         Assert.That(mtrxDiffPerc, [Is].LessThan(3))
     End Sub
@@ -288,12 +288,12 @@ Public Class BitmapInfoTests
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
         Dim jpg = src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()
 
-        Dim bi = New BitmapInfo(UnsafeFunctions.SKBitmapClone(src))
+        Dim bi = New SKBitmapInfo(UnsafeFunctions.SKBitmapClone(src))
         Assert.That(bi.BmpIsNothing, [Is].False)
         bi.SetJpg(jpg)
         Assert.That(bi.BmpIsNothing, [Is].True)
 
-        Dim biJpg = New BitmapInfo(jpg)
+        Dim biJpg = New SKBitmapInfo(jpg)
         Assert.That(bi.BmpIsNothing, [Is].True)
         bi.SetBmp(UnsafeFunctions.SKBitmapClone(src))
         Assert.That(bi.BmpIsNothing, [Is].False)
@@ -304,7 +304,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest6()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
         Dim jpg = src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()
-        Dim bi = New BitmapInfo(jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем JPEG
+        Dim bi = New SKBitmapInfo(jpg) With {.SKBitmapKeepTimeS = 1} 'Устанавливаем JPEG
         Assert.That(bi.BmpIsNothing, [Is].True) 'После установки JPEG битмап еще не развернут...
 
         For i = 1 To 4
@@ -324,7 +324,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest7()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
         Dim jpg = src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()
-        Dim bi = New BitmapInfo(jpg) With {.BitmapKeepTimeS = 1} 'Устанавливаем JPEG
+        Dim bi = New SKBitmapInfo(jpg) With {.SKBitmapKeepTimeS = 1} 'Устанавливаем JPEG
         Assert.That(bi.BmpIsNothing, [Is].True) 'После установки JPEG битмап еще не развернут...
 
         For i = 1 To 4
@@ -350,7 +350,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest_Formats()
         For Each file In {"CMYK.jpg", "Gray.jpg", "RGB.jpg", "YCbCr.jpg", "YCbCrK.jpg"}
             Dim jpg = ResourceLoader.LoadResourceData(file) 'Читаем файл
-            Dim bi = New BitmapInfo(jpg) 'Устанавливаем JPEG
+            Dim bi = New SKBitmapInfo(jpg) 'Устанавливаем JPEG
             Assert.That(bi.BmpIsNothing, [Is].True) 'После установки JPEG битмап еще не развернут...
             Dim bmpJpg = bi.GetClonedBmp() '...получаем Bitmap
             Assert.That(bmpJpg.Size(), [Is].EqualTo(bi.BmpSize)) 'Проверка
@@ -363,7 +363,7 @@ Public Class BitmapInfoTests
     Public Sub BitmapInfoJpegTest_CamFormats()
         For Each file In {"26FWD_IZHS.jpg", "No_JFIF.jpg"}
             Dim jpg = ResourceLoader.LoadResourceData(file) 'Читаем файл
-            Dim bi = New BitmapInfo(jpg) 'Устанавливаем JPEG
+            Dim bi = New SKBitmapInfo(jpg) 'Устанавливаем JPEG
             Assert.That(bi.BmpIsNothing, [Is].True) 'После установки JPEG битмап еще не развернут...
             Dim bmpJpg = bi.GetClonedBmp() '...получаем Bitmap
             Assert.That(bmpJpg.Size(), [Is].EqualTo(bi.BmpSize)) 'Проверка
@@ -375,7 +375,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCompressTest1()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi = New BitmapInfo(UnsafeFunctions.SKBitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi = New SKBitmapInfo(UnsafeFunctions.SKBitmapClone(src)) With {.SKBitmapKeepTimeS = 1} 'Устанавливаем BMP
         Assert.That(bi.BmpIsNothing, [Is].False) 'Bitmap уже есть...
         Assert.That(bi.JpgIsNothing, [Is].True) '...а JPEG не развернут
         Assert.That(bi.ColorType, [Is].EqualTo(SKColorType.Bgra8888)) 'Исходный Bitmap имеет 32 бита на пиксель
@@ -385,8 +385,8 @@ Public Class BitmapInfoTests
         Assert.That(bi.ColorType, [Is].EqualTo(SKColorType.Bgra8888)) 'При восстановлении из JPEG пиксель 24 бита
         'Проверка изображений на соответствие
         Dim bmpJpg = bi.GetClonedBmp() 'Восстановленный из JPEG битмап
-        Dim mtrxSrc = src.BitmapToRgbMatrix()
-        Dim mtrxJpeg = bmpJpg.BitmapToRgbMatrix()
+        Dim mtrxSrc = src.ToRgbMatrix()
+        Dim mtrxJpeg = bmpJpg.ToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrxSrc, mtrxJpeg) * 100
         Assert.That(mtrxDiffPerc, [Is].LessThan(3))
     End Sub
@@ -395,7 +395,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCompressTest2()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi = New BitmapInfo(src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi = New SKBitmapInfo(src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()) With {.SKBitmapKeepTimeS = 1} 'Устанавливаем BMP
         Assert.That(bi.BmpIsNothing, [Is].True) 'Bitmap-а изначально нет
         Assert.That(bi.JpgIsNothing, [Is].False) '...а JPEG развернут
         Assert.That(bi.ColorType, [Is].EqualTo(SKColorType.Bgra8888)) 'При сжатии JPEG пиксель 24 бита
@@ -413,13 +413,13 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCloneTest11()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi1 = New BitmapInfo(UnsafeFunctions.SKBitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi1 = New SKBitmapInfo(UnsafeFunctions.SKBitmapClone(src)) With {.SKBitmapKeepTimeS = 1} 'Устанавливаем BMP
         Dim bi2 = bi1.GetClonedCopy()
         'Проверка изображений на соответствие
         Dim bmp1 = bi1.GetClonedBmp()
         Dim bmp2 = bi2.GetClonedBmp()
-        Dim mtrx1 = bmp1.BitmapToRgbMatrix()
-        Dim mtrx2 = bmp2.BitmapToRgbMatrix()
+        Dim mtrx1 = bmp1.ToRgbMatrix()
+        Dim mtrx2 = bmp2.ToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
         Assert.That(mtrxDiffPerc, [Is].LessThan(0.5))
     End Sub
@@ -428,13 +428,13 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCloneTest12()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi1 = New BitmapInfo(UnsafeFunctions.SKBitmapClone(src)) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
-        Dim bi2 As BitmapInfo = bi1.Clone()
+        Dim bi1 = New SKBitmapInfo(UnsafeFunctions.SKBitmapClone(src)) With {.SKBitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi2 As SKBitmapInfo = bi1.Clone()
         'Проверка изображений на соответствие
         Dim bmp1 = bi1.GetClonedBmp()
         Dim bmp2 = bi2.GetClonedBmp()
-        Dim mtrx1 = bmp1.BitmapToRgbMatrix()
-        Dim mtrx2 = bmp2.BitmapToRgbMatrix()
+        Dim mtrx1 = bmp1.ToRgbMatrix()
+        Dim mtrx2 = bmp2.ToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
         Assert.That(mtrxDiffPerc, [Is].LessThan(0.5))
     End Sub
@@ -443,13 +443,13 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCloneTest21()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi1 = New BitmapInfo(src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi1 = New SKBitmapInfo(src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()) With {.SKBitmapKeepTimeS = 1} 'Устанавливаем BMP
         Dim bi2 = bi1.GetClonedCopy()
         'Проверка изображений на соответствие
         Dim bmp1 = bi1.GetClonedBmp()
         Dim bmp2 = bi2.GetClonedBmp()
-        Dim mtrx1 = bmp1.BitmapToRgbMatrix()
-        Dim mtrx2 = bmp2.BitmapToRgbMatrix()
+        Dim mtrx1 = bmp1.ToRgbMatrix()
+        Dim mtrx2 = bmp2.ToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
         Assert.That(mtrxDiffPerc, [Is].LessThan(0.5))
     End Sub
@@ -458,13 +458,13 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoCloneTest22()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi1 = New BitmapInfo(src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()) With {.BitmapKeepTimeS = 1} 'Устанавливаем BMP
-        Dim bi2 As BitmapInfo = bi1.Clone()
+        Dim bi1 = New SKBitmapInfo(src.Encode(SKEncodedImageFormat.Jpeg, 95).ToArray()) With {.SKBitmapKeepTimeS = 1} 'Устанавливаем BMP
+        Dim bi2 As SKBitmapInfo = bi1.Clone()
         'Проверка изображений на соответствие
         Dim bmp1 = bi1.GetClonedBmp()
         Dim bmp2 = bi2.GetClonedBmp()
-        Dim mtrx1 = bmp1.BitmapToRgbMatrix()
-        Dim mtrx2 = bmp2.BitmapToRgbMatrix()
+        Dim mtrx1 = bmp1.ToRgbMatrix()
+        Dim mtrx2 = bmp2.ToRgbMatrix()
         Dim mtrxDiffPerc = GetAvgMatrixesDiff(mtrx1, mtrx2) * 100
         Assert.That(mtrxDiffPerc, [Is].LessThan(0.5))
     End Sub
@@ -480,7 +480,7 @@ Public Class BitmapInfoTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub BitmapInfoLockTest()
         Dim src = GetTestBmp(New SKSizeI(48, 96), SKColorType.Bgra8888, SKAlphaType.Premul)
-        Dim bi = New BitmapInfo(src) With {.BitmapKeepTimeS = 1}
+        Dim bi = New SKBitmapInfo(src) With {.SKBitmapKeepTimeS = 1}
 
         Dim lockedCount = 0
 

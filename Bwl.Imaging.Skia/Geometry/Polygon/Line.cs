@@ -1,5 +1,4 @@
-﻿
-using SkiaSharp;
+﻿using SkiaSharp;
 using System.Runtime.Serialization;
 
 namespace Bwl.Imaging.Skia

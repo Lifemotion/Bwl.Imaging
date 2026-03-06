@@ -1,68 +1,65 @@
-﻿
-using SkiaSharp;
+﻿using SkiaSharp;
 using System.Runtime.Serialization;
 
-namespace Bwl.Imaging.Skia
+namespace Bwl.Imaging.Skia;
+
+public class Vector : Line
 {
 
-    public class Vector : Line
+    [IgnoreDataMember]
+    public SKPoint PointFrom
     {
-
-        [IgnoreDataMember]
-        public SKPoint PointFrom
+        set
         {
-            set
-            {
-                _points[0] = value;
-            }
-            get
-            {
-                return _points[0];
-            }
+            _points[0] = value;
         }
-
-        [IgnoreDataMember]
-        public SKPoint PointTo
+        get
         {
-            set
-            {
-                _points[1] = value;
-            }
-            get
-            {
-                return _points[1];
-            }
+            return _points[0];
         }
+    }
 
-        [IgnoreDataMember]
-        public SKPoint VectorValue
+    [IgnoreDataMember]
+    public SKPoint PointTo
+    {
+        set
         {
-            set
-            {
-                _points[1].X = _points[0].X + value.X;
-                _points[1].Y = _points[0].Y + value.Y;
-            }
-            get
-            {
-                return new SKPoint(_points[1].X - _points[0].X, _points[1].Y - _points[0].Y);
-            }
+            _points[1] = value;
         }
+        get
+        {
+            return _points[1];
+        }
+    }
 
-        public Vector() : base()
+    [IgnoreDataMember]
+    public SKPoint VectorValue
+    {
+        set
         {
+            _points[1].X = _points[0].X + value.X;
+            _points[1].Y = _points[0].Y + value.Y;
         }
+        get
+        {
+            return new SKPoint(_points[1].X - _points[0].X, _points[1].Y - _points[0].Y);
+        }
+    }
 
-        public Vector(float x1, float y1, float x2, float y2) : base(x1, y1, x2, y2)
-        {
-        }
+    public Vector() : base()
+    {
+    }
 
-        public Vector(SKPoint p1, SKPoint p2) : base(p1, p2)
-        {
-        }
+    public Vector(float x1, float y1, float x2, float y2) : base(x1, y1, x2, y2)
+    {
+    }
 
-        public override string ToString()
-        {
-            return "Vector: " + Point1.ToString() + " -> " + Point2.ToString();
-        }
+    public Vector(SKPoint p1, SKPoint p2) : base(p1, p2)
+    {
+    }
+
+    public override string ToString()
+    {
+        return "Vector: " + Point1.ToString() + " -> " + Point2.ToString();
     }
 }

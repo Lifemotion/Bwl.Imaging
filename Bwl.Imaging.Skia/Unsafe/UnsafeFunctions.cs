@@ -1,6 +1,5 @@
 ﻿using SkiaSharp;
 using System.Runtime.InteropServices;
-using System.Security;
 
 namespace Bwl.Imaging.Skia;
 

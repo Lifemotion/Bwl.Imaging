@@ -10,7 +10,7 @@ Public Class MatrixTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub LoadAndAccessRgbMatrixTest()
         Dim bmp = ResourceLoader.Res_4x3_rgb
-        Dim rgb = BitmapConverter.BitmapToRGBMatrix(bmp)
+        Dim rgb = bmp.ToRgbMatrix()
         Assert.That(rgb.Width, [Is].EqualTo(4))
         Assert.That(rgb.Height, [Is].EqualTo(3))
         Assert.That(rgb.GetRedPixel(0, 0), [Is].EqualTo(0)) : Assert.That(rgb.GetGreenPixel(0, 0), [Is].EqualTo(0)) : Assert.That(rgb.GetBluePixel(0, 0), [Is].EqualTo(0))
@@ -34,7 +34,7 @@ Public Class MatrixTests
     Public Sub LoadAndAccessRgbMatrixTest2()
         Dim bmp = ResourceLoader.Res_4x3_rgb
         Dim bmpArgb = RgbToArgb(bmp, 255)
-        Dim rgb = BitmapConverter.BitmapToRGBMatrix(bmpArgb)
+        Dim rgb = bmpArgb.ToRgbMatrix()
         Assert.That(rgb.Width, [Is].EqualTo(4))
         Assert.That(rgb.Height, [Is].EqualTo(3))
         Assert.That(rgb.GetRedPixel(0, 0), [Is].EqualTo(0)) : Assert.That(rgb.GetGreenPixel(0, 0), [Is].EqualTo(0)) : Assert.That(rgb.GetBluePixel(0, 0), [Is].EqualTo(0))
@@ -57,8 +57,8 @@ Public Class MatrixTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub SaveRgbMatrixTest()
         Dim bmp = ResourceLoader.Res_4x3_rgb
-        Dim rgb = BitmapConverter.BitmapToRGBMatrix(bmp)
-        Dim newbmp = rgb.ToSKBitmap
+        Dim rgb = bmp.ToRgbMatrix()
+        Dim newbmp = rgb.ToSKBitmap()
         Dim clr00 = newbmp.GetPixel(0, 0)
         Dim clr10 = newbmp.GetPixel(1, 0)
         Dim clr20 = newbmp.GetPixel(2, 0)
@@ -104,8 +104,8 @@ Public Class MatrixTests
     Public Sub BitmapToGrayMatrixTest1()
         Dim bmpRgb = ResourceLoader.Res_4x3_rgb
         Dim bmpGray = ResourceLoader.Res_4x3_gray
-        Dim grayMatrixFromRgb_4x3 = BitmapConverter.BitmapToGrayMatrix(bmpRgb)
-        Dim grayMatrixFromGray_4x3 = BitmapConverter.BitmapToGrayMatrix(bmpGray)
+        Dim grayMatrixFromRgb_4x3 = bmpRgb.ToGrayMatrix()
+        Dim grayMatrixFromGray_4x3 = bmpGray.ToGrayMatrix()
 
         Dim grayMatrixFromRgb_4x4 = New GrayMatrix(7, 3)
         Dim grayMatrixFromGray_4x4 = New GrayMatrix(7, 3)
@@ -139,8 +139,8 @@ Public Class MatrixTests
             Next
         Next
 
-        Dim bmpGray2_1 = grayMatrixFromRgb_4x4.ToBitmap()
-        Dim bmpGray2_2 = grayMatrixFromGray_4x4.ToBitmap()
+        Dim bmpGray2_1 = grayMatrixFromRgb_4x4.ToSKBitmap()
+        Dim bmpGray2_2 = grayMatrixFromGray_4x4.ToSKBitmap()
         For y = 0 To grayMatrixFromRgb_4x3.Height - 1
             Dim offset = y * grayMatrixFromRgb_4x3.Width
             For x = 0 To grayMatrixFromRgb_4x3.Width - 1
@@ -158,8 +158,8 @@ Public Class MatrixTests
     Public Sub BitmapToGrayMatrixTest2()
         Dim bmpRgb = ResourceLoader.Resrgbw25
         Dim bmpGray = ResourceLoader.Resgray25
-        Dim grayMatrixFromRgb = BitmapConverter.BitmapToGrayMatrix(bmpRgb)
-        Dim grayMatrixFromGray = BitmapConverter.BitmapToGrayMatrix(bmpGray)
+        Dim grayMatrixFromRgb = bmpRgb.ToGrayMatrix()
+        Dim grayMatrixFromGray = bmpGray.ToGrayMatrix()
 
         For y = 0 To grayMatrixFromRgb.Height - 1
             Dim offset = y * grayMatrixFromRgb.Width
@@ -220,7 +220,7 @@ Public Class MatrixTests
     End Sub
 
     Private Sub GrayMatrixResizeTest(bmp As SKBitmap)
-        Dim grayMatrixFromGray = BitmapConverter.BitmapToGrayMatrix(bmp)
+        Dim grayMatrixFromGray = bmp.ToGrayMatrix()
         Dim grayMatrixFromGrayResize = grayMatrixFromGray.ResizeTwo().ResizeHalf()
         Assert.That(grayMatrixFromGray.Width, [Is].EqualTo(grayMatrixFromGrayResize.Width))
 
@@ -268,7 +268,7 @@ Public Class MatrixTests
     End Sub
 
     Private Sub RgbMatrixResizeTest(bmp As SKBitmap)
-        Dim grayMatrixFromRgb_4x3 = BitmapConverter.BitmapToRGBMatrix(bmp)
+        Dim grayMatrixFromRgb_4x3 = bmp.ToRgbMatrix()
         Dim grayMatrixFromGray_4x3_Resize = grayMatrixFromRgb_4x3.ResizeTwo().ResizeHalf()
         Assert.That(grayMatrixFromRgb_4x3.Width, [Is].EqualTo(grayMatrixFromGray_4x3_Resize.Width))
         For x = 0 To grayMatrixFromRgb_4x3.Width - 1
@@ -317,7 +317,7 @@ Public Class MatrixTests
     End Sub
 
     Private Sub GrayFloatMatrixResizeTest(bmp As SKBitmap)
-        Dim matrixFromGray = BitmapConverter.BitmapToGrayMatrix(bmp)
+        Dim matrixFromGray = bmp.ToGrayMatrix()
         Dim floatMatrixFromGray = New GrayFloatMatrix(matrixFromGray.Gray, matrixFromGray.Width, matrixFromGray.Height)
         Dim floatMatrixFromGrayResize = floatMatrixFromGray.ResizeTwo().ResizeHalf()
         Assert.That(floatMatrixFromGray.Width, [Is].EqualTo(floatMatrixFromGrayResize.Width))
@@ -365,7 +365,7 @@ Public Class MatrixTests
     End Sub
 
     Private Sub RgbFloatMatrixResizeTest(bmp As SKBitmap)
-        Dim matrixFromRgb = BitmapConverter.BitmapToRGBMatrix(bmp)
+        Dim matrixFromRgb = bmp.ToRgbMatrix()
         Dim floatMatrixFromRgb = New RGBFloatMatrix(matrixFromRgb.Red, matrixFromRgb.Green, matrixFromRgb.Blue,
                                                     matrixFromRgb.Width, matrixFromRgb.Height)
         Dim floatMatrixFromRgbResize = floatMatrixFromRgb.ResizeTwo().ResizeHalf()
@@ -428,7 +428,7 @@ Public Class MatrixTests
     End Sub
 
     Private Sub MatrixAlignAndCropTestGray(bmp As SKBitmap, align As Integer)
-        Dim matrixGray = BitmapConverter.BitmapToGrayMatrix(bmp)
+        Dim matrixGray = bmp.ToGrayMatrix()
         Dim matrixGrayAligned = MatrixTools.GrayMatrixAlign(matrixGray, align)
         Dim alignOffsetL = If(matrixGray.Width Mod align <> 0, (align - matrixGray.Width Mod align) \ 2, 0)
         Dim matrixGrayCropped = MatrixTools.GrayMatrixSubRect(matrixGrayAligned, SKExtensions.SKRectIFromXYWH(alignOffsetL, 0, matrixGray.Width, matrixGray.Height))
@@ -491,7 +491,7 @@ Public Class MatrixTests
     End Sub
 
     Private Sub MatrixAlignAndCropTestRgb(bmp As SKBitmap, align As Integer)
-        Dim matrixRgb = BitmapConverter.BitmapToRGBMatrix(bmp)
+        Dim matrixRgb = bmp.ToRgbMatrix()
         Dim matrixRgbAligned = MatrixTools.RGBMatrixAlign(matrixRgb, align)
         Dim alignOffsetL = If(matrixRgb.Width Mod align <> 0, (align - matrixRgb.Width Mod align) \ 2, 0)
         Dim matrixRGBCropped = MatrixTools.RGBMatrixSubRect(matrixRgbAligned, SKExtensions.SKRectIFromXYWH(alignOffsetL, 0, matrixRgb.Width, matrixRgb.Height))
@@ -513,8 +513,8 @@ Public Class MatrixTests
         Dim bmpGray = ResourceLoader.Res_4x3_gray.CloneResized(New SKSize(9, 7))
         Dim testRect = SKExtensions.SKRectIFromXYWH(3, 3, 4, 3)
         Dim bmpGrayCroppedEthalon = UnsafeFunctions.Crop(bmpGray, testRect)
-        Dim bmpGrayCroppedEthalonMatrix = BitmapConverter.BitmapToGrayMatrix(bmpGrayCroppedEthalon)
-        Dim matrixGray = BitmapConverter.BitmapToGrayMatrix(bmpGray)
+        Dim bmpGrayCroppedEthalonMatrix = bmpGrayCroppedEthalon.ToGrayMatrix()
+        Dim matrixGray = bmpGray.ToGrayMatrix()
         Dim matrixGrayCropped = MatrixTools.GrayMatrixSubRect(matrixGray, testRect)
         If matrixGrayCropped.Width <> bmpGrayCroppedEthalonMatrix.Width AndAlso matrixGrayCropped.Height <> bmpGrayCroppedEthalonMatrix.Height Then
             Throw New Exception("matrixGrayCropped.Width <> bmpGrayCroppedEthalonMatrix.Width AndAlso matrixGrayCropped.Height <> bmpGrayCroppedEthalonMatrix.Height")
@@ -532,8 +532,8 @@ Public Class MatrixTests
         Dim bmpRgb = ResourceLoader.Res_4x3_rgb.CloneResized(New SKSize(9, 7))
         Dim testRect = SKExtensions.SKRectIFromXYWH(3, 3, 4, 3)
         Dim bmpRgbCroppedEthalon = UnsafeFunctions.Crop(bmpRgb, testRect)
-        Dim bmpRgbCroppedEthalonMatrix = BitmapConverter.BitmapToRGBMatrix(bmpRgbCroppedEthalon)
-        Dim matrixRgb = BitmapConverter.BitmapToRGBMatrix(bmpRgb)
+        Dim bmpRgbCroppedEthalonMatrix = bmpRgbCroppedEthalon.ToRgbMatrix()
+        Dim matrixRgb = bmpRgb.ToRgbMatrix()
         Dim matrixRgbCropped = MatrixTools.RGBMatrixSubRect(matrixRgb, testRect)
         If matrixRgbCropped.Width <> bmpRgbCroppedEthalonMatrix.Width AndAlso matrixRgbCropped.Height <> bmpRgbCroppedEthalonMatrix.Height Then
             Throw New Exception("matrixRgbCropped.Width <> bmpRgbCroppedEthalonMatrix.Width AndAlso matrixRgbCropped.Height <> bmpRgbCroppedEthalonMatrix.Height")
@@ -551,7 +551,7 @@ Public Class MatrixTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub MatrixInverseTestGray()
         Dim bmpGray = ResourceLoader.Res_4x3_gray
-        Dim grayMatrix1 = BitmapConverter.BitmapToGrayMatrix(bmpGray)
+        Dim grayMatrix1 = bmpGray.ToGrayMatrix()
         Dim grayMatrix2 = grayMatrix1.Clone()
         MatrixTools.InverseGray(grayMatrix2)
         For y = 0 To grayMatrix1.Height - 1
@@ -571,7 +571,7 @@ Public Class MatrixTests
     <Parallelizable(ParallelScope.Self)>
     Public Sub MatrixInverseTestRgb()
         Dim bmpRgb = ResourceLoader.Res_4x3_rgb
-        Dim rgbMatrix1 = BitmapConverter.BitmapToRGBMatrix(bmpRgb)
+        Dim rgbMatrix1 = bmpRgb.ToRgbMatrix()
         Dim rgbMatrix2 = rgbMatrix1.Clone()
         MatrixTools.InverseRGB(rgbMatrix2)
         For y = 0 To rgbMatrix1.Height - 1

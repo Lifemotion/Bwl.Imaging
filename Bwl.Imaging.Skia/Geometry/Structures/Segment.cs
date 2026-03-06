@@ -1,100 +1,96 @@
 ﻿using SkiaSharp;
-using System;
 
+namespace Bwl.Imaging.Skia;
 
-namespace Bwl.Imaging.Skia
+public class Segment
 {
+    public int Left { get; set; }
+    public int Top { get; set; }
+    public int Width { get; set; }
+    public int Height { get; set; }
+    public int ID { get; set; }
+    public int Tag { get; set; }
+    public string Debug { get; set; }
 
-    public class Segment
+    public int Right
     {
-        public int Left { get; set; }
-        public int Top { get; set; }
-        public int Width { get; set; }
-        public int Height { get; set; }
-        public int ID { get; set; }
-        public int Tag { get; set; }
-        public string Debug { get; set; }
+        get
+        {
+            return Left + Width;
+        }
+        set
+        {
+            Width = value - Left;
+        }
+    }
+    public int Bottom
+    {
+        get
+        {
+            return Top + Height;
+        }
+        set
+        {
+            Height = value - Top;
+        }
+    }
+    public override string ToString()
+    {
+        return "L:" + Left.ToString() + " :T" + Top.ToString() + " :W" + Width.ToString() + " :H" + Height.ToString();
+    }
 
-        public int Right
+    public int CenterX
+    {
+        get
         {
-            get
-            {
-                return Left + Width;
-            }
-            set
-            {
-                Width = value - Left;
-            }
+            return (int)Math.Round(Left + Width / 2d);
         }
-        public int Bottom
-        {
-            get
-            {
-                return Top + Height;
-            }
-            set
-            {
-                Height = value - Top;
-            }
-        }
-        public override string ToString()
-        {
-            return "L:" + Left.ToString() + " :T" + Top.ToString() + " :W" + Width.ToString() + " :H" + Height.ToString();
-        }
+    }
 
-        public int CenterX
+    public float WHRatio
+    {
+        get
         {
-            get
-            {
-                return (int)Math.Round(Left + Width / 2d);
-            }
+            if (Height == 0)
+                return 0f;
+            return (int)Math.Round(Width / (double)Height);
         }
+    }
 
-        public float WHRatio
+    public int CenterY
+    {
+        get
         {
-            get
-            {
-                if (Height == 0)
-                    return 0f;
-                return (int)Math.Round(Width / (double)Height);
-            }
+            return (int)Math.Round(Top + Height / 2d);
         }
+    }
 
-        public int CenterY
-        {
-            get
-            {
-                return (int)Math.Round(Top + Height / 2d);
-            }
-        }
+    public bool IsPointInside(int x, int y)
+    {
+        return x >= Left & x <= Left + Width & y >= Top & y <= Top + Height;
+    }
 
-        public bool IsPointInside(int x, int y)
-        {
-            return x >= Left & x <= Left + Width & y >= Top & y <= Top + Height;
-        }
+    public SKRectI ToSKRectI()
+    {
+        return new SKRectI(Left, Top, Right, Bottom);
+    }
 
-        public SKRectI ToSKRectI()
-        {
-            return new SKRectI(Left, Top, Right, Bottom);
-        }
+    public SKRect ToSKRect()
+    {
+        return new SKRect(Left, Top, Right, Bottom);
+    }
 
-        public SKRect ToSKRect()
-        {
-            return new SKRect(Left, Top, Right, Bottom);
-        }
-
-        public Segment()
-        {
-
-        }
-
-        public Segment(int x, int y, int width, int height)
-        {
-            Left = x;
-            Top = y;
-            Width = width;
-            Height = height;
-        }
+    public Segment()
+    {
 
     }
+
+    public Segment(int x, int y, int width, int height)
+    {
+        Left = x;
+        Top = y;
+        Width = width;
+        Height = height;
+    }
+
 }

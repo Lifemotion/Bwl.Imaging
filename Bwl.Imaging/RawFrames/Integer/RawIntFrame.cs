@@ -1,8 +1,5 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
-using System.Linq;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace Bwl.Imaging
 {
@@ -30,8 +27,8 @@ namespace Bwl.Imaging
 
         public RawIntFrame(BlobContainer bc) : base(bc)
         {
-            Width = Conversions.ToInteger(Attributes["Width"]);
-            Height = Conversions.ToInteger(Attributes["Height"]);
+            Width = Convert.ToInt32(Attributes["Width"]);
+            Height = Convert.ToInt32(Attributes["Height"]);
             Data = Blobs[0].Data;
         }
 
@@ -59,11 +56,11 @@ namespace Bwl.Imaging
             {
                 using (var sw = new System.IO.StreamReader(fs))
                 {
-                    int width = Conversions.ToInteger(sw.ReadLine());
-                    int height = Conversions.ToInteger(sw.ReadLine());
+                    int width = Convert.ToInt32(sw.ReadLine());
+                    int height = Convert.ToInt32(sw.ReadLine());
                     var arr = new int[width * height * 3 + 1];
                     for (int i = 0, loopTo = arr.Length - 1; i <= loopTo; i++)
-                        arr[i] = Conversions.ToInteger(sw.ReadLine());
+                        arr[i] = Convert.ToInt32(sw.ReadLine());
                     fs.Close();
                     var frame = new RawIntFrame(width, height, arr);
                     frame.Data = arr;
