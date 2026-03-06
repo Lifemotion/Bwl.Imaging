@@ -1,4 +1,4 @@
-﻿namespace Bwl.Imaging;
+﻿namespace Bwl.Imaging.Skia;
 
 public class Parameter
 {
