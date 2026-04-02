@@ -26,6 +26,12 @@ jobs:
       - name: Restore NuGet packages
         run: nuget restore Bwl.Imaging.sln
 
+      - name: Create output directories
+        run: |
+          mkdir -p debug/dll
+          mkdir -p release/dll
+        shell: bash
+
       - name: Build
         run: msbuild Bwl.Imaging.sln /p:Configuration=Release /m
 
